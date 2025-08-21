@@ -1,0 +1,42 @@
+table {
+  border-radius: 1em;
+  overflow: hidden;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 0 0 2px #b1539d;
+  width: 100%;
+}
+
+table thead {
+  border-bottom: 2px solid #b1539d;
+}
+
+table td {
+  padding: 0.5em 1em;
+  color: #999;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.8em;
+}
+
+table td.weight {
+  font-weight: bold;
+  color: #111;
+  font-size: 1rem;
+}
+
+table th {
+  padding: 0.5em 1em;
+  background: #b1539d;
+  color: #fff;
+  text-align: left;
+}
+
+body {
+  background-image: url(paws.gif);
+  background-size: 160px;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: never;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
