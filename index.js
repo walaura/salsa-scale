@@ -26,7 +26,7 @@ app.get("/", async (req, res) => {
         </tr>`;
       }
 
-      const table = `<table class="container">
+      let table = `<table class="container">
         <thead>
           <tr>
             <th>Weight</th>
@@ -37,6 +37,12 @@ app.get("/", async (req, res) => {
           ${results}
         </tbody>
       </table>`;
+
+      table = makeDetails({
+        title: "All days",
+        children: table,
+        isOpen: true,
+      });
 
       const dom = ` <!DOCTYPE html>
         <html lang="en">
@@ -91,3 +97,12 @@ app.get("/track/" + process.env.TOP_SECRET_PATH + "/:weight", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+const makeDetails = ({ title, children, isOpen }) => `
+  <details ${isOpen ? "open" : ""}>
+    <summary>${title}</summary>
+    <div class="details-content">
+        ${children}
+    </div>
+  </details>
+`;
