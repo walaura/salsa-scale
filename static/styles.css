@@ -54,3 +54,18 @@ body {
     "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+svg {
+  background-color: #fff;
+  padding: 25px 0;
+  background: repeating-linear-gradient(#fff, #fff 24px, #ddd 24px, #ddd 25px);
+  display: block;
+}
+
+svg polyline {
+  stroke: #edb2e5;
+}
+
+details + details {
+  margin-top: 2em;
+}
