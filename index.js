@@ -1,13 +1,15 @@
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
 const express = require("express");
+const { makeChart } = require("./ui/Chart");
+const { makeTable } = require("./ui/Table");
+const { makeDetails } = require("./ui/Details");
 
 const app = express();
 const port = 3000;
 const uri = process.env.MONGO_URL;
 
-const MSECS_IN_DAY = 24 * 60 * 60 * 1000;
-const CHART_LENGTH = MSECS_IN_DAY / 4;
+process.env.TZ = "Europe/London"; // update if salsa moves out
 
 app.use("/static", express.static("static"));
 
@@ -15,7 +17,6 @@ app.get("/", async (req, res) => {
   async function run() {
     const client = new MongoClient(uri);
     try {
-      const timestamp = Date.now();
       const database = client.db("default");
       const logs = database.collection("logs");
       const list = logs.find().sort({ timestamp: -1 }).limit(500);
@@ -25,75 +26,34 @@ app.get("/", async (req, res) => {
         points.push(doc);
       }
 
-      const svgPointsCount = points.filter(
-        (point) => point.timestamp > timestamp - CHART_LENGTH
-      ).length;
+      const days = {};
+      for (const point of points) {
+        const date = new Date(point.timestamp).toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        if (!days[date]) {
+          days[date] = [];
+        }
+        days[date].push(point);
+      }
 
-      const svgPoints = points
-        .slice(0, svgPointsCount + 6)
-        .map((point) => ({
-          ...point,
-          timeOffset:
-            (CHART_LENGTH - (timestamp - point.timestamp)) / CHART_LENGTH,
-        }))
-        .reverse();
-
-      console.log(svgPoints);
-      const maxWeight = Math.max(...svgPoints.map((point) => point.weight));
-      let svgLine = ` <svg
-        height="200"
-        width="100%"
-        preserveAspectRatio="none"
-        viewBox="0 0 1000 ${maxWeight}"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <polyline
-          points="${svgPoints
-            .map((point) => {
-              const x = Math.floor(point.timeOffset * 1000);
-              const y = maxWeight - Math.max(point.weight, 0);
-              return `${x} ${y}`;
-            })
-            .join(", ")}"
-          style="fill:none;stroke-width:5;stroke-linecap:round"
-        />
-      </svg>`;
-
-      let table = `<table class="container">
-        <thead>
-          <tr>
-            <th>Weight</th>
-            <th>Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${points
-            .map(
-              (point) => `
-            <tr>
-              <td class="weight">${point.weight}g</td>
-              <td class="timestamp">${new Date(
-                point.timestamp
-              ).toLocaleString()}</td>
-            </tr>`
-            )
-            .join("")}
-        </tbody>
-      </table>`;
-
-      table = makeDetails({
+      const table = makeDetails({
         title: "All days",
-        children: table,
+        children: makeTable({
+          points,
+        }),
         isOpen: true,
       });
 
       svgLine = makeDetails({
         title: "Chart",
-        children: svgLine,
+        children: makeChart({ points }),
         isOpen: true,
       });
 
-      const dom = ` <!DOCTYPE html>
+      const dom = /* HTML */ `<!DOCTYPE html>
         <html lang="en">
           <head>
             <meta charset="UTF-8" />
@@ -102,7 +62,15 @@ app.get("/", async (req, res) => {
           </head>
           <body>
             ${svgLine}
-            ${table}
+            ${Object.entries(days)
+              .map(([date, points], idx) =>
+                makeDetails({
+                  title: date,
+                  children: makeTable({ points }),
+                  isOpen: idx === 0,
+                })
+              )
+              .join("")}
           </body>
         </html>`;
 
@@ -147,12 +115,3 @@ app.get("/track/" + process.env.TOP_SECRET_PATH + "/:weight", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
-const makeDetails = ({ title, children, isOpen }) => `
-  <details ${isOpen ? "open" : ""}>
-    <summary>${title}</summary>
-    <div class="details-content">
-        ${children}
-    </div>
-  </details>
-`;
