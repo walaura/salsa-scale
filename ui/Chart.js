@@ -43,7 +43,6 @@ const makeChart = ({ points }) => {
         vector-effect="non-scaling-stroke"
         points="${svgPoints
           .map((point) => {
-            console.log(point.weight, projectPoint(point.weight));
             const x = Math.floor(point.timeOffset * 1000);
             const y = PADDING + projectPoint(point.weight) * HEIGHT;
             return `${x} ${y}`;

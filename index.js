@@ -28,8 +28,6 @@ app.get("/", async (req, res) => {
         points.push(doc);
       }
 
-      console.log(points[0]._id.toString());
-
       const days = {};
       for (const point of points) {
         const date = new Date(point.timestamp).toLocaleDateString(undefined, {
@@ -132,5 +130,5 @@ app.get(DELETE_PATH, (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Scale listening on port ${port}`);
 });
