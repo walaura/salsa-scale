@@ -65,6 +65,7 @@ const makeChart = ({ points }) => {
           return /* HTML */ `
             <g class="chart-point">
               <circle cx="${x}%" cy="${y}" r="2" fill="var(--pink-300)" />
+              <circle cx="${x}%" cy="${y}" r="12" fill="transparent" />
               <g transform="translate(-20 0)">
                 <g class="chart-point-label">
                   <svg x="${x}%" y="${y - 24}">
