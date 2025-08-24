@@ -1,3 +1,47 @@
+:root {
+  --pink-50: #fff0fb;
+  --pink-100: #ffc8f0;
+  --pink-200: #fe9ce7;
+  --pink-300: #e484cd;
+  --pink-400: #ca6cb5;
+  --pink-500: #b1539d;
+  --pink-600: #a0318b;
+  --pink-700: #80006e;
+  --pink-800: #540047;
+  --pink-900: #300028;
+}
+
+details {
+  border-radius: 1em;
+  box-shadow: 0 0.1em 0.5em 0.01em rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.details-content {
+  border: 1px solid var(--pink-600);
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  overflow: hidden;
+  margin-top: -1px;
+}
+
+details summary {
+  padding: calc(0.75rem + 2px) calc(1rem + 2px);
+  background-color: var(--pink-600);
+  background: linear-gradient(
+    to bottom,
+    var(--pink-400) 0%,
+    var(--pink-600) 100%
+  );
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+details + details {
+  margin-top: 2em;
+}
+
 table {
   overflow: hidden;
   border-collapse: collapse;
@@ -5,29 +49,23 @@ table {
   width: 100%;
 }
 
-details {
-  border: 2px solid #b1539d;
-  border-radius: 1em;
-  box-shadow: 0 0.1em 0.5em 0.01em rgba(0, 0, 0, 0.25);
-  overflow: hidden;
+table th:last-child,
+table td:last-child {
+  text-align: end;
 }
 
-details summary {
-  padding: 0.5rem 1rem;
-  background: #b1539d;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
+table tr:hover {
+  background: var(--pink-50);
 }
 
 table thead {
-  border-bottom: 1px solid #b1539d;
+  border-bottom: 1px solid var(--pink-400);
 }
 
 table td {
   padding: 0.5rem 1rem;
   color: #999;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--pink-100);
   font-size: 0.8em;
 }
 
@@ -39,7 +77,8 @@ table td.weight {
 
 table th {
   padding: 0.5rem 1rem;
-  background: #edb2e5;
+  background: var(--pink-100);
+  color: var(--pink-600);
   text-align: left;
   font-weight: normal;
 }
@@ -57,15 +96,36 @@ body {
 
 svg {
   background-color: #fff;
-  padding: 25px 0;
-  background: repeating-linear-gradient(#fff, #fff 24px, #ddd 24px, #ddd 25px);
   display: block;
+  width: 100%;
 }
 
-svg polyline {
-  stroke: #edb2e5;
+svg.chart-container {
+  background: repeating-linear-gradient(
+    #fff,
+    #fff 24px,
+    var(--pink-100) 24px,
+    var(--pink-100) 25px
+  );
 }
 
-details + details {
-  margin-top: 2em;
+svg * {
+  transform-box: fill-box;
+}
+
+svg text {
+  font-size: 0.7em;
+}
+
+.chart-point-label {
+  transform: scaleY(0.5) scaleX(0.2);
+  opacity: 0;
+  transform-origin: bottom center;
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.chart-point:hover .chart-point-label {
+  opacity: 1;
+  transform: scaleY(1) scaleX(1);
+  z-index: 999999;
 }

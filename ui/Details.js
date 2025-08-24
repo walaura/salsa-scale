@@ -1,5 +1,5 @@
-const makeDetails = ({ title, children, isOpen }) => /* HTML */ `
-  <details ${isOpen ? "open" : ""}>
+const makeDetails = ({ title, children, isOpen, name }) => /* HTML */ `
+  <details ${name ? `name="${name}"` : ""} ${isOpen ? "open" : ""}>
     <summary>${title}</summary>
     <div class="details-content">${children}</div>
   </details>

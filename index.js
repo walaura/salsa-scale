@@ -1,9 +1,10 @@
 require("dotenv").config();
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const express = require("express");
 const { makeChart } = require("./ui/Chart");
 const { makeTable } = require("./ui/Table");
 const { makeDetails } = require("./ui/Details");
+const { DELETE_PATH, TRACK_PATH } = require("./app/routes.js");
 
 const app = express();
 const port = 3000;
@@ -14,6 +15,7 @@ process.env.TZ = "Europe/London"; // update if salsa moves out
 app.use("/static", express.static("static"));
 
 app.get("/", async (req, res) => {
+  const showActions = req.query.edit === process.env.TOP_SECRET_PATH;
   async function run() {
     const client = new MongoClient(uri);
     try {
@@ -25,6 +27,8 @@ app.get("/", async (req, res) => {
       for await (const doc of list) {
         points.push(doc);
       }
+
+      console.log(points[0]._id.toString());
 
       const days = {};
       for (const point of points) {
@@ -38,14 +42,6 @@ app.get("/", async (req, res) => {
         }
         days[date].push(point);
       }
-
-      const table = makeDetails({
-        title: "All days",
-        children: makeTable({
-          points,
-        }),
-        isOpen: true,
-      });
 
       svgLine = makeDetails({
         title: "Chart",
@@ -66,7 +62,7 @@ app.get("/", async (req, res) => {
               .map(([date, points], idx) =>
                 makeDetails({
                   title: date,
-                  children: makeTable({ points }),
+                  children: makeTable({ points, showActions }),
                   isOpen: idx === 0,
                 })
               )
@@ -85,7 +81,7 @@ app.get("/", async (req, res) => {
   });
 });
 
-app.get("/track/" + process.env.TOP_SECRET_PATH + "/:weight", (req, res) => {
+app.get(TRACK_PATH, (req, res) => {
   const weight = req.params.weight;
   const timestamp = Date.now();
 
@@ -99,6 +95,29 @@ app.get("/track/" + process.env.TOP_SECRET_PATH + "/:weight", (req, res) => {
         timestamp,
       });
       const response = `New log entry created with the following id: ${result.insertedId}`;
+      console.log(response);
+      res.send(response);
+      return;
+    } finally {
+      await client.close();
+    }
+  }
+  run().catch((err) => {
+    console.error(err);
+    res.send(`Ah shit`);
+  });
+});
+
+app.get(DELETE_PATH, (req, res) => {
+  const id = req.params.id;
+
+  async function run() {
+    const client = new MongoClient(uri);
+    try {
+      const database = client.db("default");
+      const logs = database.collection("logs");
+      await logs.deleteOne({ _id: new ObjectId(id) });
+      const response = `Log entry deleted with the following id: ${id}`;
       console.log(response);
       res.send(response);
       return;
