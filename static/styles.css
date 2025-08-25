@@ -117,6 +117,10 @@ svg text {
   font-size: 0.7em;
 }
 
+.chart-point-date {
+  font-size: 0.6em;
+}
+
 .chart-point-label {
   transform: scaleY(0.5) scaleX(0.2);
   opacity: 0;
@@ -124,8 +128,16 @@ svg text {
   transition: transform 0.1s ease, opacity 0.1s ease;
 }
 
+.chart-point,
+.chart-point-dot {
+  z-index: 1;
+}
+
+.chart-point:hover {
+  z-index: 99999;
+}
+
 .chart-point:hover .chart-point-label {
   opacity: 1;
-  transform: scaleY(1) scaleX(1);
-  z-index: 999999;
+  transform: scaleY(1) scaleX(1) translateZ(42px);
 }

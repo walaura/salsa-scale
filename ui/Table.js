@@ -1,5 +1,5 @@
 const { DELETE_PATH } = require("../app/routes.js");
-const { formatGrams } = require("../app/formatGrams.js");
+const { formatGrams, formatTimeHtml } = require("../app/format.js");
 
 const makeTable = ({ points, showActions = false }) => /* HTML */ `<table
   class="container"
@@ -15,11 +15,9 @@ const makeTable = ({ points, showActions = false }) => /* HTML */ `<table
     ${points
       .map(
         (point) => `
-        <tr>
+        <tr id=${point._id.toString()}>
           <td class="weight">${formatGrams(point.weight)}</td>
-          <td class="timestamp">${new Date(
-            point.timestamp
-          ).toLocaleTimeString()}</td>
+          <td class="timestamp">${formatTimeHtml(point.timestamp)}</td>
           ${
             showActions
               ? /* HTML */ `<td class="actions">

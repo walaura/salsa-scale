@@ -1,4 +1,4 @@
-const { formatGrams } = require("../app/formatGrams.js");
+const { formatGrams, formatTime } = require("../app/format.js");
 
 const MSECS_IN_DAY = 24 * 60 * 60 * 1000;
 const CHART_LENGTH = MSECS_IN_DAY;
@@ -63,29 +63,54 @@ const makeChart = ({ points }) => {
           const x = point.timeOffset * 100;
           const y = PADDING + projectPoint(point.weight) * HEIGHT;
           return /* HTML */ `
+            <circle
+              cx="${x}%"
+              cy="${y}"
+              r="2"
+              fill="var(--pink-300)"
+              class="chart-point-dot"
+            />
+          `;
+        })
+        .join("")}
+      ${svgPoints
+        .map((point) => {
+          const x = point.timeOffset * 100;
+          const y = PADDING + projectPoint(point.weight) * HEIGHT;
+          return /* HTML */ `
             <g class="chart-point">
-              <circle cx="${x}%" cy="${y}" r="2" fill="var(--pink-300)" />
-              <circle cx="${x}%" cy="${y}" r="12" fill="transparent" />
-              <g transform="translate(-20 0)">
-                <g class="chart-point-label">
-                  <svg x="${x}%" y="${y - 24}">
-                    <rect
-                      width="40"
-                      height="20"
-                      fill="var(--pink-600)"
-                      rx="10"
-                      ry="10"
-                    />
-                    <text fill="#fff" x="20" y="14" text-anchor="middle">
-                      ${formatGrams(point.weight)}
-                    </text>
-                  </svg>
+              <a href="#${point._id.toString()}">
+                <circle cx="${x}%" cy="${y}" r="12" fill="transparent" />
+                <g transform="translate(-20 0)">
+                  <g class="chart-point-label">
+                    <svg x="${x}%" y="${y - 24}">
+                      <rect
+                        width="48"
+                        height="32"
+                        fill="var(--pink-600)"
+                        rx="4"
+                        ry="4"
+                      />
+                      <text fill="#fff" x="24" y="14" text-anchor="middle">
+                        ${formatGrams(point.weight)}
+                      </text>
+                      <text
+                        class="chart-point-date"
+                        fill="var(--pink-100)"
+                        x="24"
+                        y="25"
+                        text-anchor="middle"
+                      >
+                        ${formatTime(point.timestamp)}
+                      </text>
+                    </svg>
+                  </g>
                 </g>
-              </g>
+              </a>
             </g>
           `;
         })
-        .join(", ")}
+        .join("")}
     </svg>
   </svg>`;
 };
