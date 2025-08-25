@@ -58,6 +58,10 @@ table tr:hover {
   background: var(--pink-50);
 }
 
+table tr img {
+  vertical-align: text-bottom;
+}
+
 table thead {
   border-bottom: 1px solid var(--pink-400);
 }
@@ -69,7 +73,7 @@ table td {
   font-size: 0.8em;
 }
 
-table td.weight {
+table td.weight.weight-highlight {
   font-weight: bold;
   color: inherit;
   font-size: 1rem;

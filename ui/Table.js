@@ -13,10 +13,25 @@ const makeTable = ({ points, showActions = false }) => /* HTML */ `<table
   </thead>
   <tbody>
     ${points
-      .map(
-        (point) => `
+      .map((point, index, val) => {
+        const up2 = val[index + 2] ? val[index + 2].weight : 0;
+        const up1 = val[index + 1] ? val[index + 1].weight : 0;
+
+        const diff = point.weight - up1 + up1 - up2;
+        let weightRow = /* HTML */ `<td class="weight">
+          ${formatGrams(point.weight)}
+        </td>`;
+        if (diff <= -5 && point.__consumed !== true) {
+          val[index + 1].__consumed = true;
+          weightRow = /* HTML */ `<td class="weight weight-highlight">
+            <img src="/static/cake.gif" alt="Cake" />&nbsp;&nbsp;
+            ${formatGrams(point.weight)} - Feeding event?
+            (${formatGrams(Math.abs(diff))})
+          </td>`;
+        }
+        return `
         <tr id=${point._id.toString()}>
-          <td class="weight">${formatGrams(point.weight)}</td>
+          ${weightRow}
           <td class="timestamp">${formatTimeHtml(point.timestamp)}</td>
           ${
             showActions
@@ -31,8 +46,8 @@ const makeTable = ({ points, showActions = false }) => /* HTML */ `<table
                 </td>`
               : ""
           }
-        </tr>`
-      )
+        </tr>`;
+      })
       .join("")}
   </tbody>
 </table>`;
