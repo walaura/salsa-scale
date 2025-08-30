@@ -73,10 +73,17 @@ table td {
   font-size: 0.8em;
 }
 
-table td.weight.weight-highlight {
+table td strong {
   font-weight: bold;
-  color: inherit;
+  color: #000;
   font-size: 1rem;
+}
+
+table .row-with-icon {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+  gap: 1rem;
 }
 
 table th {
@@ -89,6 +96,7 @@ table th {
 
 body {
   padding: 1em;
+  line-height: 1.4;
   background-image: url(paws.gif);
   background-size: 160px;
   image-rendering: pixelated;
