@@ -79,7 +79,8 @@ async function indexRoute({
       <head>
         <meta charset="UTF-8" />
         <title>Is salsa starving</title>
-        <link rel="stylesheet" href="/static/styles.css" />
+        <link rel="stylesheet" href="./static/styles.css" />
+        <link rel="icon" href="./static/favicon.png" />
       </head>
       <body>
         ${svgLine}
