@@ -1,29 +1,37 @@
-const { formatGrams, formatTime } = require("../app/format.js");
+import type { WithId } from "mongodb";
+import type { LogEntry } from "../app/db.ts";
+import { formatGrams, formatTime } from "../app/format.ts";
 
 const MSECS_IN_DAY = 24 * 60 * 60 * 1000;
-const CHART_LENGTH = MSECS_IN_DAY;
 
 const HEIGHT = 200;
 const PADDING = 25;
 
-const makeChart = ({ points }) => {
+const makeChart = ({
+  points,
+  scale = 1,
+}: {
+  points: WithId<LogEntry>[];
+  scale?: number;
+}) => {
+  const length = scale * MSECS_IN_DAY;
   const timestamp = Date.now();
   const svgPointsCount = points.filter(
-    (point) => point.timestamp > timestamp - CHART_LENGTH
+    (point) => point.timestamp > timestamp - length
   ).length;
 
   const svgPoints = points
     .slice(0, svgPointsCount + 2)
     .map((point) => ({
       ...point,
-      timeOffset: (CHART_LENGTH - (timestamp - point.timestamp)) / CHART_LENGTH,
+      timeOffset: (length - (timestamp - point.timestamp)) / length,
     }))
     .reverse();
 
   const maxWeight = Math.max(...svgPoints.map((point) => point.weight));
   const minWeight = Math.min(...svgPoints.map((point) => point.weight));
 
-  const projectPoint = (pointWeight) => {
+  const projectPoint = (pointWeight: number) => {
     const scaled = (pointWeight - minWeight) / (maxWeight - minWeight);
     return 1 - Math.max(0, Math.min(1, scaled));
   };
@@ -62,7 +70,7 @@ const makeChart = ({ points }) => {
         .map((point) => {
           const x = point.timeOffset * 100;
           const y = PADDING + projectPoint(point.weight) * HEIGHT;
-          const r = point.isFeedingEvent ? 6 : 2;
+          const r = point.feedingEventOfSize ? 6 : 2;
           return /* HTML */ `
             <circle
               cx="${x}%"
@@ -116,4 +124,4 @@ const makeChart = ({ points }) => {
   </svg>`;
 };
 
-exports.makeChart = makeChart;
+export { makeChart };

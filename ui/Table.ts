@@ -1,18 +1,11 @@
-const { DELETE_PATH } = require("../app/routes.js");
-const { formatGrams, formatTimeHtml } = require("../app/format.js");
+import { DELETE_PATH } from "../app/routes.ts";
+import { formatGrams, formatTimeHtml } from "../app/format.ts";
+import type { LogEntry } from "../app/db.ts";
+import type { WithId } from "mongodb";
 
-const makeWeightRow = ({ point, index, val }) => {
-  if (point.isFeedingEvent !== true) {
+const makeWeightRow = ({ point }: { point: LogEntry }) => {
+  if (point.feedingEventOfSize == null) {
     return /* HTML */ `<td class="weight">${formatGrams(point.weight)}</td>`;
-  }
-
-  let delta = Math.abs(point?.weight - val[index + 2]?.weight);
-  if (!Number.isNaN(delta)) {
-    delta = ` – ${formatGrams(
-      Math.abs(point?.weight - val[index + 2]?.weight)
-    )}`;
-  } else {
-    delta = null;
   }
 
   return /* HTML */ ` <td class="weight">
@@ -21,17 +14,21 @@ const makeWeightRow = ({ point, index, val }) => {
       <div>
         ${formatGrams(point.weight)}<br />
         <strong>
-          Feeding event at
-          ${formatTimeHtml(point.timestamp)}${delta ?? ""}</strong
+          Feeding event at ${formatTimeHtml(point.timestamp)} –
+          ${formatGrams(point.feedingEventOfSize)}</strong
         >
       </div>
     </div>
   </td>`;
 };
 
-const makeTable = ({ points, showActions = false }) => /* HTML */ ` <table
-  class="container"
->
+const makeTable = ({
+  points,
+  showActions = false,
+}: {
+  points: WithId<LogEntry>[];
+  showActions?: boolean;
+}) => /* HTML */ ` <table class="container">
   <thead>
     <tr>
       <th>Weight</th>
@@ -41,9 +38,9 @@ const makeTable = ({ points, showActions = false }) => /* HTML */ ` <table
   </thead>
   <tbody>
     ${points
-      .map((point, index, val) => {
+      .map((point) => {
         return /* HTML */ ` <tr id=${point._id.toString()}>
-          ${makeWeightRow({ point, index, val })}
+          ${makeWeightRow({ point })}
           <td class="timestamp">${formatTimeHtml(point.timestamp)}</td>
           ${showActions
             ? /* HTML */ `<td class="actions">
@@ -62,4 +59,4 @@ const makeTable = ({ points, showActions = false }) => /* HTML */ ` <table
   </tbody>
 </table>`;
 
-exports.makeTable = makeTable;
+export { makeTable };

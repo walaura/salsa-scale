@@ -2,9 +2,10 @@
   "name": "salsa-scale",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --experimental-strip-types index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -13,5 +14,10 @@
     "express": "^5.1.0",
     "mongodb": "^6.18.0",
     "save": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0"
   }
 }

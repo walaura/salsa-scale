@@ -10,6 +10,9 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "moduleResolution": "node16"
   }
 }

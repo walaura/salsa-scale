@@ -1,4 +1,4 @@
-exports.formatGrams = (grams) => {
+export const formatGrams = (grams: number) => {
   if (grams < 1000) {
     return `${grams} g`;
   }
@@ -6,20 +6,20 @@ exports.formatGrams = (grams) => {
   return `${kilos.toFixed(1)} kg`;
 };
 
-exports.formatTimeHtml = (timestamp) => {
+export const formatTimeHtml = (timestamp: number) => {
   const date = new Date(timestamp);
   return /* HTML */ `<time
     title="${date.toLocaleString()}"
     datetime="${date.toISOString()}"
-    >${exports.formatTime(timestamp)}
+    >${formatTime(timestamp)}
   </time>`;
 };
 
-exports.formatTime = (timestamp) => {
+export const formatTime = (timestamp: number) => {
   const date = new Date(timestamp);
   return date.toLocaleTimeString([], {
     hour: "numeric",
     minute: "2-digit",
-    seconds: undefined,
+    second: undefined,
   });
 };

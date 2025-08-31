@@ -1,28 +1,45 @@
-const { MongoClient } = require("mongodb");
-const uri = process.env.MONGO_URL;
+import { Collection, MongoClient } from "mongodb";
+import type { LogEntry } from "../app/db.ts";
 
-const detectFeedingEvent = async ({ logs, weight }) => {
+const uri = process.env.MONGO_URL as string;
+
+const detectFeedingEventOfSize = async ({
+  logs,
+  weight,
+}: {
+  logs: Collection<LogEntry>;
+  weight: number;
+}) => {
   const twoPrior = [];
   for await (const doc of logs.find().sort({ timestamp: -1 }).limit(2)) {
     twoPrior.push(doc);
   }
 
   if (twoPrior.length !== 2) {
-    return false;
+    return null;
   }
-  if (twoPrior[0].isFeedingEvent === true) {
-    return false;
+  if (twoPrior[0].feedingEventOfSize != null) {
+    return null;
   }
   const largestWeight = Math.max(
     twoPrior[0]?.weight || 0,
     twoPrior[1]?.weight || 0
   );
-  return largestWeight - weight >= 5;
+  const delta = largestWeight - weight;
+  if (delta < 5) {
+    return null;
+  }
+
+  return delta;
 };
 
-const getTimeSinceLastFeedingEvent = async ({ logs }) => {
+const getTimeSinceLastFeedingEvent = async ({
+  logs,
+}: {
+  logs: Collection<LogEntry>;
+}) => {
   const lastFeedingEvent = await logs
-    .find({ isFeedingEvent: true })
+    .find({ feedingEventOfSize: { $ne: null } })
     .sort({ timestamp: -1 })
     .limit(1)
     .toArray();
@@ -32,16 +49,21 @@ const getTimeSinceLastFeedingEvent = async ({ logs }) => {
   return Date.now() - lastFeedingEvent[0].timestamp;
 };
 
-async function trackRoute({ weight, timestamp }) {
+async function trackRoute({
+  weight,
+  timestamp,
+}: {
+  weight: number;
+  timestamp: number;
+}) {
   const client = new MongoClient(uri);
 
   try {
     const database = client.db("default");
-    const logs = database.collection("logs");
+    const logs = database.collection<LogEntry>("logs");
 
-    const isFeedingEvent = await detectFeedingEvent({ logs, weight });
-
-    const timeSinceLastFeedingEvent = await (isFeedingEvent === true
+    const feedingEventOfSize = await detectFeedingEventOfSize({ logs, weight });
+    const timeSinceLastFeedingEvent = await (feedingEventOfSize == null
       ? null
       : getTimeSinceLastFeedingEvent({
           logs,
@@ -57,9 +79,9 @@ async function trackRoute({ weight, timestamp }) {
     }
 
     const result = await logs.insertOne({
-      weight: parseInt(weight),
+      weight,
       timestamp,
-      isFeedingEvent,
+      feedingEventOfSize,
     });
     const response = `New log entry created with the following id: ${result.insertedId}`;
     console.log(response);
@@ -70,4 +92,4 @@ async function trackRoute({ weight, timestamp }) {
   }
 }
 
-module.exports.trackRoute = trackRoute;
+export { trackRoute };
