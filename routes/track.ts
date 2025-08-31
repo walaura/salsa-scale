@@ -26,7 +26,7 @@ const detectFeedingEventOfSize = async ({
     twoPrior[1]?.weight || 0
   );
   const delta = largestWeight - weight;
-  if (delta < 5) {
+  if (delta < 3) {
     return null;
   }
 

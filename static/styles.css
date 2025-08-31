@@ -66,22 +66,36 @@ details {
   margin-top: -1px;
 }
 
-details summary {
-  padding: calc(0.75rem + 2px) calc(1rem + 2px);
-  background-color: var(--pink-600);
-  background: linear-gradient(
-    to bottom,
-    var(--pink-400) 0%,
-    var(--pink-600) 100%
-  );
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+details {
+  summary {
+    padding: calc(0.75rem + 2px) calc(1rem + 2px);
+    background-color: var(--pink-600);
+    background: linear-gradient(
+      to bottom,
+      var(--pink-400) 0%,
+      var(--pink-600) 100%
+    );
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   .details-title {
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    img {
+      vertical-align: baseline;
+      transition: transform 0.4s ease;
+      transform: rotate(-90deg);
+    }
+  }
+
+  &[open] .details-title img {
+    transform: rotate(0deg);
   }
 
   .details-pivot {
