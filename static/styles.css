@@ -1,14 +1,17 @@
 :root {
-  --pink-50: #fff0fb;
-  --pink-100: #ffc8f0;
-  --pink-200: #fe9ce7;
-  --pink-300: #e484cd;
-  --pink-400: #ca6cb5;
-  --pink-500: #b1539d;
-  --pink-600: #a0318b;
-  --pink-700: #80006e;
-  --pink-800: #540047;
-  --pink-900: #300028;
+  --pink-50: #fff1f6;
+  --pink-100: #ffd6e5;
+  --pink-200: #ffb9d4;
+  --pink-300: #ff9bc3;
+  --pink-400: #ff78b4;
+  --pink-500: #ff4ba4;
+  --pink-600: #e10087;
+  --pink-700: #a20060;
+  --pink-800: #650039;
+  --pink-900: #33001b;
+
+  --neutral-400: #999;
+  --neutral-900: #000000;
 
   --font-primary: 1rem;
   --font-secondary: 0.8rem;
@@ -149,7 +152,7 @@ table thead {
 
 table td {
   padding: 0.5rem 1rem;
-  color: #999;
+  color: var(--neutral-400);
   border-bottom: 1px solid var(--pink-100);
   font-size: var(--font-secondary);
 }
@@ -234,4 +237,33 @@ svg text {
 .chart-point:hover .chart-point-label {
   opacity: 1;
   transform: scaleY(1) scaleX(1) translateZ(42px);
+}
+
+.dashboard {
+  display: grid;
+  background: #fff;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: -1px;
+  .dashboard-widget {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-direction: column;
+    border: 1px solid var(--pink-200);
+    padding: 2rem 1rem;
+    strong {
+      font-size: var(--font-secondary);
+      color: var(--neutral-400);
+      font-weight: inherit;
+    }
+    .dashboard-widget-text-w-icon {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .dashboard-fact {
+      font-weight: 800;
+    }
+  }
 }

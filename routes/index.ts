@@ -1,8 +1,11 @@
 import { MongoClient } from "mongodb";
+import type { WithId } from "mongodb";
 import { makeChart } from "../ui/Chart.ts";
 import { makeTable } from "../ui/Table.ts";
 import { makeDetails } from "../ui/Details.ts";
+import { makeDashboard } from "../ui/Dashboard.ts";
 import type { LogEntry } from "../app/db.ts";
+import { formatGrams, formatTime, formatTimeHtml } from "../app/format.ts";
 
 const uri = process.env.MONGO_URL as string;
 
@@ -13,17 +16,15 @@ const getData = async ({ chartScale }: { chartScale: number }) => {
     await client.connect();
     const database = client.db("default");
     const logs = database.collection<LogEntry>("logs");
-    const list = logs
+    const all = await logs
       .find()
       .sort({ timestamp: -1 })
-      .limit(6 * 24 * daysToFetch); // 6 an hour, 14 hours/day
-
-    const points = [];
-    for await (const doc of list) {
-      points.push(doc);
-    }
-
-    return points;
+      .limit(6 * 24 * daysToFetch)
+      .toArray();
+    const feedingEvents = all.filter(
+      (entry) => entry.feedingEventOfSize != null
+    );
+    return { all, feedingEvents };
   } finally {
     await client.close();
   }
@@ -38,12 +39,12 @@ async function indexRoute({
   chartScale: number;
   url: URL;
 }) {
-  const points = await getData({
+  const { all, feedingEvents } = await getData({
     chartScale,
   });
 
-  const days: Record<string, typeof points> = {};
-  for (const point of points) {
+  const days: Record<string, WithId<LogEntry>[]> = {};
+  for (const point of all) {
     const date = new Date(point.timestamp).toLocaleDateString(undefined, {
       year: "numeric",
       month: "long",
@@ -67,9 +68,11 @@ async function indexRoute({
   const svgLine = makeDetails({
     title: "Chart",
     pivot,
-    children: makeChart({ points, scale: chartScale }),
+    children: makeChart({ points: all, scale: chartScale }),
     isOpen: true,
   });
+
+  const dashboard = makeDashboard({ feedingEvents });
 
   const dom = /* HTML */ `<!DOCTYPE html>
     <html lang="en">
@@ -80,6 +83,13 @@ async function indexRoute({
       </head>
       <body>
         ${svgLine}
+        ${dashboard
+          ? makeDetails({
+              title: "Dashboard",
+              isOpen: true,
+              children: dashboard,
+            })
+          : ""}
         ${Object.entries(days)
           .map(([date, points], idx) =>
             makeDetails({
