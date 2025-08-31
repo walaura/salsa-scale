@@ -4,4 +4,4 @@
 
 This is a frontend to show how much food is in my cats bowl and the backend the arduino that sits next to the bowl talks to
 
-I seriously doubt you have this use case but also if you do you can probs do better
+I seriously doubt you have this use case but also if you do you can probs do better!
