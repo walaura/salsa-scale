@@ -9,6 +9,47 @@
   --pink-700: #80006e;
   --pink-800: #540047;
   --pink-900: #300028;
+
+  --font-primary: 1rem;
+  --font-secondary: 0.8rem;
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(30px);
+  }
+}
+
+@keyframes slide-to-left {
+  to {
+    transform: translateX(-30px);
+  }
+}
+
+::view-transition-old(chart) {
+  animation: 90ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+}
+
+::view-transition-new(chart) {
+  animation: 210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
 }
 
 details {
@@ -34,8 +75,34 @@ details summary {
     var(--pink-600) 100%
   );
   color: #fff;
-  font-weight: bold;
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .details-title {
+    font-weight: bold;
+  }
+
+  .details-pivot {
+    display: flex;
+    font-size: var(--font-secondary);
+    gap: -0.5rem;
+    margin: -0.25rem;
+    .details-pivot-link {
+      color: inherit;
+      text-decoration: none;
+      padding: 0.25rem 1rem;
+      border-radius: 999px;
+      color: var(--pink-50);
+
+      &.details-pivot-link-active {
+        opacity: 1;
+        background: var(--pink-100);
+        color: var(--pink-800);
+      }
+    }
+  }
 }
 
 details + details {
@@ -70,7 +137,7 @@ table td {
   padding: 0.5rem 1rem;
   color: #999;
   border-bottom: 1px solid var(--pink-100);
-  font-size: 0.8em;
+  font-size: var(--font-secondary);
 }
 
 table td strong {
@@ -113,6 +180,7 @@ svg {
 }
 
 svg.chart-container {
+  view-transition-name: chart;
   background: repeating-linear-gradient(
     #fff,
     #fff 24px,
@@ -126,7 +194,7 @@ svg * {
 }
 
 svg text {
-  font-size: 0.7em;
+  font-size: var(--font-secondary);
 }
 
 .chart-point-date {

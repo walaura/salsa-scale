@@ -32,9 +32,11 @@ const getData = async ({ chartScale }: { chartScale: number }) => {
 async function indexRoute({
   showActions,
   chartScale,
+  url,
 }: {
   showActions: boolean;
   chartScale: number;
+  url: URL;
 }) {
   const points = await getData({
     chartScale,
@@ -53,8 +55,18 @@ async function indexRoute({
     days[date].push(point);
   }
 
+  const pivot = [
+    { label: "24h", value: 1 },
+    { label: "3d", value: 3 },
+    { label: "7d", value: 7 },
+  ].map((f) => {
+    const link = new URL(url);
+    link.searchParams.set("scale", f.value.toString());
+    return { ...f, isActive: f.value === chartScale, link };
+  });
   const svgLine = makeDetails({
     title: "Chart",
+    pivot,
     children: makeChart({ points, scale: chartScale }),
     isOpen: true,
   });

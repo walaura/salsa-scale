@@ -20,8 +20,9 @@ app.get("/", async (req, res) => {
   const chartScale = req.query.scale
     ? parseFloat(req.query.scale.toString())
     : 1;
+  const url = new URL(req.protocol + "://" + req.get("host") + req.originalUrl);
 
-  indexRoute({ showActions, chartScale })
+  indexRoute({ showActions, chartScale, url })
     .catch((err) => {
       console.error(err);
       res.send(`Ah shit`);
