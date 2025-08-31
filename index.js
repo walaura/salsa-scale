@@ -5,6 +5,7 @@ const { makeChart } = require("./ui/Chart");
 const { makeTable } = require("./ui/Table");
 const { makeDetails } = require("./ui/Details");
 const { DELETE_PATH, TRACK_PATH } = require("./app/routes.js");
+const { trackRoute } = require("./routes/track.js");
 
 const app = express();
 const port = 3000;
@@ -83,65 +84,17 @@ app.get(TRACK_PATH, (req, res) => {
   const weight = parseInt(req.params.weight);
   const timestamp = Date.now();
 
-  async function run() {
-    const client = new MongoClient(uri);
-    try {
-      const database = client.db("default");
-      const logs = database.collection("logs");
-
-      const twoPrior = [];
-      for await (const doc of logs.find().sort({ timestamp: -1 }).limit(2)) {
-        twoPrior.push(doc);
-      }
-
-      let isFeedingEvent = false;
-      if (twoPrior[0].isFeedingEvent === true) {
-        isFeedingEvent = false;
-      } else {
-        isFeedingEvent = twoPrior[1].weight - weight >= 5;
-      }
-
-      let timeSinceLastFeedingEvent = 0;
-      if (isFeedingEvent === false) {
-        const lastFeedingEvent = await logs
-          .find({ isFeedingEvent: true })
-          .sort({ timestamp: -1 })
-          .limit(1)
-          .toArray();
-
-        console.log(lastFeedingEvent[0]);
-        if (lastFeedingEvent[0]) {
-          timeSinceLastFeedingEvent =
-            Date.now() - lastFeedingEvent[0].timestamp;
-        }
-      }
-
-      if (timeSinceLastFeedingEvent > 0) {
-        console.log(
-          `Time since last feeding event: ${Math.round(
-            timeSinceLastFeedingEvent / (1000 * 60)
-          )} minutes`
-        );
-        // TODO email if severe
-      }
-
-      const result = await logs.insertOne({
-        weight: parseInt(weight),
-        timestamp,
-        isFeedingEvent,
-      });
-      const response = `New log entry created with the following id: ${result.insertedId}`;
-      console.log(response);
+  trackRoute({
+    weight,
+    timestamp,
+  })
+    .catch((err) => {
+      console.error(err);
+      res.send(`Ah shit`);
+    })
+    .then((response) => {
       res.send(response);
-      return;
-    } finally {
-      await client.close();
-    }
-  }
-  run().catch((err) => {
-    console.error(err);
-    res.send(`Ah shit`);
-  });
+    });
 });
 
 app.get(DELETE_PATH, (req, res) => {

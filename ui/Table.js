@@ -6,15 +6,24 @@ const makeWeightRow = ({ point, index, val }) => {
     return /* HTML */ `<td class="weight">${formatGrams(point.weight)}</td>`;
   }
 
+  let delta = Math.abs(point?.weight - val[index + 2]?.weight);
+  if (!Number.isNaN(delta)) {
+    delta = ` – ${formatGrams(
+      Math.abs(point?.weight - val[index + 2]?.weight)
+    )}`;
+  } else {
+    delta = null;
+  }
+
   return /* HTML */ ` <td class="weight">
     <div class="row-with-icon">
       <img src="/static/cake.gif" alt="Cake" />
       <div>
         ${formatGrams(point.weight)}<br />
         <strong>
-          Feeding event at ${formatTimeHtml(point.timestamp)} –
-          ${formatGrams(Math.abs(point.weight - val[index + 2].weight))}
-        </strong>
+          Feeding event at
+          ${formatTimeHtml(point.timestamp)}${delta ?? ""}</strong
+        >
       </div>
     </div>
   </td>`;

@@ -62,11 +62,12 @@ const makeChart = ({ points }) => {
         .map((point) => {
           const x = point.timeOffset * 100;
           const y = PADDING + projectPoint(point.weight) * HEIGHT;
+          const r = point.isFeedingEvent ? 6 : 2;
           return /* HTML */ `
             <circle
               cx="${x}%"
               cy="${y}"
-              r="2"
+              r="${r}"
               fill="var(--pink-300)"
               class="chart-point-dot"
             />
