@@ -1,5 +1,6 @@
 const { writeFileSync } = require("fs");
 const { join } = require("path");
+const { execSync } = require("child_process");
 
 const pinkRamp = {
   50: "#fff1f6",
@@ -13,6 +14,20 @@ const pinkRamp = {
   800: "#650039",
   900: "#33001b",
   950: "#1e0010",
+};
+
+const pinkRampDark = {
+  50: "#f5f3ff",
+  100: "#d3c9ff",
+  200: "#b39cff",
+  300: "#9669ff",
+  400: "#793be5",
+  500: "#5d00c0",
+  600: "#4f00a5",
+  700: "#3e0084",
+  800: "#2d0063",
+  900: "#1e0047",
+  950: "#12002d",
 };
 
 const neutralRamp = {
@@ -30,6 +45,9 @@ const RAMPS = {
 // flip ramps for dark mode automatically
 const flipRampForDarkMode = (rampName, ramp) => {
   const newRamp = {};
+  if (rampName === "pink") {
+    ramp = pinkRampDark;
+  }
   Object.entries(ramp).forEach(([key, value]) => {
     newKey = 1000 - parseInt(key);
     if (!ramp[newKey]) {
@@ -60,25 +78,35 @@ function toCssVars(obj, rampName) {
 }
 
 const cssVars = `
-:root {
-${Object.entries(RAMPS)
-  .map(([rampName, rampObj]) => toCssVars(rampObj, rampName))
-  .join("\n")}
-}
+  :root {
+    ${Object.entries(RAMPS)
+      .map(([rampName, rampObj]) => toCssVars(rampObj, rampName))
+      .join("\n")}
+  }
 `;
 
 const darkModeCssVars = `
-:root.dark-mode {
-${Object.entries(RAMPS)
-  .map(([rampName, rampObj]) =>
-    toCssVars(flipRampForDarkMode(rampName, rampObj), rampName)
-  )
-  .join("\n")}
-}
+  :root.dark-mode {
+    ${Object.entries(RAMPS)
+      .map(([rampName, rampObj]) =>
+        toCssVars(flipRampForDarkMode(rampName, rampObj), rampName)
+      )
+      .join("\n")}
+  }
 `;
 
-const file = darkModeCssVars + cssVars;
+const file = [
+  `/* DO NOT TOUCH THIS LOL */`,
+  `/* USE npm run make-colors */`,
+  "\n\n",
+  darkModeCssVars,
+  cssVars,
+].join("\n");
 
 const outPath = join(__dirname, "../static/css/colors.css");
 writeFileSync(outPath, file);
+
+// run prettier
+execSync("npx prettier --write " + outPath);
+
 console.log("colors.css generated at", outPath);

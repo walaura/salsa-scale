@@ -5,7 +5,8 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node --experimental-strip-types index.ts"
+    "start": "node --experimental-strip-types index.ts",
+    "make-colors": "node scripts/makeColorRamp.cjs"
   },
   "author": "",
   "license": "ISC",

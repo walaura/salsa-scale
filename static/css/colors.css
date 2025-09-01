@@ -1,16 +1,18 @@
+/* DO NOT TOUCH THIS LOL */
+/* USE npm run make-colors */
 
 :root.dark-mode {
-  --pink-50: #1e0010;
-  --pink-100: #33001b;
-  --pink-200: #650039;
-  --pink-300: #a20060;
-  --pink-400: #e10087;
-  --pink-500: #ff4ba4;
-  --pink-600: #ff78b4;
-  --pink-700: #ff9bc3;
-  --pink-800: #ffb9d4;
-  --pink-900: #ffd6e5;
-  --pink-950: #fff1f6;
+  --pink-50: #12002d;
+  --pink-100: #1e0047;
+  --pink-200: #2d0063;
+  --pink-300: #3e0084;
+  --pink-400: #4f00a5;
+  --pink-500: #5d00c0;
+  --pink-600: #793be5;
+  --pink-700: #9669ff;
+  --pink-800: #b39cff;
+  --pink-900: #d3c9ff;
+  --pink-950: #f5f3ff;
   --neutral-0-A80: rgba(0, 0, 0, 0.8);
   --neutral-0: #000;
   --neutral-400: #8e898a;
