@@ -33,10 +33,12 @@ async function indexRoute({
   showActions,
   chartScale,
   url,
+  forceMode,
 }: {
   showActions: boolean;
   chartScale: number;
   url: URL;
+  forceMode: "dark" | "light" | undefined;
 }) {
   const { all, feedingEvents } = await getData({
     chartScale,
@@ -73,12 +75,20 @@ async function indexRoute({
 
   const dashboard = makeDashboard({ feedingEvents });
 
+  const isDarkMode =
+    forceMode === "light"
+      ? false
+      : forceMode === "dark" ||
+        new Date().getHours() >= 20 ||
+        new Date().getHours() < 8;
+
   const dom = /* HTML */ `<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" class="${isDarkMode ? "dark-mode" : ""}">
       <head>
         <meta charset="UTF-8" />
         <title>Is salsa starving</title>
-        <link rel="stylesheet" href="./static/styles.css" />
+        <link rel="stylesheet" href="./static/css/colors.css" />
+        <link rel="stylesheet" href="./static/css/styles.css" />
         <link rel="icon" href="./static/favicon.png" />
       </head>
       <body>

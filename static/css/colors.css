@@ -1,0 +1,40 @@
+
+:root.dark-mode {
+  --pink-50: #1e0010;
+  --pink-100: #33001b;
+  --pink-200: #650039;
+  --pink-300: #a20060;
+  --pink-400: #e10087;
+  --pink-500: #ff4ba4;
+  --pink-600: #ff78b4;
+  --pink-700: #ff9bc3;
+  --pink-800: #ffb9d4;
+  --pink-900: #ffd6e5;
+  --pink-950: #fff1f6;
+  --neutral-0-A80: rgba(0, 0, 0, 0.8);
+  --neutral-0: #000;
+  --neutral-400: #8e898a;
+  --neutral-600: #b8b4b6;
+  --neutral-1000-A80: rgba(255, 255, 255, 0.8);
+  --neutral-1000: #fff;
+}
+
+:root {
+  --pink-50: #fff1f6;
+  --pink-100: #ffd6e5;
+  --pink-200: #ffb9d4;
+  --pink-300: #ff9bc3;
+  --pink-400: #ff78b4;
+  --pink-500: #ff4ba4;
+  --pink-600: #e10087;
+  --pink-700: #a20060;
+  --pink-800: #650039;
+  --pink-900: #33001b;
+  --pink-950: #1e0010;
+  --neutral-0-A80: rgba(255, 255, 255, 0.8);
+  --neutral-0: #fff;
+  --neutral-400: #b8b4b6;
+  --neutral-600: #8e898a;
+  --neutral-1000-A80: rgba(0, 0, 0, 0.8);
+  --neutral-1000: #000;
+}

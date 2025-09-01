@@ -20,13 +20,22 @@ const makeChart = ({
     (point) => point.timestamp > timestamp - length
   ).length;
 
-  const svgPoints = points
+  let svgPoints = points
     .slice(0, svgPointsCount + 2)
     .map((point) => ({
       ...point,
       timeOffset: (length - (timestamp - point.timestamp)) / length,
     }))
     .reverse();
+
+  if (svgPoints.length > 200) {
+    svgPoints = svgPoints.filter((p, i) => {
+      if (p.feedingEventOfSize != null) {
+        return true;
+      }
+      return i % Math.round(scale) === 0;
+    });
+  }
 
   const maxWeight = Math.max(...svgPoints.map((point) => point.weight));
   const minWeight = Math.min(...svgPoints.map((point) => point.weight));

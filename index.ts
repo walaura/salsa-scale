@@ -21,8 +21,14 @@ app.get("/", async (req, res) => {
     ? parseFloat(req.query.scale.toString())
     : 1;
   const url = new URL(req.protocol + "://" + req.get("host") + req.originalUrl);
+  const forceMode =
+    req.query.dark != null
+      ? "dark"
+      : req.query.light != null
+      ? "light"
+      : undefined;
 
-  indexRoute({ showActions, chartScale, url })
+  indexRoute({ showActions, chartScale, url, forceMode })
     .catch((err) => {
       console.error(err);
       res.send(`Ah shit`);

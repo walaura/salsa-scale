@@ -34,9 +34,10 @@ const makeDetails = ({
     <details ${name ? `name="${name}"` : ""} ${isOpen ? "open" : ""}>
       <summary>
         <span class="details-title">
-          <img src="./static/drop.gif" alt="" />
-          ${title}</span
-        >${pivot
+          <div class="details-title-drop"></div>
+          ${title}
+        </span>
+        ${pivot
           ? /* HTML */ ` <span class="details-aside">${makePivot(pivot)}</span>`
           : ""}
       </summary>
