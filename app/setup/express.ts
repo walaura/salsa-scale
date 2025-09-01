@@ -1,35 +1,19 @@
 import express from "express";
-import { makePage } from "../ui/shell/Page.ts";
+import { makePage } from "../../ui/shell/Page.ts";
 
 declare global {
   namespace Express {
     interface Response {
-      page: (html: string | void) => void;
       maybeCatch: <T>(fn: Promise<T>, callback: (result: T) => void) => void;
     }
   }
 }
 
-const setupApp = (): [express.Express, () => void] => {
+const setupExpress = (): [express.Express, () => void] => {
   const app = express();
   const port = 3000;
 
-  process.env.TZ = "Europe/London"; // update if salsa moves out
-
   app.use("/static", express.static("static"));
-  app.use((req, res, next) => {
-    const forceMode =
-      req.query.dark != null
-        ? "dark"
-        : req.query.light != null
-        ? "light"
-        : undefined;
-
-    res.page = (html: string | void) =>
-      res.send(makePage({ forceMode, children: html ?? "" }));
-
-    next();
-  });
 
   app.use((_, res, next) => {
     res.maybeCatch = async (promise, callback) => {
@@ -53,4 +37,4 @@ const setupApp = (): [express.Express, () => void] => {
   ];
 };
 
-export { setupApp };
+export { setupExpress };

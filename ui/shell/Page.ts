@@ -16,7 +16,7 @@ const makePage = ({
     <html lang="en" class="${isDarkMode ? "dark-mode" : ""}">
       <head>
         <meta charset="UTF-8" />
-        <title>Is salsa starving</title>
+        <title>Is Salsa starving</title>
         <link rel="stylesheet" href="./static/css/colors.css" />
         <link rel="stylesheet" href="./static/css/styles.css" />
         <link rel="icon" href="./static/favicon.png" />

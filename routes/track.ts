@@ -1,9 +1,7 @@
-import { Collection, MongoClient } from "mongodb";
-import type { LogEntry } from "../app/db.ts";
+import { Collection } from "mongodb";
+import { withDb, type LogEntry } from "../app/db.ts";
 
 const FEEDING_EVENT_THRESHOLD = 4;
-
-const uri = process.env.MONGO_URL as string;
 
 const detectFeedingEventOfSize = async ({
   logs,
@@ -109,10 +107,7 @@ async function trackRoute({
   weight: number;
   timestamp: number;
 }) {
-  const client = new MongoClient(uri);
-
-  try {
-    const database = client.db("default");
+  return withDb(async (database) => {
     const logs = database.collection<LogEntry>("logs");
 
     let maybeFeedingEventOfSize = await detectFeedingEventOfSize({
@@ -133,9 +128,7 @@ async function trackRoute({
     console.log(response);
 
     return response;
-  } finally {
-    await client.close();
-  }
+  });
 }
 
 export { trackRoute };

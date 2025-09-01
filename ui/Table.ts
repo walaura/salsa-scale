@@ -1,4 +1,4 @@
-import { DELETE_PATH } from "../app/routes.ts";
+import { ROUTES } from "../router.ts";
 import { formatGrams, formatTimeHtml } from "../app/format.ts";
 import type { LogEntry } from "../app/db.ts";
 import type { WithId } from "mongodb";
@@ -47,7 +47,10 @@ const makeTable = ({
                 <a
                   title="delete record"
                   target="_blank"
-                  href="${DELETE_PATH.replace(":id", point._id.toString())}"
+                  href="${ROUTES.delet.path.replace(
+                    ":id",
+                    point._id.toString()
+                  )}"
                 >
                   <img src="/static/bomb.gif" alt="Delete" />
                 </a>

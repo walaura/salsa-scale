@@ -1,19 +1,14 @@
-import { MongoClient } from "mongodb";
 import type { WithId } from "mongodb";
 import { makeChart } from "../ui/Chart.ts";
 import { makeTable } from "../ui/Table.ts";
 import { makeDetails } from "../ui/Details.ts";
 import { makeDashboard } from "../ui/Dashboard.ts";
-import type { LogEntry } from "../app/db.ts";
+import { withDb, type LogEntry } from "../app/db.ts";
 
-const uri = process.env.MONGO_URL as string;
+const getData = async ({ chartScale }: { chartScale: number }) =>
+  withDb(async (database) => {
+    const daysToFetch = Math.max(chartScale, 5, 10);
 
-const getData = async ({ chartScale }: { chartScale: number }) => {
-  const client = new MongoClient(uri);
-  const daysToFetch = Math.max(chartScale, 5, 10);
-  try {
-    await client.connect();
-    const database = client.db("default");
     const logs = database.collection<LogEntry>("logs");
     const all = await logs
       .find()
@@ -24,10 +19,7 @@ const getData = async ({ chartScale }: { chartScale: number }) => {
       (entry) => entry.feedingEventOfSize != null
     );
     return { all, feedingEvents };
-  } finally {
-    await client.close();
-  }
-};
+  });
 
 async function landingRoute({
   showActions,

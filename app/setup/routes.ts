@@ -1,0 +1,28 @@
+import type { Request } from "express";
+import { makePage } from "../../ui/shell/Page.ts";
+
+export type RouteHandler<ExpectedResponse> = (
+  req: Request
+) => Promise<ExpectedResponse>;
+
+export type RouteFromExpress<Method, ExpectedResponse = string> = {
+  method: Method;
+  path: string;
+  handler: RouteHandler<ExpectedResponse>;
+};
+
+export const withPage = <ExpectedResponse>(
+  handler: RouteHandler<ExpectedResponse>
+): RouteHandler<string> => {
+  return (req) => {
+    const forceMode =
+      req.query.dark != null
+        ? "dark"
+        : req.query.light != null
+        ? "light"
+        : undefined;
+    return handler(req).then((resp) => {
+      return makePage({ forceMode, children: resp as string });
+    });
+  };
+};
