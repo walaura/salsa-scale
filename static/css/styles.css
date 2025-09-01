@@ -42,7 +42,7 @@ details {
   overflow: hidden;
   transform-origin: center 1rem;
   transition: transform 0.2s ease;
-  &:active {
+  &:has(summary:active) {
     transform: scale(0.995);
   }
 
