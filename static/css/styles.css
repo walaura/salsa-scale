@@ -50,7 +50,7 @@ details {
     background-color: var(--pink-600);
     background: linear-gradient(
       to bottom,
-      color-mix(in oklch, var(--pink-600), white 20%) 0%,
+      color-mix(in oklch, var(--pink-600), white 30%) 0%,
       var(--pink-600) 100%
     );
     color: var(--neutral-0);
