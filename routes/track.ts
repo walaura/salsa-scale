@@ -79,7 +79,7 @@ const maybeCombineFeedingEvent = async ({
   // TODO email if severe
 
   /* short snack? delete previous feeding event and make this one bigger */
-  if (timeSincePreviousFeedingEvent < 1000 * 60 * 30) {
+  if (timeSincePreviousFeedingEvent < 1000 * 60 * 21) {
     console.log(
       previousFeedingEvent.feedingEventOfSize,
       maybeFeedingEventOfSize
