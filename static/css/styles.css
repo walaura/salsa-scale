@@ -53,7 +53,7 @@ body {
   from {
   }
   to {
-    transform: scale(0.3);
+    transform: scale(0.3) translateY(calc(var(--margin-page) * -2));
     box-shadow: 0 1px 20px 5px rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(1rem);
   }
@@ -73,8 +73,8 @@ details {
 
   &:first-child {
     position: sticky;
-    top: calc(var(--margin-page) / 2);
-    animation: ease-in details-stick-first both;
+    top: calc(var(--margin-page));
+    animation: ease details-stick-first both;
     animation-timeline: scroll(root block);
     animation-range: 0 40vh;
     transform-origin: top center;
