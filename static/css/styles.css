@@ -6,6 +6,8 @@
 
   --margin-page: min(4vw, 3rem);
   --max-width: max(80vw, 60rem);
+
+  --bg-size: 160px;
 }
 
 @view-transition {
@@ -14,10 +16,34 @@
 
 @keyframes scroll-background {
   from {
-    background-position: 0 0;
+    transform: translateX(0) translateY(0);
   }
   to {
-    background-position: 160px -160px;
+    transform: translateX(var(--bg-size)) translateY(calc(var(--bg-size) * -1));
+  }
+}
+:root {
+  background-color: var(--pink-100);
+
+  &:before {
+    content: "";
+    position: fixed;
+    contain: strict;
+    top: calc(var(--bg-size) * -2);
+    left: calc(var(--bg-size) * -2);
+    right: calc(var(--bg-size) * -2);
+    bottom: calc(var(--bg-size) * -2);
+    pointer-events: none;
+    background-color: var(--pink-100);
+    background-image: url(../paws.png);
+    background-size: 160px;
+    animation: scroll-background 40s linear infinite;
+  }
+  &.dark-mode:before {
+    background-image: url(../stars.png);
+  }
+  body {
+    position: relative;
   }
 }
 
@@ -26,19 +52,10 @@ body {
   margin: auto;
   line-height: 1.4;
   color: var(--neutral-1000);
-  background-color: var(--pink-100);
-  background-image: url(../paws.png);
-  animation: scroll-background 40s linear infinite;
-  background-size: 160px;
   image-rendering: pixelated;
-  -webkit-font-smoothing: never;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
-  :root.dark-mode & {
-    background-image: url(../stars.png);
-  }
 
   details {
     max-width: var(--max-width);
@@ -75,8 +92,8 @@ details {
     position: sticky;
     top: calc(var(--margin-page));
     animation: ease details-stick-first both;
-    animation-timeline: scroll(root block);
-    animation-range: 0 40vh;
+    animation-timeline: scroll(nearest block);
+    animation-range: 0 400px;
     transform-origin: top center;
     z-index: 999;
     will-change: transform;
@@ -157,6 +174,7 @@ details {
 }
 
 table {
+  contain: strict;
   overflow: hidden;
   border-collapse: collapse;
   background: var(--neutral-0);
@@ -212,6 +230,7 @@ table {
 }
 .chart {
   display: block;
+  contain: strict;
   width: 100%;
   background: repeating-linear-gradient(
     var(--neutral-0-A80),
