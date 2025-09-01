@@ -1,6 +1,8 @@
 import { Collection, MongoClient } from "mongodb";
 import type { LogEntry } from "../app/db.ts";
 
+const FEEDING_EVENT_THRESHOLD = 3;
+
 const uri = process.env.MONGO_URL as string;
 
 const detectFeedingEventOfSize = async ({
@@ -18,35 +20,83 @@ const detectFeedingEventOfSize = async ({
   if (twoPrior.length !== 2) {
     return null;
   }
-  if (twoPrior[0].feedingEventOfSize != null) {
-    return null;
-  }
   const largestWeight = Math.max(
     twoPrior[0]?.weight || 0,
     twoPrior[1]?.weight || 0
   );
   const delta = largestWeight - weight;
-  if (delta < 3) {
+  if (delta < FEEDING_EVENT_THRESHOLD) {
     return null;
   }
 
   return delta;
 };
 
-const getTimeSinceLastFeedingEvent = async ({
+const getPreviousFeedingEvent = async ({
   logs,
 }: {
   logs: Collection<LogEntry>;
 }) => {
-  const lastFeedingEvent = await logs
+  const previousFeedingEvents = await logs
     .find({ feedingEventOfSize: { $ne: null } })
     .sort({ timestamp: -1 })
     .limit(1)
     .toArray();
-  if (!lastFeedingEvent[0]) {
+  if (!previousFeedingEvents[0]) {
     return null;
   }
-  return Date.now() - lastFeedingEvent[0].timestamp;
+  return previousFeedingEvents[0];
+};
+
+const maybeCombineFeedingEvent = async ({
+  maybeFeedingEventOfSize,
+  logs,
+}: {
+  maybeFeedingEventOfSize: number | null;
+  logs: Collection<LogEntry>;
+}): Promise<number | null> => {
+  if (maybeFeedingEventOfSize == null) {
+    return null;
+  }
+
+  const previousFeedingEvent = await getPreviousFeedingEvent({ logs });
+  /* db empty? */
+  if (
+    previousFeedingEvent == null ||
+    previousFeedingEvent.feedingEventOfSize == null
+  ) {
+    return maybeFeedingEventOfSize;
+  }
+
+  const timeSincePreviousFeedingEvent =
+    Date.now() - previousFeedingEvent.timestamp;
+
+  console.log(
+    `Time since last feeding event: ${Math.round(
+      timeSincePreviousFeedingEvent / (1000 * 60)
+    )} minutes`
+  );
+  // TODO email if severe
+
+  console.log({ timeSincePreviousFeedingEvent });
+  /* short snack? delete previous feeding event and make this one bigger */
+  if (timeSincePreviousFeedingEvent < 1000 * 60 * 3) {
+    console.log(
+      previousFeedingEvent.feedingEventOfSize,
+      maybeFeedingEventOfSize
+    );
+    console.log("Short snack detected");
+    await logs.updateOne(
+      { _id: previousFeedingEvent._id },
+      {
+        $set: {
+          feedingEventOfSize: null,
+        },
+      }
+    );
+    return previousFeedingEvent.feedingEventOfSize + maybeFeedingEventOfSize;
+  }
+  return maybeFeedingEventOfSize;
 };
 
 async function trackRoute({
@@ -62,26 +112,19 @@ async function trackRoute({
     const database = client.db("default");
     const logs = database.collection<LogEntry>("logs");
 
-    const feedingEventOfSize = await detectFeedingEventOfSize({ logs, weight });
-    const timeSinceLastFeedingEvent = await (feedingEventOfSize == null
-      ? null
-      : getTimeSinceLastFeedingEvent({
-          logs,
-        }));
-
-    if (timeSinceLastFeedingEvent) {
-      console.log(
-        `Time since last feeding event: ${Math.round(
-          timeSinceLastFeedingEvent / (1000 * 60)
-        )} minutes`
-      );
-      // TODO email if severe
-    }
+    let maybeFeedingEventOfSize = await detectFeedingEventOfSize({
+      logs,
+      weight,
+    });
+    maybeFeedingEventOfSize = await maybeCombineFeedingEvent({
+      maybeFeedingEventOfSize,
+      logs,
+    });
 
     const result = await logs.insertOne({
       weight,
       timestamp,
-      feedingEventOfSize,
+      feedingEventOfSize: maybeFeedingEventOfSize,
     });
     const response = `New log entry created with the following id: ${result.insertedId}`;
     console.log(response);

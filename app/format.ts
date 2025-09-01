@@ -1,9 +1,9 @@
 export const formatGrams = (grams: number) => {
   if (grams < 1000) {
-    return `${grams} g`;
+    return `${grams.toFixed(2).replace(".00", "")} g`;
   }
   const kilos = grams / 1000;
-  return `${kilos.toFixed(1)} kg`;
+  return `${kilos.toFixed(2)} kg`;
 };
 
 export const formatTimeHtml = (

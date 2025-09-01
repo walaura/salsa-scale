@@ -5,7 +5,6 @@ import { makeTable } from "../ui/Table.ts";
 import { makeDetails } from "../ui/Details.ts";
 import { makeDashboard } from "../ui/Dashboard.ts";
 import type { LogEntry } from "../app/db.ts";
-import { formatGrams, formatTime, formatTimeHtml } from "../app/format.ts";
 
 const uri = process.env.MONGO_URL as string;
 

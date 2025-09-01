@@ -36,12 +36,14 @@ const makeDashboard = ({
   const averageTimeBetweenEvents =
     feedingEvents.reduce((acc, curr, idx) => {
       if (idx === 0) return acc;
-      return acc + (feedingEvents[idx - 1].timestamp - curr.timestamp);
+      const diff = feedingEvents[idx - 1].timestamp - curr.timestamp;
+      return acc + diff;
     }, timeSinceLast) / feedingEvents.length;
 
-  const averageSizeOfEvents = feedingEvents.reduce((acc, curr) => {
-    return acc + (curr.feedingEventOfSize ?? 0);
-  }, 0);
+  const averageSizeOfEvents =
+    feedingEvents.reduce((acc, curr) => {
+      return acc + (curr.feedingEventOfSize ?? 0);
+    }, 0) / feedingEvents.length;
 
   const expectedNextFeedingTime =
     now - timeSinceLast + averageTimeBetweenEvents;
