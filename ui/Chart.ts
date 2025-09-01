@@ -28,14 +28,12 @@ const makeChart = ({
     }))
     .reverse();
 
-  if (svgPoints.length > 200) {
-    svgPoints = svgPoints.filter((p, i) => {
-      if (p.feedingEventOfSize != null) {
-        return true;
-      }
-      return i % Math.round(scale) === 0;
-    });
-  }
+  svgPoints = svgPoints.filter((p, i) => {
+    if (p.feedingEventOfSize != null) {
+      return true;
+    }
+    return i % Math.round(scale * 2) === 0;
+  });
 
   const maxWeight = Math.max(...svgPoints.map((point) => point.weight));
   const minWeight = Math.min(...svgPoints.map((point) => point.weight));
@@ -93,7 +91,7 @@ const makeChart = ({
           return /* HTML */ `
             <g class="chart-hoverable">
               <a href="#${point._id.toString()}">
-                <circle cx="${x}%" cy="${y}" r="12" fill="transparent" />
+                <circle cx="${x}%" cy="${y}" r="12" />
                 <g transform="translate(-20 0)">
                   <g class="chart-hoverable-label">
                     <svg x="${x}%" y="${y - 24}">

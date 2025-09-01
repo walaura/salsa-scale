@@ -260,6 +260,10 @@ table {
   }
 
   .chart-hoverable {
+    circle {
+      display: none;
+    }
+
     .chart-hoverable-date {
       font-size: 0.6em;
     }
