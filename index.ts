@@ -1,58 +1,38 @@
 import { MongoClient, ObjectId } from "mongodb";
-import express from "express";
 import { DELETE_PATH, TRACK_PATH } from "./app/routes.ts";
 import { trackRoute } from "./routes/track.ts";
-import { indexRoute } from "./routes/index.ts";
+import { landingRoute } from "./routes/landing.ts";
+import { setupApp } from "./app/setupApp.ts";
 
 import dotenv from "dotenv";
 dotenv.config();
-
-const app = express();
-const port = 3000;
 const uri = process.env.MONGO_URL as string;
 
 process.env.TZ = "Europe/London"; // update if salsa moves out
 
-app.use("/static", express.static("static"));
+const [app, start] = setupApp();
 
-app.get("/", async (req, res) => {
+app.get("/", async (req, res, next) => {
   const showActions = req.query.edit === process.env.TOP_SECRET_PATH;
   const chartScale = req.query.scale
     ? parseFloat(req.query.scale.toString())
     : 1;
   const url = new URL(req.protocol + "://" + req.get("host") + req.originalUrl);
-  const forceMode =
-    req.query.dark != null
-      ? "dark"
-      : req.query.light != null
-      ? "light"
-      : undefined;
 
-  indexRoute({ showActions, chartScale, url, forceMode })
-    .catch((err) => {
-      console.error(err);
-      res.send(`Ah shit`);
-    })
-    .then((response) => {
-      res.send(response);
-    });
+  res.maybeCatch(landingRoute({ showActions, chartScale, url }), res.page);
 });
 
 app.get(TRACK_PATH, (req, res) => {
   const weight = parseInt(req.params.weight);
   const timestamp = Date.now();
 
-  trackRoute({
-    weight,
-    timestamp,
-  })
-    .catch((err) => {
-      console.error(err);
-      res.send(`Ah shit`);
-    })
-    .then((response) => {
-      res.send(response);
-    });
+  res.maybeCatch(
+    trackRoute({
+      weight,
+      timestamp,
+    }),
+    (resp) => res.send(resp)
+  );
 });
 
 app.get(DELETE_PATH, (req, res) => {
@@ -66,18 +46,13 @@ app.get(DELETE_PATH, (req, res) => {
       await logs.deleteOne({ _id: new ObjectId(id) });
       const response = `Log entry deleted with the following id: ${id}`;
       console.log(response);
-      res.send(response);
-      return;
+      return response;
     } finally {
       await client.close();
     }
   }
-  run().catch((err) => {
-    console.error(err);
-    res.send(`Ah shit`);
-  });
+
+  res.maybeCatch(run(), (resp) => res.send(resp));
 });
 
-app.listen(port, () => {
-  console.log(`Scale listening on port ${port}`);
-});
+start();
