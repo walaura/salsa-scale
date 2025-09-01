@@ -98,7 +98,7 @@ details {
       text-decoration: none;
       padding: 0.25rem 1rem;
       border-radius: 999px;
-      color: var(--pink-100);
+      color: var(--pink-200);
 
       &:hover {
         color: var(--neutral-0);
@@ -107,7 +107,7 @@ details {
       &.details-pivot-link-active {
         opacity: 1;
         background: color-mix(in oklch, var(--pink-700), transparent 20%);
-        color: var(--pink-50);
+        color: var(--neutral-0);
         box-shadow: inset 0 1px 1px 0
           color-mix(in oklch, var(--pink-700), #000 20%);
       }
@@ -124,100 +124,104 @@ table {
   border-collapse: collapse;
   background: var(--neutral-0);
   width: 100%;
+  :is(th, td):last-child {
+    text-align: end;
+  }
+
+  thead th,
+  tr td {
+    padding: 0.5rem 1rem;
+  }
+
+  thead {
+    border-bottom: 1px solid var(--pink-200);
+    th {
+      background: var(--pink-100);
+      color: var(--pink-600);
+      font-size: var(--font-secondary);
+      font-weight: normal;
+      font-style: italic;
+      text-align: start;
+    }
+  }
+
+  tr {
+    &:hover {
+      background: var(--pink-50);
+    }
+    td {
+      color: var(--neutral-400);
+      border-bottom: 1px solid var(--pink-100);
+      font-size: var(--font-secondary);
+      strong {
+        font-weight: bold;
+        color: var(--neutral-1000);
+        font-size: var(--font-primary);
+      }
+      .row-with-icon {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: row;
+        gap: 1rem;
+      }
+    }
+  }
 }
 
-table th:last-child,
-table td:last-child {
-  text-align: end;
+@keyframes chart-dash {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
-
-table tr:hover {
-  background: var(--pink-50);
-}
-
-table tr img {
-  vertical-align: text-bottom;
-}
-
-table thead {
-  border-bottom: 1px solid var(--pink-400);
-}
-
-table td {
-  padding: 0.5rem 1rem;
-  color: var(--neutral-400);
-  border-bottom: 1px solid var(--pink-100);
-  font-size: var(--font-secondary);
-}
-
-table td strong {
-  font-weight: bold;
-  color: var(--neutral-1000);
-  font-size: 1rem;
-}
-
-table .row-with-icon {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: row;
-  gap: 1rem;
-}
-
-table th {
-  padding: 0.5rem 1rem;
-  background: var(--pink-100);
-  color: var(--pink-600);
-  text-align: left;
-  font-weight: normal;
-}
-
-svg {
+.chart {
   display: block;
   width: 100%;
-  contain: strict;
-}
-
-svg.chart-container {
-  view-transition-name: chart;
   background: repeating-linear-gradient(
     var(--neutral-0-A80),
     var(--neutral-0-A80) 24px,
     var(--pink-100) 24px,
     var(--pink-100) 25px
   );
-}
 
-svg * {
-  transform-box: fill-box;
-}
+  &,
+  * {
+    transform-box: fill-box;
+  }
 
-svg text {
-  font-size: var(--font-secondary);
-}
+  text {
+    font-size: var(--font-secondary);
+  }
 
-.chart-point-date {
-  font-size: 0.6em;
-}
+  .chart-line {
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    animation: chart-dash 1.5s linear forwards;
+  }
 
-.chart-point-label {
-  transform: scaleY(0.5) scaleX(0.2);
-  opacity: 0;
-  transform-origin: bottom center;
-  transition: transform 0.1s ease, opacity 0.1s ease;
-}
+  .chart-dot {
+    fill: var(--pink-500);
+  }
 
-.chart-point,
-.chart-point-dot {
-  z-index: 1;
-}
+  .chart-hoverable {
+    .chart-hoverable-date {
+      font-size: 0.6em;
+    }
 
-.chart-point:hover {
-  z-index: 99999;
-}
+    .chart-hoverable-label {
+      transform: scaleY(0.5) scaleX(0.2);
+      opacity: 0;
+      transform-origin: bottom center;
+      transition: transform 0.1s ease, opacity 0.1s ease;
+    }
 
-.chart-point:hover .chart-point-label {
-  opacity: 1;
-  transform: scaleY(1) scaleX(1) translateZ(42px);
+    &:hover {
+      z-index: 99999;
+      .chart-hoverable-label {
+        opacity: 1;
+        transform: scaleY(1) scaleX(1) translateZ(42px);
+      }
+    }
+  }
 }
 
 .dashboard {
@@ -235,8 +239,9 @@ svg text {
     padding: 2rem 1rem;
     strong {
       font-size: var(--font-secondary);
-      color: var(--neutral-400);
+      color: var(--pink-600);
       font-weight: inherit;
+      font-style: italic;
     }
     .dashboard-widget-text-w-icon {
       display: flex;

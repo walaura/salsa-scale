@@ -45,18 +45,15 @@ const makeChart = ({
     return 1 - Math.max(0, Math.min(1, scaled));
   };
 
-  return /* HTML */ `<svg
-    class="chart-container"
-    height="${PADDING + HEIGHT + PADDING}"
-  >
+  return /* HTML */ `<svg class="chart" height="${PADDING + HEIGHT + PADDING}">
     <svg
-      class="chart"
       height="100%"
       width="100%"
       preserveAspectRatio="none"
       viewBox="0 0 1000 ${PADDING + HEIGHT + PADDING}"
     >
       <polyline
+        class="chart-line"
         vector-effect="non-scaling-stroke"
         points="${svgPoints
           .map((point) => {
@@ -69,25 +66,23 @@ const makeChart = ({
       />
     </svg>
     <svg>
-      <text fill="var(--pink-600)" x="${PADDING}" y="${PADDING + 4}">
+      <text fill="var(--neutral-600)" x="${PADDING}" y="${PADDING + 4}">
         ${formatGrams(maxWeight)}
       </text>
-      <text fill="var(--pink-600)" x="${PADDING}" y="${HEIGHT + PADDING + 4}">
+      <text
+        fill="var(--neutral-600)"
+        x="${PADDING}"
+        y="${HEIGHT + PADDING + 4}"
+      >
         ${formatGrams(minWeight)}
       </text>
       ${svgPoints
+        .filter((point) => point.feedingEventOfSize != null)
         .map((point) => {
           const x = point.timeOffset * 100;
           const y = PADDING + projectPoint(point.weight) * HEIGHT;
-          const r = point.feedingEventOfSize ? 6 : 2;
           return /* HTML */ `
-            <circle
-              cx="${x}%"
-              cy="${y}"
-              r="${r}"
-              fill="var(--pink-300)"
-              class="chart-point-dot"
-            />
+            <circle class="chart-dot" cx="${x}%" cy="${y}" r="6" />
           `;
         })
         .join("")}
@@ -96,11 +91,11 @@ const makeChart = ({
           const x = point.timeOffset * 100;
           const y = PADDING + projectPoint(point.weight) * HEIGHT;
           return /* HTML */ `
-            <g class="chart-point">
+            <g class="chart-hoverable">
               <a href="#${point._id.toString()}">
                 <circle cx="${x}%" cy="${y}" r="12" fill="transparent" />
                 <g transform="translate(-20 0)">
-                  <g class="chart-point-label">
+                  <g class="chart-hoverable-label">
                     <svg x="${x}%" y="${y - 24}">
                       <rect
                         width="48"
@@ -113,7 +108,7 @@ const makeChart = ({
                         ${formatGrams(point.weight)}
                       </text>
                       <text
-                        class="chart-point-date"
+                        class="chart-hoverable-date"
                         fill="var(--pink-100)"
                         x="24"
                         y="25"
