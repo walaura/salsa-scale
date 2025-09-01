@@ -93,7 +93,11 @@ const maybeCombineFeedingEvent = async ({
         },
       }
     );
-    return previousFeedingEvent.feedingEventOfSize + maybeFeedingEventOfSize;
+    return (
+      previousFeedingEvent.feedingEventOfSize +
+      previousFeedingEvent.weight -
+      maybeFeedingEventOfSize
+    );
   }
   return maybeFeedingEventOfSize;
 };
