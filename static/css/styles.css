@@ -36,7 +36,8 @@ body {
 }
 
 details {
-  border-radius: 1em;
+  --radius: 1rem;
+  border-radius: var(--radius);
   box-shadow: 0 0.1em 0.5em 0.01em rgba(0, 0, 0, 0.25);
   overflow: hidden;
   transform-origin: center 1rem;
@@ -48,6 +49,9 @@ details {
   summary {
     padding: calc(0.75rem + 2px) calc(1rem + 2px);
     background-color: var(--pink-600);
+    box-shadow: inset 0 -1px 2px 0 color-mix(in oklch, var(--pink-600), black
+            10%),
+      inset 0 1px 1px 0 color-mix(in oklch, var(--pink-600), white 50%);
     background: linear-gradient(
       to bottom,
       color-mix(in oklch, var(--pink-600), white 30%) 0%,
@@ -61,11 +65,11 @@ details {
   }
 
   .details-content {
-    border: 1px solid var(--pink-600);
-    border-bottom-left-radius: 1rem;
-    border-bottom-right-radius: 1rem;
+    border: 1px solid var(--pink-300);
+    border-top: none;
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
     overflow: hidden;
-    margin-top: -1px;
   }
 
   .details-title {
@@ -182,6 +186,7 @@ table {
     var(--pink-100) 24px,
     var(--pink-100) 25px
   );
+  margin-bottom: -1px;
 
   &,
   * {
@@ -228,7 +233,8 @@ table {
   display: grid;
   background: var(--neutral-0-A80);
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: -1px;
+  margin: -0.5px;
+
   .dashboard-widget {
     display: flex;
     align-items: center;
@@ -236,6 +242,7 @@ table {
     gap: 0.5rem;
     flex-direction: column;
     border: 1px solid var(--pink-200);
+    margin: -0.5px;
     padding: 2rem 1rem;
     strong {
       font-size: var(--font-secondary);
