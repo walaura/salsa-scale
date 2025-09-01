@@ -1,7 +1,7 @@
 import { Collection, MongoClient } from "mongodb";
 import type { LogEntry } from "../app/db.ts";
 
-const FEEDING_EVENT_THRESHOLD = 3;
+const FEEDING_EVENT_THRESHOLD = 4;
 
 const uri = process.env.MONGO_URL as string;
 
