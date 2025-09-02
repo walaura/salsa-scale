@@ -1,5 +1,5 @@
 import type { WithId } from "mongodb";
-import type { LogEntry } from "../app/db.ts";
+import type { LogEntry } from "../app/setup/db.ts";
 import { formatGrams, formatTime, formatTimeHtml } from "../app/format.ts";
 
 const makeDashboardWidget = ({

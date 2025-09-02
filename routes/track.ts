@@ -1,5 +1,5 @@
 import { Collection } from "mongodb";
-import { withDb, type LogEntry } from "../app/db.ts";
+import { withDb, type LogEntry } from "../app/setup/db.ts";
 
 const FEEDING_EVENT_THRESHOLD = 3;
 

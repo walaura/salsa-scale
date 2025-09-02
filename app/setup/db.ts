@@ -1,5 +1,5 @@
 import { Db, MongoClient } from "mongodb";
-import { MONGO_URL } from "./setup/env.ts";
+import { MONGO_URL } from "./env.ts";
 
 export interface LogEntry {
   weight: number;

@@ -1,6 +1,6 @@
 import { ROUTES } from "../router.ts";
 import { formatGrams, formatTimeHtml } from "../app/format.ts";
-import type { LogEntry } from "../app/db.ts";
+import type { LogEntry } from "../app/setup/db.ts";
 import type { WithId } from "mongodb";
 
 const makeWeightRow = ({ point }: { point: LogEntry }) => {

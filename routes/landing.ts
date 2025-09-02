@@ -3,7 +3,7 @@ import { makeChart } from "../ui/Chart.ts";
 import { makeTable } from "../ui/Table.ts";
 import { makeDetails } from "../ui/Details.ts";
 import { makeDashboard } from "../ui/Dashboard.ts";
-import { withDb, type LogEntry } from "../app/db.ts";
+import { withDb, type LogEntry } from "../app/setup/db.ts";
 
 const getData = async ({ chartScale }: { chartScale: number }) =>
   withDb(async (database) => {

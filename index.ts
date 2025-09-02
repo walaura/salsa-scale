@@ -1,13 +1,25 @@
 import {} from "./app/setup/env.ts";
 
 import { ROUTES } from "./router.ts";
-import { setupExpress } from "./app/setup/express.ts";
+import express from "express";
 
-const [express, start] = setupExpress();
+const app = express();
+const port = 3000;
+
+app.use("/static", express.static("static"));
 
 for (const route of Object.values(ROUTES)) {
-  express[route.method](route.path, (req, res) => {
-    res.maybeCatch(route.handler(req), (resp) => res.send(resp));
+  app[route.method](route.path, async (req, res) => {
+    try {
+      const resp = await route.handler(req);
+      res.send(resp);
+    } catch (err) {
+      console.error(err);
+      res.send(`Ah shit`);
+    }
   });
 }
-start();
+
+app.listen(port, () => {
+  console.log(`Scale listening on port ${port}`);
+});

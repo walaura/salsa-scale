@@ -1,5 +1,5 @@
 import type { WithId } from "mongodb";
-import type { LogEntry } from "../app/db.ts";
+import type { LogEntry } from "../app/setup/db.ts";
 import { formatGrams, formatTime } from "../app/format.ts";
 
 const MSECS_IN_DAY = 24 * 60 * 60 * 1000;

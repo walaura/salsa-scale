@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { type LogEntry, withDb } from "../app/db.ts";
+import { type LogEntry, withDb } from "../app/setup/db.ts";
 
 export const deleteById = ({ id }: { id: string }) =>
   withDb(async (database) => {
