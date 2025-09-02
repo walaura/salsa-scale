@@ -26,3 +26,14 @@ export const withPage = <ExpectedResponse>(
     });
   };
 };
+
+export const withLog = <ExpectedResponse>(
+  handler: RouteHandler<ExpectedResponse>
+): RouteHandler<string> => {
+  return (req) => {
+    return handler(req).then((resp) => {
+      console.log(resp);
+      return resp as string;
+    });
+  };
+};

@@ -22,6 +22,45 @@ const makeWeightRow = ({ point }: { point: LogEntry }) => {
   </td>`;
 };
 
+const makeActionsRow = ({ point }: { point: WithId<LogEntry> }) => {
+  const ACTIONS = [
+    {
+      title: "Delete record",
+      icon: "bomb",
+      href: ROUTES.delet.path.replace(":id", point._id.toString()),
+    },
+    {
+      title: "Mark as LV3 feeding event",
+      icon: "fe-add",
+      href: ROUTES.markEvent.path
+        .replace(":id", point._id.toString())
+        .replace(":size", "3"),
+    },
+    {
+      title: "Unset feeding event",
+      icon: "fe-rm",
+      href: ROUTES.unMarkEvent.path.replace(":id", point._id.toString()),
+    },
+  ];
+
+  return /* HTML */ `<td>
+    <div class="actions">
+      ${ACTIONS.map(
+        (action) => /* HTML */ `
+          <a
+            title="${action.title}"
+            class="actions-action"
+            target="_blank"
+            href="${action.href}"
+          >
+            <img src="/static/${action.icon}.gif" alt="${action.title}" />
+          </a>
+        `
+      ).join("")}
+    </div>
+  </td>`;
+};
+
 const makeTable = ({
   points,
   showActions = false,
@@ -32,7 +71,7 @@ const makeTable = ({
   <thead>
     <tr>
       <th>Weight</th>
-      <th>Timestamp</th>
+      <th>Time</th>
       ${showActions ? "<th>Actions</th>" : ""}
     </tr>
   </thead>
@@ -42,20 +81,7 @@ const makeTable = ({
         return /* HTML */ ` <tr id=${point._id.toString()}>
           ${makeWeightRow({ point })}
           <td class="timestamp">${formatTimeHtml(point.timestamp)}</td>
-          ${showActions
-            ? /* HTML */ `<td class="actions">
-                <a
-                  title="delete record"
-                  target="_blank"
-                  href="${ROUTES.delet.path.replace(
-                    ":id",
-                    point._id.toString()
-                  )}"
-                >
-                  <img src="/static/bomb.gif" alt="Delete" />
-                </a>
-              </td>`
-            : ""}
+          ${showActions ? makeActionsRow({ point }) : ""}
         </tr>`;
       })
       .join("")}

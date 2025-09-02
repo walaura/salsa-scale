@@ -213,6 +213,34 @@ table {
         color: var(--neutral-1000);
         font-size: var(--font-primary);
       }
+      .actions {
+        display: flex;
+        justify-content: end;
+        gap: 1px;
+        overflow: hidden;
+        .actions-action {
+          &:first-of-type {
+            border-top-left-radius: 0.25em;
+            border-bottom-left-radius: 0.25em;
+          }
+          &:last-of-type {
+            border-top-right-radius: 0.25em;
+            border-bottom-right-radius: 0.25em;
+          }
+
+          padding: 0.5rem;
+          background: var(--pink-100);
+          text-decoration: none;
+
+          img {
+            display: block;
+          }
+
+          &:hover {
+            background: var(--pink-300);
+          }
+        }
+      }
       .row-with-icon {
         display: flex;
         align-items: flex-start;
