@@ -8,6 +8,8 @@
   --max-width: max(80vw, 60rem);
 
   --bg-size: 160px;
+
+  --shadow-large: 0 1px 20px 5px rgba(0, 0, 0, 0.25);
 }
 
 @view-transition {
@@ -67,11 +69,9 @@ body {
 }
 
 @keyframes details-stick-first {
-  from {
-  }
   to {
     transform: scale(0.3) translateY(calc(var(--margin-page) * -2));
-    box-shadow: 0 1px 20px 5px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--shadow-large);
     backdrop-filter: blur(1rem);
   }
 }
@@ -102,12 +102,12 @@ details {
   summary {
     padding: calc(0.75rem + 2px) calc(1rem + 2px);
     background-color: var(--pink-600);
-    box-shadow: inset 0 -1px 2px 0 color-mix(in oklch, var(--pink-600), black
+    box-shadow: inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black
             10%),
-      inset 0 1px 1px 0 color-mix(in oklch, var(--pink-600), white 50%);
+      inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%);
     background: linear-gradient(
       to bottom,
-      color-mix(in oklch, var(--pink-600), white 30%) 0%,
+      color-mix(in oklab, var(--pink-600), white 30%) 0%,
       var(--pink-600) 100%
     );
     color: var(--neutral-0);
@@ -164,10 +164,10 @@ details {
 
       &.details-pivot-link-active {
         opacity: 1;
-        background: color-mix(in oklch, var(--pink-700), transparent 20%);
+        background: color-mix(in oklab, var(--pink-700), transparent 20%);
         color: var(--neutral-0);
         box-shadow: inset 0 1px 1px 0
-          color-mix(in oklch, var(--pink-700), #000 20%);
+          color-mix(in oklab, var(--pink-700), #000 20%);
       }
     }
   }
@@ -213,31 +213,42 @@ table {
         color: var(--neutral-1000);
         font-size: var(--font-primary);
       }
+
       .actions {
         display: flex;
         justify-content: end;
         gap: 1px;
         overflow: hidden;
+        position: relative;
+
         .actions-action {
-          &:first-of-type {
+          anchor-scope: --popover;
+
+          & > button {
+            cursor: pointer;
+            appearance: none;
+            border: none;
+            anchor-name: --popover;
+            padding: 0.5rem;
+            background: var(--pink-100);
+            text-decoration: none;
+            img {
+              display: block;
+            }
+            &:hover {
+              background: var(--pink-300);
+            }
+          }
+          &:has(:popover-open) > button {
+            opacity: 0.1;
+          }
+          &:first-of-type button {
             border-top-left-radius: 0.25em;
             border-bottom-left-radius: 0.25em;
           }
-          &:last-of-type {
+          &:last-of-type button {
             border-top-right-radius: 0.25em;
             border-bottom-right-radius: 0.25em;
-          }
-
-          padding: 0.5rem;
-          background: var(--pink-100);
-          text-decoration: none;
-
-          img {
-            display: block;
-          }
-
-          &:hover {
-            background: var(--pink-300);
           }
         }
       }
@@ -342,5 +353,63 @@ table {
     .dashboard-fact {
       font-weight: 800;
     }
+  }
+}
+
+@keyframes popover-open {
+  0% {
+    display: none;
+    scale: 0.2;
+    opacity: 0;
+  }
+  100% {
+    display: flex;
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+.popover {
+  position-anchor: --popover;
+  position-area: center top;
+  position: fixed;
+  margin: 0;
+  border-radius: calc(var(--margin-page) / 2);
+  padding: calc(var(--margin-page) / 2);
+  background-color: var(--pink-50);
+  align-items: stretch;
+  text-align: center;
+  flex-direction: column;
+  gap: calc(var(--margin-page) / 4);
+  border: 1px solid color-mix(in oklab, var(--pink-50), white 10%);
+  box-shadow: var(--shadow-large),
+    inset 0 -1px 0 0 color-mix(in oklab, var(--pink-50), black 10%);
+  min-width: 12em;
+
+  &::backdrop {
+    background-color: color-mix(in srgb, var(--pink-100), transparent 20%);
+  }
+
+  &:popover-open {
+    -animation: popover-open 0.1s ease both;
+    display: flex;
+  }
+  > a {
+    box-shadow: inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black
+            10%),
+      inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%);
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--pink-600), white 30%) 0%,
+      var(--pink-600) 100%
+    );
+    color: var(--neutral-0);
+    cursor: pointer;
+    display: block;
+    font-weight: 800;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-size: var(--font-primary);
   }
 }

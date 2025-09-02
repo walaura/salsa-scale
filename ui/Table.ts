@@ -47,14 +47,22 @@ const makeActionsRow = ({ point }: { point: WithId<LogEntry> }) => {
     <div class="actions">
       ${ACTIONS.map(
         (action) => /* HTML */ `
-          <a
-            title="${action.title}"
-            class="actions-action"
-            target="_blank"
-            href="${action.href}"
-          >
-            <img src="/static/${action.icon}.gif" alt="${action.title}" />
-          </a>
+          <div class="actions-action">
+            <div
+              class="popover"
+              popover
+              id="actions-popover-${point._id}-${action.icon}"
+            >
+              ${action.title}?
+              <a target="_blank" href="${action.href}"> Confirm </a>
+            </div>
+            <button
+              title="${action.title}"
+              popovertarget="actions-popover-${point._id}-${action.icon}"
+            >
+              <img src="/static/${action.icon}.gif" alt="${action.title}" />
+            </button>
+          </div>
         `
       ).join("")}
     </div>
