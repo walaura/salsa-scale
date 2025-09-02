@@ -1,7 +1,7 @@
 import { Collection } from "mongodb";
 import { withDb, type LogEntry } from "../app/db.ts";
 
-const FEEDING_EVENT_THRESHOLD = 4;
+const FEEDING_EVENT_THRESHOLD = 3;
 
 const detectFeedingEventOfSize = async ({
   logs,
