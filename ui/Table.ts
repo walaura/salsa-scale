@@ -2,6 +2,8 @@ import { ROUTES } from "../router.ts";
 import { formatGrams, formatTimeHtml } from "../app/format.ts";
 import type { LogEntry } from "../app/setup/db.ts";
 import type { WithId } from "mongodb";
+import { makePopoverAndTrigger } from "./Popover.ts";
+import { makeButton } from "./Button.ts";
 
 const makeWeightRow = ({ point }: { point: LogEntry }) => {
   if (point.feedingEventOfSize == null) {
@@ -45,26 +47,31 @@ const makeActionsRow = ({ point }: { point: WithId<LogEntry> }) => {
 
   return /* HTML */ `<td>
     <div class="actions">
-      ${ACTIONS.map(
-        (action) => /* HTML */ `
+      ${ACTIONS.map((action) => {
+        const popoverId = `actions-popover-${point._id}-${action.icon}`;
+        return /* HTML */ `
           <div class="actions-action">
-            <div
-              class="popover"
-              popover
-              id="actions-popover-${point._id}-${action.icon}"
-            >
-              ${action.title}?
-              <a target="_blank" href="${action.href}"> Confirm </a>
-            </div>
-            <button
-              title="${action.title}"
-              popovertarget="actions-popover-${point._id}-${action.icon}"
-            >
-              <img src="/static/${action.icon}.gif" alt="${action.title}" />
-            </button>
+            ${makePopoverAndTrigger({
+              id: popoverId,
+              trigger: {
+                children: /* HTML */ `<img
+                  src="/static/${action.icon}.gif"
+                  alt="${action.title}"
+                />`,
+                title: action.title,
+              },
+              popover: {
+                children: /* HTML */ `<span>${action.title}?</span>
+                  ${makeButton({
+                    label: "Confirm",
+                    href: action.href,
+                    target: "_blank",
+                  })}`,
+              },
+            }).join("")}
           </div>
-        `
-      ).join("")}
+        `;
+      }).join("")}
     </div>
   </td>`;
 };

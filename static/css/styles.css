@@ -68,111 +68,6 @@ body {
   }
 }
 
-@keyframes details-stick-first {
-  to {
-    transform: scale(0.3) translateY(calc(var(--margin-page) * -2));
-    box-shadow: var(--shadow-large);
-    backdrop-filter: blur(1rem);
-  }
-}
-
-details {
-  --radius: 1rem;
-  border-radius: var(--radius);
-  box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
-  transform-origin: center 1rem;
-  transition: transform 0.2s ease;
-
-  &:has(summary:active) {
-    transform: scale(0.995);
-  }
-
-  &:first-child {
-    position: sticky;
-    top: calc(var(--margin-page));
-    animation: ease details-stick-first both;
-    animation-timeline: scroll(nearest block);
-    animation-range: 0 400px;
-    transform-origin: top center;
-    z-index: 999;
-    will-change: transform;
-  }
-
-  summary {
-    padding: calc(0.75rem + 2px) calc(1rem + 2px);
-    background-color: var(--pink-600);
-    box-shadow: inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black
-            10%),
-      inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%);
-    background: linear-gradient(
-      to bottom,
-      color-mix(in oklab, var(--pink-600), white 30%) 0%,
-      var(--pink-600) 100%
-    );
-    color: var(--neutral-0);
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .details-content {
-    border: 1px solid var(--pink-300);
-    border-top: none;
-    border-bottom-left-radius: var(--radius);
-    border-bottom-right-radius: var(--radius);
-    overflow: hidden;
-    contain: content;
-  }
-
-  .details-title {
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    .details-title-drop {
-      width: 16px;
-      height: 16px;
-      transition: transform 0.4s ease;
-      transform: rotate(-90deg);
-      mask-image: url(../drop.gif);
-      display: block;
-      background: var(--neutral-0);
-    }
-  }
-
-  &[open] .details-title .details-title-drop {
-    transform: rotate(0deg);
-  }
-
-  .details-pivot {
-    display: flex;
-    font-size: var(--font-secondary);
-    gap: -0.5rem;
-    margin: -0.25rem;
-    .details-pivot-link {
-      color: inherit;
-      text-decoration: none;
-      padding: 0.25rem 1rem;
-      border-radius: 999px;
-      color: var(--pink-200);
-
-      &:hover {
-        color: var(--neutral-0);
-      }
-
-      &.details-pivot-link-active {
-        opacity: 1;
-        background: color-mix(in oklab, var(--pink-700), transparent 20%);
-        color: var(--neutral-0);
-        box-shadow: inset 0 1px 1px 0
-          color-mix(in oklab, var(--pink-700), #000 20%);
-      }
-    }
-  }
-}
-
 table {
   contain: strict;
   overflow: hidden;
@@ -218,17 +113,13 @@ table {
         display: flex;
         justify-content: end;
         gap: 1px;
-        overflow: hidden;
         position: relative;
 
         .actions-action {
-          anchor-scope: --popover;
-
           & > button {
             cursor: pointer;
             appearance: none;
             border: none;
-            anchor-name: --popover;
             padding: 0.5rem;
             background: var(--pink-100);
             text-decoration: none;
@@ -353,63 +244,5 @@ table {
     .dashboard-fact {
       font-weight: 800;
     }
-  }
-}
-
-@keyframes popover-open {
-  0% {
-    display: none;
-    scale: 0.2;
-    opacity: 0;
-  }
-  100% {
-    display: flex;
-    scale: 1;
-    opacity: 1;
-  }
-}
-
-.popover {
-  position-anchor: --popover;
-  position-area: center top;
-  position: fixed;
-  margin: 0;
-  border-radius: calc(var(--margin-page) / 2);
-  padding: calc(var(--margin-page) / 2);
-  background-color: var(--pink-50);
-  align-items: stretch;
-  text-align: center;
-  flex-direction: column;
-  gap: calc(var(--margin-page) / 4);
-  border: 1px solid color-mix(in oklab, var(--pink-50), white 10%);
-  box-shadow: var(--shadow-large),
-    inset 0 -1px 0 0 color-mix(in oklab, var(--pink-50), black 10%);
-  min-width: 12em;
-
-  &::backdrop {
-    background-color: color-mix(in srgb, var(--pink-100), transparent 20%);
-  }
-
-  &:popover-open {
-    -animation: popover-open 0.1s ease both;
-    display: flex;
-  }
-  > a {
-    box-shadow: inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black
-            10%),
-      inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%);
-    background: linear-gradient(
-      to bottom,
-      color-mix(in oklab, var(--pink-600), white 30%) 0%,
-      var(--pink-600) 100%
-    );
-    color: var(--neutral-0);
-    cursor: pointer;
-    display: block;
-    font-weight: 800;
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    text-decoration: none;
-    font-size: var(--font-primary);
   }
 }

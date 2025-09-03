@@ -1,7 +1,7 @@
 import type { WithId } from "mongodb";
 import { makeChart } from "../ui/Chart.ts";
 import { makeTable } from "../ui/Table.ts";
-import { makeDetails } from "../ui/Details.ts";
+import { makeExpander } from "../ui/section/Expander.ts";
 import { makeDashboard } from "../ui/Dashboard.ts";
 import { withDb, type LogEntry } from "../app/setup/db.ts";
 
@@ -56,7 +56,7 @@ async function landingRoute({
     link.searchParams.set("scale", f.value.toString());
     return { ...f, isActive: f.value === chartScale, link };
   });
-  const svgLine = makeDetails({
+  const svgLine = makeExpander({
     title: "Chart",
     pivot,
     children: makeChart({ points: all, scale: chartScale }),
@@ -68,14 +68,14 @@ async function landingRoute({
   return [
     svgLine,
     dashboard
-      ? makeDetails({
+      ? makeExpander({
           title: "Dashboard",
           isOpen: true,
           children: dashboard,
         })
       : null,
     ...Object.entries(days).map(([date, points], idx) =>
-      makeDetails({
+      makeExpander({
         title: date,
         children: makeTable({ points, showActions }),
         isOpen: idx === 0,

@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node --experimental-strip-types index.ts",
+    "live": "nodemon",
     "make-colors": "node scripts/makeColorRamp.cjs"
   },
   "author": "",
@@ -14,7 +15,20 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "mongodb": "^6.18.0",
+    "nodemon": "^3.1.10",
     "save": "^2.9.0"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/static/**"
+    ],
+    "watch": [
+      "**/*.ts"
+    ],
+    "execMap": {
+      "ts": "node --experimental-strip-types"
+    },
+    "delay": 2500
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.3",

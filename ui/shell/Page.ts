@@ -1,3 +1,5 @@
+import { getRegisteredStyles } from "../../app/setup/styles.ts";
+
 const makePage = ({
   children,
   forceMode,
@@ -20,6 +22,9 @@ const makePage = ({
         <link rel="stylesheet" href="./static/css/colors.css" />
         <link rel="stylesheet" href="./static/css/styles.css" />
         <link rel="icon" href="./static/favicon.png" />
+        <style type="text/css">
+          ${getRegisteredStyles().join("")}
+        </style>
       </head>
       <body>
         ${children}
