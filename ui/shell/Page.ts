@@ -1,15 +1,19 @@
+import { type IRoute } from "express";
 import {
   css,
   getRegisteredStyles,
   withStyles,
 } from "../../app/setup/styles.ts";
+import { makeNav } from "./Nav.ts";
 
 const makePage = ({
   children,
   forceMode,
+  currentRoute,
 }: {
   children: string;
   forceMode: "dark" | "light" | undefined;
+  currentRoute: IRoute;
 }) => {
   const isDarkMode =
     forceMode === "light"
@@ -31,7 +35,7 @@ const makePage = ({
         </style>
       </head>
       <body class="${className}">
-        ${children}
+        ${makeNav({ currentRoute })} ${children}
       </body>
     </html>`;
 };

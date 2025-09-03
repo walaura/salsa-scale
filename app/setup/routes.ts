@@ -22,7 +22,11 @@ export const withPage = <ExpectedResponse>(
         ? "light"
         : undefined;
     return handler(req).then((resp) => {
-      return makePage({ forceMode, children: resp as string });
+      return makePage({
+        forceMode,
+        children: resp as string,
+        currentRoute: req.route,
+      });
     });
   };
 };

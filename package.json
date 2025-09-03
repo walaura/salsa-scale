@@ -23,12 +23,14 @@
       "**/static/**"
     ],
     "watch": [
-      "**/*.ts"
+      "**/*.ts",
+      "**/*.js",
+      "**/*.json"
     ],
     "execMap": {
       "ts": "node --experimental-strip-types"
     },
-    "delay": 2500
+    "delay": 600
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.3",

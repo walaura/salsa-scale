@@ -3,24 +3,9 @@ import { makeChart } from "../ui/Chart.ts";
 import { makeTable } from "../ui/Table.ts";
 import { makeExpander } from "../ui/section/Expander.ts";
 import { makeDashboard } from "../ui/Dashboard.ts";
-import { withDb, type LogEntry } from "../app/setup/db.ts";
+import { type LogEntry } from "../app/setup/db.ts";
 import { makeStickySection } from "../ui/section/StickySection.ts";
-
-const getData = async ({ chartScale }: { chartScale: number }) =>
-  withDb(async (database) => {
-    const daysToFetch = Math.max(chartScale, 5, 10);
-
-    const logs = database.collection<LogEntry>("logs");
-    const all = await logs
-      .find()
-      .sort({ timestamp: -1 })
-      .limit(6 * 24 * daysToFetch)
-      .toArray();
-    const feedingEvents = all.filter(
-      (entry) => entry.feedingEventOfSize != null
-    );
-    return { all, feedingEvents };
-  });
+import { getAllData } from "../app/getData.ts";
 
 async function landingRoute({
   showActions,
@@ -31,9 +16,10 @@ async function landingRoute({
   chartScale: number;
   url: URL;
 }) {
-  const { all, feedingEvents } = await getData({
-    chartScale,
+  const all = await getAllData({
+    daysToFetch: chartScale + 1,
   });
+  const feedingEvents = all.filter((entry) => entry.feedingEventOfSize != null);
 
   const days: Record<string, WithId<LogEntry>[]> = {};
   for (const point of all) {

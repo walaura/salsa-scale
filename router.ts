@@ -11,6 +11,7 @@ import {
   markFeedingEvent,
   unmarkFeedingEvent,
 } from "./routes/sudo.ts";
+import { recordsRoute } from "./routes/records.ts";
 
 const landing: RouteFromExpress<"get"> = {
   method: "get",
@@ -24,6 +25,15 @@ const landing: RouteFromExpress<"get"> = {
       req.protocol + "://" + req.get("host") + req.originalUrl
     );
     return landingRoute({ showActions, chartScale, url });
+  }),
+};
+
+const records: RouteFromExpress<"get"> = {
+  method: "get",
+  path: "/records",
+  handler: withPage((req) => {
+    const showActions = req.query.edit === TOP_SECRET_PATH;
+    return recordsRoute({ showActions });
   }),
 };
 
@@ -75,6 +85,7 @@ export const ROUTES = {
   landing,
   track,
   delet,
+  records,
   markEvent,
   unMarkEvent,
 };
