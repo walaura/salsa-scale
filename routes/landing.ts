@@ -4,6 +4,7 @@ import { makeTable } from "../ui/Table.ts";
 import { makeExpander } from "../ui/section/Expander.ts";
 import { makeDashboard } from "../ui/Dashboard.ts";
 import { withDb, type LogEntry } from "../app/setup/db.ts";
+import { makeStickySection } from "../ui/section/StickySection.ts";
 
 const getData = async ({ chartScale }: { chartScale: number }) =>
   withDb(async (database) => {
@@ -66,7 +67,9 @@ async function landingRoute({
   const dashboard = makeDashboard({ feedingEvents });
 
   return [
-    svgLine,
+    makeStickySection({
+      children: svgLine,
+    }),
     dashboard
       ? makeExpander({
           title: "Dashboard",

@@ -1,4 +1,8 @@
-import { getRegisteredStyles } from "../../app/setup/styles.ts";
+import {
+  css,
+  getRegisteredStyles,
+  withStyles,
+} from "../../app/setup/styles.ts";
 
 const makePage = ({
   children,
@@ -26,10 +30,24 @@ const makePage = ({
           ${getRegisteredStyles().join("")}
         </style>
       </head>
-      <body>
+      <body class="${className}">
         ${children}
       </body>
     </html>`;
 };
+
+const [className] = withStyles(
+  (root) => css`
+    ${root} {
+      & > * {
+        max-width: var(--max-width);
+        margin: auto;
+        & + * {
+          margin-top: calc(var(--margin-page) * 0.75);
+        }
+      }
+    }
+  `
+);
 
 export { makePage };

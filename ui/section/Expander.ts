@@ -56,13 +56,6 @@ const makeExpander = ({
 
 const [className] = withStyles(
   (root) => css`
-    @keyframes details-stick-first {
-      to {
-        transform: scale(0.3) translateY(calc(var(--margin-page) * -2));
-        box-shadow: var(--shadow-large);
-        backdrop-filter: blur(1rem);
-      }
-    }
     ${root} {
       --radius: 1rem;
       border-radius: var(--radius);
@@ -73,17 +66,6 @@ const [className] = withStyles(
 
       &:has(summary:active) {
         transform: scale(0.995);
-      }
-
-      &:first-child {
-        position: sticky;
-        top: calc(var(--margin-page));
-        animation: ease details-stick-first both;
-        animation-timeline: scroll(nearest block);
-        animation-range: 0 400px;
-        transform-origin: top center;
-        z-index: 999;
-        will-change: transform;
       }
 
       summary {
