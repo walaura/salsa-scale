@@ -1,6 +1,6 @@
 import { type LogEntry } from "./setup/db.ts";
 
-const THRESHOLD = 3;
+const THRESHOLD = 4;
 
 export const isFeedingEvent = (
   current: number,
