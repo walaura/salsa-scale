@@ -1,7 +1,6 @@
 import { Collection } from "mongodb";
 import { withDb, type LogEntry } from "../app/setup/db.ts";
-
-const FEEDING_EVENT_THRESHOLD = 3;
+import { isFeedingEvent as isFeedingEventFn } from "../app/feedingEvent.ts";
 
 const detectFeedingEventOfSize = async ({
   logs,
@@ -9,28 +8,42 @@ const detectFeedingEventOfSize = async ({
 }: {
   logs: Collection<LogEntry>;
   weight: number;
-}) => {
-  const twoPrior = [];
-  for await (const doc of logs.find().sort({ timestamp: -1 }).limit(2)) {
-    twoPrior.push(doc);
-  }
+}): Promise<number | null> => {
+  const twoPrior = await getPreviousFeedingEvents({ logs });
 
   if (twoPrior.length !== 2) {
     return null;
   }
-  const largestWeight = Math.max(
-    twoPrior[0]?.weight || 0,
-    twoPrior[1]?.weight || 0
-  );
-  const delta = largestWeight - weight;
-  if (delta < FEEDING_EVENT_THRESHOLD) {
+  const [isFeedingEvent, delta] = isFeedingEventFn(weight, [
+    twoPrior[0],
+    twoPrior[1],
+  ]);
+
+  if (!isFeedingEvent) {
     return null;
+  }
+
+  //clean up the previous ones if they were set
+  for await (const prior of twoPrior) {
+    if (prior.feedingEventOfSize == null) {
+      continue;
+    }
+    console.log(`
+      Cleaning up previous feeding event ${prior._id} to merge with new event of size ${delta}`);
+    await logs.updateOne(
+      { _id: prior._id },
+      {
+        $set: {
+          feedingEventOfSize: null,
+        },
+      }
+    );
   }
 
   return delta;
 };
 
-const getPreviousFeedingEvent = async ({
+const getPreviousFeedingEvents = async ({
   logs,
 }: {
   logs: Collection<LogEntry>;
@@ -38,66 +51,9 @@ const getPreviousFeedingEvent = async ({
   const previousFeedingEvents = await logs
     .find({ feedingEventOfSize: { $ne: null } })
     .sort({ timestamp: -1 })
-    .limit(1)
+    .limit(2)
     .toArray();
-  if (!previousFeedingEvents[0]) {
-    return null;
-  }
-  return previousFeedingEvents[0];
-};
-
-const maybeCombineFeedingEvent = async ({
-  maybeFeedingEventOfSize,
-  logs,
-}: {
-  maybeFeedingEventOfSize: number | null;
-  logs: Collection<LogEntry>;
-}): Promise<number | null> => {
-  if (maybeFeedingEventOfSize == null) {
-    return null;
-  }
-
-  const previousFeedingEvent = await getPreviousFeedingEvent({ logs });
-  /* db empty? */
-  if (
-    previousFeedingEvent == null ||
-    previousFeedingEvent.feedingEventOfSize == null
-  ) {
-    return maybeFeedingEventOfSize;
-  }
-
-  const timeSincePreviousFeedingEvent =
-    Date.now() - previousFeedingEvent.timestamp;
-
-  console.log(
-    `Time since last feeding event: ${Math.round(
-      timeSincePreviousFeedingEvent / (1000 * 60)
-    )} minutes`
-  );
-  // TODO email if severe
-
-  /* short snack? delete previous feeding event and make this one bigger */
-  if (timeSincePreviousFeedingEvent < 1000 * 60 * 21) {
-    console.log(
-      previousFeedingEvent.feedingEventOfSize,
-      maybeFeedingEventOfSize
-    );
-    console.log("Short snack detected");
-    await logs.updateOne(
-      { _id: previousFeedingEvent._id },
-      {
-        $set: {
-          feedingEventOfSize: null,
-        },
-      }
-    );
-    return (
-      previousFeedingEvent.feedingEventOfSize +
-      previousFeedingEvent.weight -
-      maybeFeedingEventOfSize
-    );
-  }
-  return maybeFeedingEventOfSize;
+  return previousFeedingEvents;
 };
 
 async function trackRoute({
@@ -110,19 +66,15 @@ async function trackRoute({
   return withDb(async (database) => {
     const logs = database.collection<LogEntry>("logs");
 
-    let maybeFeedingEventOfSize = await detectFeedingEventOfSize({
+    const feedingEventOfSize = await detectFeedingEventOfSize({
       logs,
       weight,
-    });
-    maybeFeedingEventOfSize = await maybeCombineFeedingEvent({
-      maybeFeedingEventOfSize,
-      logs,
     });
 
     const result = await logs.insertOne({
       weight,
       timestamp,
-      feedingEventOfSize: maybeFeedingEventOfSize,
+      feedingEventOfSize,
     });
     const response = `New log entry created with the following id: ${result.insertedId}`;
     console.log(response);
