@@ -10,8 +10,5 @@
       }
     ]
   },
-  "moduleNameMapping": {
-    "^(\\.{1,2}/.*)\\.ts$": "$1"
-  },
   "testMatch": ["**/*.test.ts"]
 }

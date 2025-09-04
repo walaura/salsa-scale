@@ -1,7 +1,5 @@
-// Simple test for isFeedingEvent function
-
-import { isFeedingEvent } from "../app/feedingEvent.ts";
-import { LogEntry } from "../app/setup/db.ts";
+import { isFeedingEvent } from "../feedingEvent.ts";
+import { LogEntry } from "../setup/db.ts";
 
 const makeTestData = (
   ...props: [number, number, number]
