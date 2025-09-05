@@ -12,6 +12,7 @@ const detectFeedingEventOfSize = async ({
   const twoPrior = await getPreviousFeedingEvents({ logs });
 
   if (twoPrior.length !== 2) {
+    console.log(`Missing events`);
     return null;
   }
   const [isFeedingEvent, delta] = isFeedingEventFn(weight, [
@@ -20,6 +21,9 @@ const detectFeedingEventOfSize = async ({
   ]);
 
   if (!isFeedingEvent) {
+    console.log(
+      `Not a feeding event (${weight}, ${twoPrior[0].weight}, ${twoPrior[1].weight})`
+    );
     return null;
   }
 
@@ -40,6 +44,9 @@ const detectFeedingEventOfSize = async ({
     );
   }
 
+  console.log(`
+      Marking as feeding event of size ${delta}`);
+
   return delta;
 };
 
@@ -49,9 +56,9 @@ const getPreviousFeedingEvents = async ({
   logs: Collection<LogEntry>;
 }) => {
   const previousFeedingEvents = await logs
-    .find({ feedingEventOfSize: { $ne: null } })
-    .sort({ timestamp: -1 })
+    .find()
     .limit(2)
+    .sort({ timestamp: -1 })
     .toArray();
   return previousFeedingEvents;
 };

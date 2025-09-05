@@ -20,6 +20,10 @@ const ASSERTIONS = [
     expected: [true, 6],
   },
   {
+    input: [652, 658, 655],
+    expected: [true, 6],
+  },
+  {
     input: [11, 8, 15],
     expected: [false, 4],
   },
