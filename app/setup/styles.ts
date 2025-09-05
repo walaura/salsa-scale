@@ -5,17 +5,34 @@ const REGISTERED_STYLE_PROPS = new Map<string, { [key: string]: string }>();
 
 type EitherStyles<Props> = Styles | StylesWithProps<Props>;
 type Nullable<T> = { [K in keyof T]?: T[K] | null };
+type Merge<A, B> = {
+  [K in keyof A]: K extends keyof B ? B[K] : A[K];
+} & B;
+
+type JsStyles = Merge<
+  Nullable<CSSStyleDeclaration>,
+  {
+    [key: string]: JsStyles | string | number | undefined | null;
+  }
+>;
 
 type StylesWithProps<Props = { [key: string]: string }> = (
   root: Selector,
   props: Props
-) => {};
-type Styles = (root: Selector) => string;
+) => string | JsStyles;
+type Styles = (root: Selector) => string | JsStyles;
 
 type Selector = {
   (child: string): string;
   toString(): string;
   keyframes(child: string): string;
+};
+
+const camelCaseToKebabCase = (str: string) => {
+  return str
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/[\s_]+/g, "-")
+    .toLowerCase();
 };
 
 const styleProps = <P>(props: P) => {
@@ -97,8 +114,34 @@ const getRegisteredStyles = () => {
         }
       `;
     }
-    return defaultProps + styles(makeSelector(className, "."), props);
+
+    const selector = makeSelector(className, ".");
+    const renderedStyles = styles(selector, props);
+
+    let outputStyles = "";
+    if (typeof renderedStyles === "string") {
+      outputStyles = renderedStyles;
+    } else {
+      outputStyles = reduceJsStyles({
+        [selector.toString()]: renderedStyles,
+      });
+      console.log(outputStyles);
+    }
+
+    return defaultProps + outputStyles;
   });
+};
+
+const reduceJsStyles = (styles: JsStyles): string => {
+  let result = "";
+  for (const [key, value] of Object.entries(styles)) {
+    if (!(typeof value === "object")) {
+      result += `${camelCaseToKebabCase(key)} : ${value};\n`;
+    } else if (value !== null) {
+      result += `${key} { ${reduceJsStyles(value)} }\n`;
+    }
+  }
+  return result;
 };
 
 const VOID_SELECTOR = makeSelector("");

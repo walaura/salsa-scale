@@ -77,40 +77,35 @@ const makeDashboard = ({
   `;
 };
 
-const [className] = withStyles(
-  (root) => css`
-    ${root} {
-      display: grid;
-      background: var(--neutral-0-A80);
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      margin: -0.5px;
-
-      ${root("widget")} {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        flex-direction: column;
-        border: 1px solid var(--pink-200);
-        margin: -0.5px;
-        padding: 2rem 1rem;
-        strong {
-          font-size: var(--font-secondary);
-          color: var(--pink-600);
-          font-weight: inherit;
-          font-style: italic;
-        }
-        ${root("widget-text-w-icon")} {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
-        ${root("fact")} {
-          font-weight: 800;
-        }
-      }
-    }
-  `
-);
+const [className] = withStyles((root) => ({
+  display: "grid",
+  background: "var(--neutral-0-A80)",
+  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+  margin: "-0.5px",
+  [root("widget")]: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "0.5rem",
+    flexDirection: "column",
+    border: "1px solid var(--pink-200)",
+    margin: "-0.5px",
+    padding: "2rem 1rem",
+    strong: {
+      fontSize: "var(--font-secondary)",
+      color: "var(--pink-600)",
+      fontWeight: "inherit",
+      fontStyle: "italic",
+    },
+    [root("widget-text-w-icon")]: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.25rem",
+    },
+    [root("fact")]: {
+      fontWeight: 800,
+    },
+  },
+}));
 
 export { makeDashboard };
