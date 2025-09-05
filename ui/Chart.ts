@@ -1,6 +1,7 @@
 import type { WithId } from "mongodb";
 import type { LogEntry } from "../app/setup/db.ts";
 import { formatGrams, formatTime } from "../app/format.ts";
+import { css, withStyles } from "../app/setup/styles.ts";
 
 const MSECS_IN_DAY = 24 * 60 * 60 * 1000;
 
@@ -43,7 +44,10 @@ const makeChart = ({
     return 1 - Math.max(0, Math.min(1, scaled));
   };
 
-  return /* HTML */ `<svg class="chart" height="${PADDING + HEIGHT + PADDING}">
+  return /* HTML */ `<svg
+    class=${className}
+    height="${PADDING + HEIGHT + PADDING}"
+  >
     <svg
       height="100%"
       width="100%"
@@ -51,7 +55,7 @@ const makeChart = ({
       viewBox="0 0 1000 ${PADDING + HEIGHT + PADDING}"
     >
       <polyline
-        class="chart-line"
+        class="${className}-line"
         vector-effect="non-scaling-stroke"
         points="${svgPoints
           .map((point) => {
@@ -80,7 +84,7 @@ const makeChart = ({
           const x = point.timeOffset * 100;
           const y = PADDING + projectPoint(point.weight) * HEIGHT;
           return /* HTML */ `
-            <circle class="chart-dot" cx="${x}%" cy="${y}" r="6" />
+            <circle class="${className}-dot" cx="${x}%" cy="${y}" r="6" />
           `;
         })
         .join("")}
@@ -88,42 +92,113 @@ const makeChart = ({
         .map((point) => {
           const x = point.timeOffset * 100;
           const y = PADDING + projectPoint(point.weight) * HEIGHT;
-          return /* HTML */ `
-            <g class="chart-hoverable">
-              <a href="#${point._id.toString()}">
-                <circle cx="${x}%" cy="${y}" r="12" />
-                <g transform="translate(-20 0)">
-                  <g class="chart-hoverable-label">
-                    <svg x="${x}%" y="${y - 24}">
-                      <rect
-                        width="48"
-                        height="32"
-                        fill="var(--pink-600)"
-                        rx="4"
-                        ry="4"
-                      />
-                      <text fill="#fff" x="24" y="14" text-anchor="middle">
-                        ${formatGrams(point.weight)}
-                      </text>
-                      <text
-                        class="chart-hoverable-date"
-                        fill="var(--pink-100)"
-                        x="24"
-                        y="25"
-                        text-anchor="middle"
-                      >
-                        ${formatTime(point.timestamp)}
-                      </text>
-                    </svg>
-                  </g>
-                </g>
-              </a>
-            </g>
-          `;
+          return makeHoverable({ point, x, y });
         })
         .join("")}
     </svg>
   </svg>`;
 };
+
+const [className] = withStyles(
+  (root) => css`
+    @keyframes ${root.keyframes("dash")} {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    ${root} {
+      display: block;
+      contain: strict;
+      width: 100%;
+      background: repeating-linear-gradient(
+        var(--neutral-0-A80),
+        var(--neutral-0-A80) 24px,
+        var(--pink-100) 24px,
+        var(--pink-100) 25px
+      );
+      margin-bottom: -1px;
+
+      &,
+      * {
+        transform-box: fill-box;
+      }
+
+      text {
+        font-size: var(--font-secondary);
+      }
+
+      ${root}-line {
+        stroke-dasharray: 2000;
+        stroke-dashoffset: 2000;
+        animation: ${root.keyframes("dash")} 1.5s linear forwards;
+      }
+
+      ${root}-dot {
+        fill: var(--pink-500);
+      }
+    }
+  `
+);
+
+const makeHoverable = ({
+  point,
+  x,
+  y,
+}: {
+  point: WithId<LogEntry>;
+  x: number;
+  y: number;
+}) => /* HTML */ `
+  <g class="${hoverableClassName}">
+    <a href="#${point._id.toString()}">
+      <circle cx="${x}%" cy="${y}" r="12" />
+      <g transform="translate(-20 0)">
+        <g class="${hoverableClassName("label")}">
+          <svg x="${x}%" y="${y - 24}">
+            <rect width="48" height="32" fill="var(--pink-600)" rx="4" ry="4" />
+            <text fill="#fff" x="24" y="14" text-anchor="middle">
+              ${formatGrams(point.weight)}
+            </text>
+            <text
+              class="${hoverableClassName("date")}"
+              fill="var(--pink-100)"
+              x="24"
+              y="25"
+              text-anchor="middle"
+            >
+              ${formatTime(point.timestamp)}
+            </text>
+          </svg>
+        </g>
+      </g>
+    </a>
+  </g>
+`;
+
+const [hoverableClassName] = withStyles(
+  (root) => css`
+    ${root} {
+      circle {
+        display: none;
+      }
+      ${root("date")} {
+        font-size: 0.6em;
+      }
+      ${root("label")} {
+        transform: scaleY(0.5) scaleX(0.2);
+        opacity: 0;
+        transform-origin: bottom center;
+        transition: transform 0.1s ease, opacity 0.1s ease;
+      }
+      &:hover {
+        z-index: 99999;
+        ${root("label")} {
+          opacity: 1;
+          transform: scaleY(1) scaleX(1) translateZ(42px);
+        }
+      }
+    }
+  `
+);
 
 export { makeChart };

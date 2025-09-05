@@ -7,10 +7,16 @@ type EitherStyles<Props> = Styles | StylesWithProps<Props>;
 type Nullable<T> = { [K in keyof T]?: T[K] | null };
 
 type StylesWithProps<Props = { [key: string]: string }> = (
-  root: string,
+  root: Selector,
   props: Props
 ) => {};
-type Styles = (root: string) => string;
+type Styles = (root: Selector) => string;
+
+type Selector = {
+  (child: string): string;
+  toString(): string;
+  keyframes(child: string): string;
+};
 
 const styleProps = <P>(props: P) => {
   if (!props) return "";
@@ -35,20 +41,20 @@ export const css = (
 const hash = (string: string) =>
   crypto.createHash("sha256").update(string, "utf8").digest("hex");
 
-function withStyles<Props = null>(styles: Styles): [string];
+function withStyles<Props = null>(styles: Styles): [Selector];
 function withStyles<Props = { [key: string]: string }>(
   styles: StylesWithProps<Props>,
   props: Props
-): [string, (props: Nullable<Props>) => string];
+): [Selector, (props: Nullable<Props>) => string];
 
 function withStyles<Props = undefined | { [key: string]: string }>(
   styles: EitherStyles<Props>,
   props?: Props
-): [string] | [string, (props: Nullable<Props>) => string] {
+): [Selector] | [Selector, (props: Nullable<Props>) => string] {
   const styleHash =
     props != undefined
-      ? `${hash(styles("", props).toString())}`
-      : `${hash(styles("", undefined as Props).toString())}`;
+      ? `${hash(styles(VOID_SELECTOR, props).toString())}`
+      : `${hash(styles(VOID_SELECTOR, undefined as Props).toString())}`;
 
   const className = `style-${styleHash}`;
   if (!REGISTERED_STYLES.has(className)) {
@@ -58,8 +64,20 @@ function withStyles<Props = undefined | { [key: string]: string }>(
     }
   }
 
-  return [className, styleProps];
+  return [makeSelector(className), styleProps];
 }
+
+const makeSelector = (
+  rawClassName: string,
+  maybePrefix: "." | "" = ""
+): Selector => {
+  const className = `${maybePrefix}${rawClassName}`;
+  const fn = (child: string) => [className, child].join("-");
+  fn.toString = () => className;
+  fn.keyframes = (child: string) => `kf-${rawClassName}-${child}`;
+
+  return fn;
+};
 
 const getRegisteredStyles = () => {
   return Array.from(REGISTERED_STYLES.entries()).map(([className, styles]) => {
@@ -72,7 +90,6 @@ const getRegisteredStyles = () => {
         defaultProps += `--${key}: ${value};`;
       }
     );
-
     if (defaultProps) {
       defaultProps = css`
         .${className} {
@@ -80,8 +97,10 @@ const getRegisteredStyles = () => {
         }
       `;
     }
-    return defaultProps + styles("." + className, props);
+    return defaultProps + styles(makeSelector(className, "."), props);
   });
 };
+
+const VOID_SELECTOR = makeSelector("");
 
 export { withStyles, getRegisteredStyles };
