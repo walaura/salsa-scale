@@ -1,6 +1,8 @@
 import { Collection } from "mongodb";
 import { withDb, type LogEntry } from "../app/setup/db.ts";
 import { isFeedingEvent as isFeedingEventFn } from "../app/feedingEvent.ts";
+import { getPreviousFeedingEvents } from "../app/getData.ts";
+import { formatGrams } from "../app/format.ts";
 
 const detectFeedingEventOfSize = async ({
   logs,
@@ -9,31 +11,34 @@ const detectFeedingEventOfSize = async ({
   logs: Collection<LogEntry>;
   weight: number;
 }): Promise<number | null> => {
-  const twoPrior = await getPreviousFeedingEvents({ logs });
+  const lastHour = await getPreviousFeedingEvents({ logs });
 
-  if (twoPrior.length !== 2) {
+  if (lastHour.length <= 2) {
     console.log(`Missing events`);
     return null;
   }
-  const [isFeedingEvent, delta] = isFeedingEventFn(weight, [
-    twoPrior[0],
-    twoPrior[1],
-  ]);
+  const [isFeedingEvent, delta] = isFeedingEventFn(
+    weight,
+    lastHour.map((e) => e.weight)
+  );
 
   if (!isFeedingEvent) {
     console.log(
-      `Not a feeding event (${weight}, ${twoPrior[0].weight}, ${twoPrior[1].weight})`
+      `Not a feeding event (${weight} - ${lastHour
+        .map((e) => e.weight)
+        .join(", ")})`
     );
     return null;
   }
 
   //clean up the previous ones if they were set
-  for await (const prior of twoPrior) {
+  for await (const prior of lastHour) {
     if (prior.feedingEventOfSize == null) {
       continue;
     }
-    console.log(`
-      Cleaning up previous feeding event ${prior._id} to merge with new event of size ${delta}`);
+    console.log(
+      `Cleaning up previous feeding event ${prior._id} to merge with new event of size ${delta}`
+    );
     await logs.updateOne(
       { _id: prior._id },
       {
@@ -44,23 +49,9 @@ const detectFeedingEventOfSize = async ({
     );
   }
 
-  console.log(`
-      Marking as feeding event of size ${delta}`);
+  console.log(`Marking as feeding event of size ${delta}`);
 
   return delta;
-};
-
-const getPreviousFeedingEvents = async ({
-  logs,
-}: {
-  logs: Collection<LogEntry>;
-}) => {
-  const previousFeedingEvents = await logs
-    .find()
-    .limit(2)
-    .sort({ timestamp: -1 })
-    .toArray();
-  return previousFeedingEvents;
 };
 
 async function trackRoute({
@@ -83,7 +74,9 @@ async function trackRoute({
       timestamp,
       feedingEventOfSize,
     });
-    const response = `New log entry created with the following id: ${result.insertedId}`;
+    const response = `New log entry (${formatGrams(
+      weight
+    )}) created with the following id: ${result.insertedId}`;
     console.log(response);
 
     return response;

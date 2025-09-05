@@ -1,13 +1,13 @@
-import { type LogEntry } from "./setup/db.ts";
-
 const THRESHOLD = 4;
 
 export const isFeedingEvent = (
   current: number,
-  [prev, prevToLast]: [LogEntry, LogEntry]
+  lastHour: number[]
 ): [isFeedingEvent: boolean, delta: number] => {
-  const maxPreviousWeight = Math.max(prev.weight, prevToLast.weight);
+  const [prev, prevToLast] = lastHour;
+  const maxPreviousWeight = Math.max(prev, prevToLast);
 
+  // Not a feeding event if the weight is increasing
   if (current >= maxPreviousWeight) {
     return [false, 0];
   }
@@ -16,5 +16,15 @@ export const isFeedingEvent = (
     Math.min(current, maxPreviousWeight) - Math.max(current, maxPreviousWeight)
   );
 
-  return [maxPreviousWeight - current > THRESHOLD, delta];
+  const averageInChangeThruLastHour = Math.max(
+    (lastHour.reduce((a, b) => a + b, 0) / lastHour.length - lastHour[0]) * 0.6,
+    0
+  );
+
+  const adjustedThreshold = THRESHOLD + averageInChangeThruLastHour;
+
+  return [
+    maxPreviousWeight - current > adjustedThreshold,
+    delta - averageInChangeThruLastHour,
+  ];
 };
