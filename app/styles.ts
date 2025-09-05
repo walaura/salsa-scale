@@ -1,14 +1,14 @@
-import { makeSelector, type Selector } from "./setup/styles/selector.ts";
+import { makeSelector, type Selector } from "./styles/selector.ts";
 import {
   maybeRegisterKeyframes,
   maybeRegisterStyle,
   maybeRegisterStyleWithProps,
-} from "./setup/styles/storage.ts";
+} from "./styles/storage.ts";
 import {
   type StyleFn,
   type StyleFnWithProps,
   type StyleObject,
-} from "./setup/styles/decls.ts";
+} from "./styles/decls.ts";
 
 type Nullable<T> = { [K in keyof T]?: T[K] | null };
 
@@ -41,4 +41,12 @@ function withKeyframes(styles: StyleObject) {
   return className;
 }
 
-export { withStyles, withKeyframes };
+const withUnits =
+  (units: string) =>
+  (...props: (number | string)[]) =>
+    props.map((p) => (typeof p === "string" ? p : `${p}${units}`)).join(" ");
+
+const rem = withUnits("rem");
+const px = withUnits("px");
+
+export { withStyles, withKeyframes, rem, px };

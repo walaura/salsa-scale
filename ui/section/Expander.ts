@@ -1,4 +1,4 @@
-import { withStyles } from "../../app/styles.ts";
+import { px, rem, withStyles } from "../../app/styles.ts";
 
 type PivotFilter = { label: string; isActive: boolean; link: URL };
 
@@ -8,9 +8,8 @@ const makePivot = (filters: Array<PivotFilter>) => /* HTML */ `<div
   ${filters
     .map(({ label, isActive, link }) => {
       return /* HTML */ `<a
-        class="${className}-pivot-link ${isActive
-          ? `${className}-pivot-link-active`
-          : ""}"
+        data-is-active="${isActive}"
+        class="${className("pivot-link")}"
         href="${link.toString()}"
       >
         ${label}
@@ -39,17 +38,13 @@ const makeExpander = ({
       ${isOpen ? "open" : ""}
     >
       <summary>
-        <span class="${className}-title">
-          <div class="${className}-title-drop"></div>
+        <span class="${className("title")}">
+          <div class="${className("title-drop")}"></div>
           ${title}
         </span>
-        ${pivot
-          ? /* HTML */ ` <span class="${className}-aside"
-              >${makePivot(pivot)}</span
-            >`
-          : ""}
+        ${pivot ? makePivot(pivot) : ""}
       </summary>
-      <div class="${className}-content">${children}</div>
+      <div class="${className("content")}">${children}</div>
     </details>
   `;
 };
@@ -59,9 +54,9 @@ const [className] = withStyles((select) => ({
   borderRadius: "var(--radius)",
   boxShadow: "0 1px 6px 1px rgba(0, 0, 0, 0.25)",
   overflow: "hidden",
-  transformOrigin: "center 1rem",
+  transformOrigin: rem("center", 1),
   transition: "transform 0.2s ease",
-  ":has(summary:active)": {
+  "&:has(summary:active)": {
     transform: "scale(0.995)",
   },
   summary: {
@@ -90,10 +85,10 @@ const [className] = withStyles((select) => ({
     fontWeight: "bold",
     display: "flex",
     alignItems: "center",
-    gap: "0.5rem",
+    gap: rem(0.5),
     [select("title-drop")]: {
-      width: "16px",
-      height: "16px",
+      width: px(16),
+      height: px(16),
       transition: "transform 0.4s ease",
       transform: "rotate(-90deg)",
       maskImage: "url(/static/drop.gif)",
@@ -107,23 +102,23 @@ const [className] = withStyles((select) => ({
   [select("pivot")]: {
     display: "flex",
     fontSize: "var(--font-secondary)",
-    gap: "-0.5rem",
-    margin: "-0.25rem",
-    [`${select("pivot-link")}`]: {
+    gap: rem(-0.5),
+    margin: rem(-0.25),
+    [select("pivot-link")]: {
       textDecoration: "none",
-      padding: "0.25rem 1rem",
-      borderRadius: "999px",
+      padding: rem(0.25, 1),
+      borderRadius: px(9999),
       color: "var(--pink-200)",
-      "&:hover": {
-        color: "var(--neutral-0)",
-      },
-      [`&${select("pivot-link-active")}`]: {
-        opacity: 1,
-        background: "color-mix(in oklab, var(--pink-700), transparent 20%)",
-        color: "var(--neutral-0)",
-        boxShadow:
-          "inset 0 1px 1px 0 color-mix(in oklab, var(--pink-700), #000 20%)",
-      },
+      transition: "all .2s ease",
+    },
+    [`&:not(:has(:hover)) ${select(
+      "pivot-link"
+    )}[data-is-active="true"], ${select("pivot-link")}:hover`]: {
+      opacity: 1,
+      background: "color-mix(in oklab, var(--pink-700), transparent 20%)",
+      color: "var(--neutral-0)",
+      boxShadow:
+        "inset 0 1px 1px 0 color-mix(in oklab, var(--pink-700), #000 20%)",
     },
   },
 }));

@@ -1,7 +1,7 @@
 import { type IRoute } from "express";
 import { withStyles } from "../../app/styles.ts";
 import { makeNav } from "./Nav.ts";
-import { getRegisteredStyles } from "../../app/setup/styles/storage.ts";
+import { getRegisteredStyles } from "../../app/styles/storage.ts";
 
 const makePage = ({
   children,
