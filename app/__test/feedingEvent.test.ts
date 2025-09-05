@@ -44,6 +44,10 @@ const ASSERTIONS = [
     input: [-4, 5, 4],
     expected: [true, 9],
   },
+  {
+    input: [-3, -2, -2],
+    expected: [false, 1],
+  },
   // double dipping works
   {
     input: [8, 10, 30],
