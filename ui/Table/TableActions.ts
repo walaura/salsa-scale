@@ -1,7 +1,7 @@
 import { makePopoverAndTrigger } from "../Popover.ts";
 import { makeButton } from "../Button.ts";
 import { randomBytes } from "node:crypto";
-import { css, withStyles } from "../../app/setup/styles.ts";
+import { withStyles } from "../../app/styles.ts";
 
 const generateId = (length = 24) => {
   return Buffer.from(randomBytes(length)).toString("hex");
@@ -41,43 +41,38 @@ const makeTableActionsRow = ({ actions }: { actions: Array<Action> }) => {
   </div>`;
 };
 
-const [className] = withStyles(
-  (root) => css`
-    ${root} {
-      display: flex;
-      justify-content: end;
-      gap: 1px;
-      position: relative;
-
-      ${root("action")} {
-        & > button {
-          cursor: pointer;
-          appearance: none;
-          border: none;
-          padding: 0.5rem;
-          background: var(--pink-100);
-          text-decoration: none;
-          img {
-            display: block;
-          }
-          &:hover {
-            background: var(--pink-300);
-          }
-        }
-        &:has(:popover-open) > button {
-          opacity: 0.1;
-        }
-        &:first-of-type button {
-          border-top-left-radius: 0.25em;
-          border-bottom-left-radius: 0.25em;
-        }
-        &:last-of-type button {
-          border-top-right-radius: 0.25em;
-          border-bottom-right-radius: 0.25em;
-        }
-      }
-    }
-  `
-);
+const [className] = withStyles((select) => ({
+  display: "flex",
+  justifyContent: "end",
+  gap: "1px",
+  position: "relative",
+  [select("action")]: {
+    "& > button": {
+      cursor: "pointer",
+      appearance: "none",
+      border: "none",
+      padding: "0.5rem",
+      background: "var(--pink-100)",
+      textDecoration: "none",
+      img: {
+        display: "block",
+      },
+      "&:hover": {
+        background: "var(--pink-300)",
+      },
+    },
+    "&:has(:popover-open) > button": {
+      opacity: 0.1,
+    },
+    "&:first-of-type button": {
+      borderTopLeftRadius: "0.25em",
+      borderBottomLeftRadius: "0.25em",
+    },
+    "&:last-of-type button": {
+      borderTopRightRadius: "0.25em",
+      borderBottomRightRadius: "0.25em",
+    },
+  },
+}));
 
 export { makeTableActionsRow };

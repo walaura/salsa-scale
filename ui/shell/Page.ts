@@ -1,10 +1,7 @@
 import { type IRoute } from "express";
-import {
-  css,
-  getRegisteredStyles,
-  withStyles,
-} from "../../app/setup/styles.ts";
+import { withStyles } from "../../app/styles.ts";
 import { makeNav } from "./Nav.ts";
+import { getRegisteredStyles } from "../../app/setup/styles/storage.ts";
 
 const makePage = ({
   children,
@@ -40,18 +37,14 @@ const makePage = ({
     </html>`;
 };
 
-const [className] = withStyles(
-  (root) => css`
-    ${root} {
-      & > * {
-        max-width: var(--max-width);
-        margin: auto;
-        & + * {
-          margin-top: calc(var(--margin-page) * 0.75);
-        }
-      }
-    }
-  `
-);
+const [className] = withStyles(() => ({
+  "& > *": {
+    maxWidth: "var(--max-width)",
+    margin: "auto",
+    "& + *": {
+      marginTop: "calc(var(--margin-page) * 0.75)",
+    },
+  },
+}));
 
 export { makePage };

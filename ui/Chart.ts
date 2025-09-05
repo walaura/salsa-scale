@@ -1,7 +1,7 @@
 import type { WithId } from "mongodb";
 import type { LogEntry } from "../app/setup/db.ts";
 import { formatGrams, formatTime } from "../app/format.ts";
-import { css, withStyles } from "../app/setup/styles.ts";
+import { withKeyframes, withStyles } from "../app/styles.ts";
 
 const MSECS_IN_DAY = 24 * 60 * 60 * 1000;
 
@@ -99,46 +99,34 @@ const makeChart = ({
   </svg>`;
 };
 
-const [className] = withStyles(
-  (root) => css`
-    @keyframes ${root.keyframes("dash")} {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
-    ${root} {
-      display: block;
-      contain: strict;
-      width: 100%;
-      background: repeating-linear-gradient(
-        var(--neutral-0-A80),
-        var(--neutral-0-A80) 24px,
-        var(--pink-100) 24px,
-        var(--pink-100) 25px
-      );
-      margin-bottom: -1px;
+const dashAnimation = withKeyframes({
+  to: {
+    strokeDashoffset: 0,
+  },
+});
 
-      &,
-      * {
-        transform-box: fill-box;
-      }
-
-      text {
-        font-size: var(--font-secondary);
-      }
-
-      ${root}-line {
-        stroke-dasharray: 2000;
-        stroke-dashoffset: 2000;
-        animation: ${root.keyframes("dash")} 1.5s linear forwards;
-      }
-
-      ${root}-dot {
-        fill: var(--pink-500);
-      }
-    }
-  `
-);
+const [className] = withStyles((select) => ({
+  display: "block",
+  contain: "strict",
+  width: "100%",
+  background:
+    "repeating-linear-gradient(var(--neutral-0-A80), var(--neutral-0-A80) 24px, var(--pink-100) 24px, var(--pink-100) 25px)",
+  marginBottom: "-1px",
+  "&, *": {
+    transformBox: "fill-box",
+  },
+  text: {
+    fontSize: "var(--font-secondary)",
+  },
+  [select("line")]: {
+    strokeDasharray: 2000,
+    strokeDashoffset: 2000,
+    animation: `${dashAnimation} 1.5s linear forwards`,
+  },
+  [select("dot")]: {
+    fill: "var(--pink-500)",
+  },
+}));
 
 const makeHoverable = ({
   point,
@@ -175,30 +163,26 @@ const makeHoverable = ({
   </g>
 `;
 
-const [hoverableClassName] = withStyles(
-  (root) => css`
-    ${root} {
-      circle {
-        display: none;
-      }
-      ${root("date")} {
-        font-size: 0.6em;
-      }
-      ${root("label")} {
-        transform: scaleY(0.5) scaleX(0.2);
-        opacity: 0;
-        transform-origin: bottom center;
-        transition: transform 0.1s ease, opacity 0.1s ease;
-      }
-      &:hover {
-        z-index: 99999;
-        ${root("label")} {
-          opacity: 1;
-          transform: scaleY(1) scaleX(1) translateZ(42px);
-        }
-      }
-    }
-  `
-);
+const [hoverableClassName] = withStyles((select) => ({
+  circle: {
+    display: "none",
+  },
+  [select("date")]: {
+    fontSize: "0.6em",
+  },
+  [select("label")]: {
+    transform: "scaleY(0.5) scaleX(0.2)",
+    opacity: 0,
+    transformOrigin: "bottom center",
+    transition: "transform 0.1s ease, opacity 0.1s ease",
+  },
+  "&:hover": {
+    zIndex: 99999,
+    [select("label")]: {
+      opacity: 1,
+      transform: "scaleY(1) scaleX(1) translateZ(42px)",
+    },
+  },
+}));
 
 export { makeChart };

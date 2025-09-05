@@ -3,7 +3,7 @@ import { formatGrams, formatTimeHtml } from "../app/format.ts";
 import type { LogEntry } from "../app/setup/db.ts";
 import type { WithId } from "mongodb";
 import { makeTableActionsRow } from "./Table/TableActions.ts";
-import { css, withStyles } from "../app/setup/styles.ts";
+import { withStyles } from "../app/styles.ts";
 
 const makeWeightRow = ({ point }: { point: LogEntry }) => {
   if (point.feedingEventOfSize == null) {
@@ -80,58 +80,50 @@ const makeTable = ({
 const makeTd = ({ children }: { children: string }) =>
   /* HTML */ `<td>${children}</td>`;
 
-const [className] = withStyles(
-  (root) => css`
-    ${root} {
-      contain: strict;
-      overflow: hidden;
-      border-collapse: collapse;
-      background: var(--neutral-0);
-      width: 100%;
-      :is(th, td):last-child {
-        text-align: end;
-      }
-
-      thead th,
-      tr td {
-        padding: 0.5rem 1rem;
-      }
-
-      thead {
-        border-bottom: 1px solid var(--pink-200);
-        th {
-          background: var(--pink-100);
-          color: var(--pink-600);
-          font-size: var(--font-secondary);
-          font-weight: normal;
-          font-style: italic;
-          text-align: start;
-        }
-      }
-
-      tr {
-        &:hover {
-          background: var(--pink-50);
-        }
-        td {
-          color: var(--neutral-400);
-          border-bottom: 1px solid var(--pink-100);
-          font-size: var(--font-secondary);
-          strong {
-            font-weight: bold;
-            color: var(--neutral-1000);
-            font-size: var(--font-primary);
-          }
-          ${root("rowWithIcon")} {
-            display: flex;
-            align-items: flex-start;
-            flex-direction: row;
-            gap: 1rem;
-          }
-        }
-      }
-    }
-  `
-);
+const [className] = withStyles((select) => ({
+  contain: "strict",
+  overflow: "hidden",
+  borderCollapse: "collapse",
+  background: "var(--neutral-0)",
+  width: "100%",
+  ":is(th, td):last-child": {
+    textAlign: "end",
+  },
+  "thead th, tr td": {
+    padding: "0.5rem 1rem",
+  },
+  thead: {
+    borderBottom: "1px solid var(--pink-200)",
+    th: {
+      background: "var(--pink-100)",
+      color: "var(--pink-600)",
+      fontSize: "var(--font-secondary)",
+      fontWeight: "normal",
+      fontStyle: "italic",
+      textAlign: "start",
+    },
+  },
+  tr: {
+    "&:hover": {
+      background: "var(--pink-50)",
+    },
+    td: {
+      color: "var(--neutral-400)",
+      borderBottom: "1px solid var(--pink-100)",
+      fontSize: "var(--font-secondary)",
+      strong: {
+        fontWeight: "bold",
+        color: "var(--neutral-1000)",
+        fontSize: "var(--font-primary)",
+      },
+      [select("rowWithIcon")]: {
+        display: "flex",
+        alignItems: "flex-start",
+        flexDirection: "row",
+        gap: "1rem",
+      },
+    },
+  },
+}));
 
 export { makeTable };

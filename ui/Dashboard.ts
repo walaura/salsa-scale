@@ -1,7 +1,7 @@
 import type { WithId } from "mongodb";
 import type { LogEntry } from "../app/setup/db.ts";
 import { formatGrams, formatTime, formatTimeHtml } from "../app/format.ts";
-import { withStyles, css } from "../app/setup/styles.ts";
+import { withStyles } from "../app/styles.ts";
 
 const makeDashboardWidget = ({
   title,
@@ -77,12 +77,12 @@ const makeDashboard = ({
   `;
 };
 
-const [className] = withStyles((root) => ({
+const [className] = withStyles((select) => ({
   display: "grid",
   background: "var(--neutral-0-A80)",
   gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
   margin: "-0.5px",
-  [root("widget")]: {
+  [select("widget")]: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -97,12 +97,12 @@ const [className] = withStyles((root) => ({
       fontWeight: "inherit",
       fontStyle: "italic",
     },
-    [root("widget-text-w-icon")]: {
+    [select("widget-text-w-icon")]: {
       display: "flex",
       alignItems: "center",
       gap: "0.25rem",
     },
-    [root("fact")]: {
+    [select("fact")]: {
       fontWeight: 800,
     },
   },

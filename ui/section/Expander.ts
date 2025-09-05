@@ -1,4 +1,4 @@
-import { css, withStyles } from "../../app/setup/styles.ts";
+import { withStyles } from "../../app/styles.ts";
 
 type PivotFilter = { label: string; isActive: boolean; link: URL };
 
@@ -54,95 +54,78 @@ const makeExpander = ({
   `;
 };
 
-const [className] = withStyles(
-  (root) => css`
-    ${root} {
-      --radius: 1rem;
-      border-radius: var(--radius);
-      box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.25);
-      overflow: hidden;
-      transform-origin: center 1rem;
-      transition: transform 0.2s ease;
-
-      &:has(summary:active) {
-        transform: scale(0.995);
-      }
-
-      summary {
-        padding: calc(0.75rem + 2px) calc(1rem + 2px);
-        background-color: var(--pink-600);
-        box-shadow: inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black
-                10%),
-          inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%);
-        background: linear-gradient(
-          to bottom,
-          color-mix(in oklab, var(--pink-600), white 30%) 0%,
-          var(--pink-600) 100%
-        );
-        color: var(--neutral-0);
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      ${root}-content {
-        border: 1px solid var(--pink-300);
-        border-top: none;
-        border-bottom-left-radius: var(--radius);
-        border-bottom-right-radius: var(--radius);
-        overflow: hidden;
-        contain: content;
-        position: relative;
-      }
-
-      ${root}-title {
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        ${root}-title-drop {
-          width: 16px;
-          height: 16px;
-          transition: transform 0.4s ease;
-          transform: rotate(-90deg);
-          mask-image: url(/static/drop.gif);
-          display: block;
-          background: var(--neutral-0);
-        }
-      }
-
-      &[open] ${root}-title ${root}-title-drop {
-        transform: rotate(0deg);
-      }
-
-      ${root}-pivot {
-        display: flex;
-        font-size: var(--font-secondary);
-        gap: -0.5rem;
-        margin: -0.25rem;
-        ${root}-pivot-link {
-          color: inherit;
-          text-decoration: none;
-          padding: 0.25rem 1rem;
-          border-radius: 999px;
-          color: var(--pink-200);
-
-          &:hover {
-            color: var(--neutral-0);
-          }
-
-          &${root}-pivot-link-active {
-            opacity: 1;
-            background: color-mix(in oklab, var(--pink-700), transparent 20%);
-            color: var(--neutral-0);
-            box-shadow: inset 0 1px 1px 0
-              color-mix(in oklab, var(--pink-700), #000 20%);
-          }
-        }
-      }
-    }
-  `
-);
+const [className] = withStyles((select) => ({
+  "--radius": "1rem",
+  borderRadius: "var(--radius)",
+  boxShadow: "0 1px 6px 1px rgba(0, 0, 0, 0.25)",
+  overflow: "hidden",
+  transformOrigin: "center 1rem",
+  transition: "transform 0.2s ease",
+  ":has(summary:active)": {
+    transform: "scale(0.995)",
+  },
+  summary: {
+    padding: "calc(0.75rem + 2px) calc(1rem + 2px)",
+    backgroundColor: "var(--pink-600)",
+    boxShadow:
+      "inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black 10%), inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%)",
+    background:
+      "linear-gradient(to bottom, color-mix(in oklab, var(--pink-600), white 30%) 0%, var(--pink-600) 100%)",
+    color: "var(--neutral-0)",
+    cursor: "pointer",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  [select("content")]: {
+    border: "1px solid var(--pink-300)",
+    borderTop: "none",
+    borderBottomLeftRadius: "var(--radius)",
+    borderBottomRightRadius: "var(--radius)",
+    overflow: "hidden",
+    contain: "content",
+    position: "relative",
+  },
+  [select("title")]: {
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    [select("title-drop")]: {
+      width: "16px",
+      height: "16px",
+      transition: "transform 0.4s ease",
+      transform: "rotate(-90deg)",
+      maskImage: "url(/static/drop.gif)",
+      display: "block",
+      background: "var(--neutral-0)",
+    },
+  },
+  [`&[open] ${select("title")} ${select("title-drop")}`]: {
+    transform: "rotate(0deg)",
+  },
+  [select("pivot")]: {
+    display: "flex",
+    fontSize: "var(--font-secondary)",
+    gap: "-0.5rem",
+    margin: "-0.25rem",
+    [`${select("pivot-link")}`]: {
+      textDecoration: "none",
+      padding: "0.25rem 1rem",
+      borderRadius: "999px",
+      color: "var(--pink-200)",
+      "&:hover": {
+        color: "var(--neutral-0)",
+      },
+      [`&${select("pivot-link-active")}`]: {
+        opacity: 1,
+        background: "color-mix(in oklab, var(--pink-700), transparent 20%)",
+        color: "var(--neutral-0)",
+        boxShadow:
+          "inset 0 1px 1px 0 color-mix(in oklab, var(--pink-700), #000 20%)",
+      },
+    },
+  },
+}));
 
 export { makeExpander };
