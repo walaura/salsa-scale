@@ -2,7 +2,7 @@ import { type IRoute } from "express";
 import { withStyles } from "../../app/styles.ts";
 import { ROUTES } from "../../router.ts";
 
-export const makeNav = ({ currentRoute }: { currentRoute: IRoute }) => {
+export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
   const LINKS = [
     {
       label: "Home",
@@ -16,21 +16,19 @@ export const makeNav = ({ currentRoute }: { currentRoute: IRoute }) => {
     },
   ];
 
-  return `
-    <nav class="${className}">
-        <ul>
-            ${LINKS.map(
-              (link) => /* HTML */ `
-                <li>
-                  <a data-is-active="${link.isActive}" href="${link.path}">
-                    ${link.label}
-                  </a>
-                </li>
-              `
-            ).join("")}
-        </ul>
+  return (
+    <nav class={className}>
+      <ul>
+        {LINKS.map((link) => (
+          <li>
+            <a data-is-active={link.isActive} href={link.path}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
     </nav>
-`;
+  );
 };
 
 const [className] = withStyles((select) => ({

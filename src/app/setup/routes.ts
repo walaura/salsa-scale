@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import { makePage } from "../../ui/shell/Page.tsx";
+import { Page } from "../../ui/shell/Page.tsx";
 
 export type RouteHandler<ExpectedResponse> = (
   req: Request
@@ -22,7 +22,7 @@ export const withPage = <ExpectedResponse>(
         ? "light"
         : undefined;
     return handler(req).then((resp) => {
-      return makePage({
+      return Page({
         forceMode,
         children: resp as string,
         currentRoute: req.route,

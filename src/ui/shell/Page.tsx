@@ -1,9 +1,9 @@
 import { type IRoute } from "express";
 import { withStyles } from "../../app/styles.ts";
-import { makeNav } from "./Nav.tsx";
+import { Nav } from "./Nav.tsx";
 import { getRegisteredStyles } from "../../app/styles/storage.ts";
 
-const makePage = ({
+const Page = ({
   children,
   forceMode,
   currentRoute,
@@ -19,22 +19,24 @@ const makePage = ({
         new Date().getHours() >= 20 ||
         new Date().getHours() < 8;
 
-  return /* HTML */ `<!DOCTYPE html>
-    <html lang="en" class="${isDarkMode ? "dark-mode" : ""}">
+  const page = (
+    <html lang="en" class={isDarkMode ? "dark-mode" : ""}>
       <head>
-        <meta charset="UTF-8" />
+        <meta charSet="UTF-8" />
         <title>Is Salsa starving</title>
         <link rel="stylesheet" href="./static/css/colors.css" />
         <link rel="stylesheet" href="./static/css/styles.css" />
         <link rel="icon" href="./static/favicon.png" />
-        <style type="text/css">
-          ${getRegisteredStyles().join("")}
-        </style>
+        <style type="text/css">{getRegisteredStyles().join("")}</style>
       </head>
-      <body class="${className}">
-        ${makeNav({ currentRoute })} ${children}
+      <body class={className}>
+        <Nav currentRoute={currentRoute} />
+        {children}
       </body>
-    </html>`;
+    </html>
+  );
+
+  return "<!DOCTYPE html>" + page;
 };
 
 const [className] = withStyles(() => ({
@@ -47,4 +49,4 @@ const [className] = withStyles(() => ({
   },
 }));
 
-export { makePage };
+export { Page };

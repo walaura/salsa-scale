@@ -5,7 +5,7 @@ import {
 } from "./decls.ts";
 import { makeSelector } from "./selector.ts";
 import { createHash } from "crypto";
-import { camelCaseToKebabCase, reduceStyleObject } from "local-css/helpers";
+import { reduceStyleObject } from "local-css/helpers";
 
 const REGISTERED_STYLES = new Map<string, EitherStyleFn<any>>();
 const REGISTERED_KEYFRAMES = new Map<string, StyleObject>();

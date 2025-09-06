@@ -1,9 +1,9 @@
-import { ROUTES } from "../router.ts";
-import { formatGrams, formatTimeHtml } from "../app/format.ts";
-import type { LogEntry } from "../app/setup/db.ts";
+import { ROUTES } from "../../router.ts";
+import { formatGrams, formatTimeHtml } from "../../app/format.ts";
+import type { LogEntry } from "../../app/setup/db.ts";
 import type { WithId } from "mongodb";
-import { TableActionsRow } from "./Table/TableActions.tsx";
-import { withStyles } from "../app/styles.ts";
+import { TableActionsRow } from "./TableActions.tsx";
+import { rem, withStyles } from "../../app/styles.ts";
 
 const WeightRow = ({ point }: { point: LogEntry }) => {
   if (point.feedingEventOfSize == null) {
@@ -13,9 +13,8 @@ const WeightRow = ({ point }: { point: LogEntry }) => {
   return (
     <div class={className("rowWithIcon")}>
       <img src="/static/cake.gif" alt="Cake" />
-      <div>
+      <div class={className("rowWithIconInner")}>
         {formatGrams(point.weight)}
-        <br />
         <strong>
           Feeding event at {formatTimeHtml(point.timestamp)} –{" "}
           {formatGrams(point.feedingEventOfSize)}
@@ -74,8 +73,9 @@ const Table = ({
               showActions ? <ActionsRow point={point} /> : null,
             ]
               .filter((v) => v != null)
-              .map((children) => <td>{children} </td>)
-              .join("")}
+              .map((children) => (
+                <td>{children} </td>
+              ))}
           </tr>
         );
       })}
@@ -124,6 +124,12 @@ const [className] = withStyles((select) => ({
         alignItems: "flex-start",
         flexDirection: "row",
         gap: "1rem",
+        [select("rowWithIconInner")]: {
+          display: "flex",
+          alignItems: "flex-start",
+          flexDirection: "column",
+          gap: rem(1 / 8),
+        },
       },
     },
   },

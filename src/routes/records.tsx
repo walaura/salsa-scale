@@ -1,5 +1,5 @@
 import type { WithId } from "mongodb";
-import { Table } from "../ui/Table.tsx";
+import { Table } from "../ui/Table/Table.tsx";
 import { Expander } from "../ui/section/Expander.tsx";
 import { type LogEntry } from "../app/setup/db.ts";
 import { getAllData } from "../app/getData.ts";

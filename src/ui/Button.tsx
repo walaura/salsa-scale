@@ -1,6 +1,6 @@
 import { px, rem, withStyles } from "../app/styles.ts";
 
-const makeButton = ({
+const Button = ({
   label,
   href,
   target = "_self",
@@ -8,11 +8,13 @@ const makeButton = ({
   label: string;
   href: string;
   target?: string;
-}) => /* HTML */ `<a class="${className}" href="${href}" target="${target}">
-  ${label}
-</a>`;
+}) => (
+  <a class={className} href={href} target={target}>
+    {label}
+  </a>
+);
 
-const [className] = withStyles((select) => ({
+const [className] = withStyles(() => ({
   boxShadow: `inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black 10%), 
     inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%)`,
   background: `linear-gradient(
@@ -30,4 +32,4 @@ const [className] = withStyles((select) => ({
   fontSize: "var(--font-primary)",
 }));
 
-export { makeButton };
+export { Button };

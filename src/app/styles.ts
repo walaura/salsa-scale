@@ -12,22 +12,24 @@ import {
 
 type Nullable<T> = { [K in keyof T]?: T[K] | null };
 
-const styleProps = <P>(props: P) => {
-  if (!props) return "";
-  return Object.entries(props)
-    .map(([key, value]) => `--${key}: ${value};`)
-    .join(" ");
+const styleProps = <P extends {}>(props: P): StyleObject => {
+  if (!props) return {};
+  const returnable = Object.fromEntries(
+    Object.entries(props).map(([key, value]) => [`--${key}`, value])
+  );
+  return returnable as StyleObject;
 };
 
 function withStyles<Props = null>(styles: StyleFn): [Selector];
 function withStyles<Props = { [key: string]: string }>(
   styles: StyleFnWithProps<Props>,
   props: Props
-): [Selector, (props: Nullable<Props>) => string];
+): [Selector, (props: Nullable<Props>) => StyleObject];
+
 function withStyles<Props = undefined | { [key: string]: string }>(
   styles: StyleFn | StyleFnWithProps<Props>,
   props?: Props
-): [Selector] | [Selector, (props: Nullable<Props>) => string] {
+): [Selector] | [Selector, (props: Nullable<Props>) => StyleObject] {
   const className =
     props != null
       ? maybeRegisterStyleWithProps(styles, props)

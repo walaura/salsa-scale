@@ -1,5 +1,5 @@
-import { makePopoverAndTrigger } from "../Popover.tsx";
-import { makeButton } from "../Button.tsx";
+import { PopoverWithTrigger } from "../Popover.tsx";
+import { Button } from "../Button.tsx";
 import { randomBytes } from "node:crypto";
 import { withStyles } from "../../app/styles.ts";
 
@@ -16,24 +16,27 @@ const TableActionsRow = ({ actions }: { actions: Array<Action> }) => {
         const popoverId = `${generateId()}-${action.icon}`;
         return (
           <div class={className("action")}>
-            {makePopoverAndTrigger({
-              id: popoverId,
-              trigger: {
-                children: /* HTML */ `<img
-                  src="/static/${action.icon}.gif"
-                  alt="${action.title}"
-                />`,
+            <PopoverWithTrigger
+              id={popoverId}
+              trigger={{
+                children: (
+                  <img src={`/static/${action.icon}.gif`} alt={action.title} />
+                ),
                 title: action.title,
-              },
-              popover: {
-                children: /* HTML */ `<span>${action.title}?</span>
-                  ${makeButton({
-                    label: "Confirm",
-                    href: action.href,
-                    target: "_blank",
-                  })}`,
-              },
-            })}
+              }}
+              popover={{
+                children: (
+                  <>
+                    <span>{action.title}?</span>
+                    <Button
+                      label="Confirm"
+                      href={action.href}
+                      target="_blank"
+                    />
+                  </>
+                ),
+              }}
+            />
           </div>
         );
       })}

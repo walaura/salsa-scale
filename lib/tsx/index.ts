@@ -1,4 +1,4 @@
-import { camelCaseToKebabCase, reduceStyleObject } from "local-css/helpers";
+import { reduceStyleObject } from "local-css/helpers";
 import type { JSX } from "react";
 
 export const jsxs = <
@@ -41,5 +41,12 @@ declare module "react" {
     class?: string;
   }
 }
+
+export const Fragment = ({ children }: { children: string }) => {
+  if (Array.isArray(children)) {
+    children = children.join("");
+  }
+  return children;
+};
 
 export { JSX };

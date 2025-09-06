@@ -1,12 +1,13 @@
-import { withKeyframes, withStyles } from "../app/styles.ts";
+import { JSX } from "local-tsx/jsx-runtime";
+import { px, withKeyframes, withStyles } from "../app/styles.ts";
 
-const makePopover = ({
+const Popover = ({
   id,
   children,
   anchor = "--popover",
 }: {
   id: string;
-  children: string;
+  children: JSX.Element;
   anchor?: string;
 }) => {
   const popover = /* HTML */ `<div
@@ -33,7 +34,6 @@ const popoverOpenAnimation = withKeyframes({
     transform: "translateY(0) scale(1)",
   },
 });
-
 const [className, styleProps] = withStyles(
   (_, { anchor, area }) => ({
     positionAnchor: anchor,
@@ -64,43 +64,51 @@ const [className, styleProps] = withStyles(
   { anchor: ":root", area: "center top" }
 );
 
-const makePopoverAndTrigger = ({
+const PopoverWithTrigger = ({
   id,
-  trigger,
-  popover,
+  trigger: triggerProps,
+  popover: popoverProps,
 }: {
   id: string;
   trigger: {
-    children: string;
+    children: JSX.Element;
     title: string;
   };
-  popover: Omit<Parameters<typeof makePopover>[0], "id" | "trigger">;
+  popover: Omit<Parameters<typeof Popover>[0], "id" | "trigger">;
 }) => {
   const anchor = "--a-" + id;
-  const popoverEl = makePopover({
-    id,
-    anchor,
-    ...popover,
-  });
-  const triggerEl = /* HTML */ `<button
-    class="${triggerClassName}"
-    style="${triggerStyleProps({ anchorName: anchor })}"
-    title="${trigger.title}"
-    popovertarget="${id}"
-  >
-    ${trigger.children}
-  </button>`;
 
-  return [popoverEl, triggerEl];
+  const popover = <Popover id={id} anchor={anchor} {...popoverProps} />;
+  const props = triggerStyleProps({ anchorName: anchor, padding: px(0) });
+  const trigger = (
+    <button
+      class={triggerClassName}
+      style={props}
+      title={triggerProps.title}
+      popoverTarget={id}
+    >
+      {triggerProps.children}
+    </button>
+  );
+
+  return (
+    <>
+      {trigger}
+      {popover}
+    </>
+  );
 };
 
 const [triggerClassName, triggerStyleProps] = withStyles(
-  (root, { anchorName }) => ({
-    anchorName: anchorName,
+  (_, { anchorName, padding }) => ({
+    anchorName,
+    display: "block",
+    margin: padding,
   }),
   {
     anchorName: ":root",
+    padding: px(10),
   }
 );
 
-export { makePopover, makePopoverAndTrigger };
+export { Popover, PopoverWithTrigger };

@@ -1,8 +1,8 @@
 import type { WithId } from "mongodb";
 import { Chart } from "../ui/Chart.tsx";
-import { Table } from "../ui/Table.tsx";
+import { Table } from "../ui/Table/Table.tsx";
 import { Expander } from "../ui/section/Expander.tsx";
-import { makeDashboard } from "../ui/Dashboard.tsx";
+import { Dashboard } from "../ui/Dashboard.tsx";
 import { type LogEntry } from "../app/setup/db.ts";
 import { StickySection } from "../ui/section/StickySection.tsx";
 import { getAllData } from "../app/getData.ts";
@@ -51,15 +51,11 @@ async function landingRoute({
     </Expander>
   );
 
-  const dashboard = makeDashboard({ feedingEvents });
-
   return [
     <StickySection>{svgLine}</StickySection>,
-    dashboard ? (
-      <Expander title="Dashboard" isOpen={true}>
-        {dashboard}
-      </Expander>
-    ) : null,
+    <Expander title="Dashboard" isOpen={true}>
+      <Dashboard feedingEvents={feedingEvents} />
+    </Expander>,
     ...Object.entries(days).map(([date, points], idx) => (
       <Expander title={date} isOpen={idx === 0}>
         {Table({ points, showActions })}
