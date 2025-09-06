@@ -83,15 +83,14 @@ const PopoverWithTrigger = ({
   };
   popover: Omit<Parameters<typeof Popover>[0], "id" | "trigger">;
 }) => {
-  const anchor = "--a-" + id;
+  const anchorName = "--a-" + id;
 
-  const popover = <Popover id={id} anchor={anchor} {...popoverProps} />;
+  const popover = <Popover id={id} anchor={anchorName} {...popoverProps} />;
 
   const trigger = (
     <button
       {...triggerStyleProps({
-        anchorName: anchor,
-        padding: px(20),
+        anchorName,
       })}
       title={triggerProps.title}
       popoverTarget={id}
@@ -109,12 +108,10 @@ const PopoverWithTrigger = ({
 };
 
 const triggerStyleProps = withDynamicStyles(
-  ({ anchorName, padding }: { anchorName: string; padding: string }) =>
+  ({ anchorName }: { anchorName: string }) =>
     () => ({
       anchorName,
       display: "block",
-      test: "kjbcfkdskfhudsjf",
-      margin: padding,
     })
 );
 
