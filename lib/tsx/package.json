@@ -1,12 +1,10 @@
 {
-  "name": "tsx",
-  "version": "1.0.0",
-  "description": "",
   "main": "index.ts",
-  "scripts": {},
   "type": "module",
+  "dependencies": {
+    "local-css": "file:../lib/css"
+  },
   "exports": {
     "./jsx-runtime": "./index.ts"
-  },
-  "author": ""
+  }
 }

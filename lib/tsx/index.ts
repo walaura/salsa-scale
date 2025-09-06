@@ -1,3 +1,4 @@
+import { camelCaseToKebabCase, reduceStyleObject } from "local-css/helpers";
 import type { JSX } from "react";
 
 export const jsxs = <
@@ -19,7 +20,12 @@ export const jsxs = <
   }
 
   return /* HTML */ `<${name} ${Object.entries(props)
-    .map(([key, value]) => (Boolean(value) ? `${key}="${value}"` : ""))
+    .map(([key, value]) => {
+      if (key === "style" && typeof value === "object" && value !== null) {
+        value = reduceStyleObject(value);
+      }
+      return Boolean(value) ? `${key}="${value}"` : "";
+    })
     .join(" ")}>${children}</${name}>`;
 };
 
@@ -29,6 +35,9 @@ export const jsx = <T extends {}>(...props: Parameters<typeof jsxs<T>>) => {
 
 declare module "react" {
   interface HTMLAttributes<T> {
+    class?: string;
+  }
+  interface SVGAttributes<T> {
     class?: string;
   }
 }

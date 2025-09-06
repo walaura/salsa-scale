@@ -1,5 +1,5 @@
 import type { WithId } from "mongodb";
-import { makeChart } from "../ui/Chart.tsx";
+import { Chart } from "../ui/Chart.tsx";
 import { Table } from "../ui/Table.tsx";
 import { Expander } from "../ui/section/Expander.tsx";
 import { makeDashboard } from "../ui/Dashboard.tsx";
@@ -47,7 +47,7 @@ async function landingRoute({
   });
   const svgLine = (
     <Expander title="Chart" pivot={pivot} isOpen={true}>
-      {makeChart({ points: all, scale: chartScale })}
+      <Chart points={all} scale={chartScale} />
     </Expander>
   );
 

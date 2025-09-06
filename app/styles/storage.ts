@@ -5,6 +5,7 @@ import {
 } from "./decls.ts";
 import { makeSelector } from "./selector.ts";
 import { createHash } from "crypto";
+import { camelCaseToKebabCase, reduceStyleObject } from "local-css/helpers";
 
 const REGISTERED_STYLES = new Map<string, EitherStyleFn<any>>();
 const REGISTERED_KEYFRAMES = new Map<string, StyleObject>();
@@ -44,18 +45,6 @@ const getRegisteredStyles = () => {
   return [...styles, ...keyframes];
 };
 
-const reduceStyleObject = (styles: StyleObject): string => {
-  let result = "";
-  for (const [key, value] of Object.entries(styles)) {
-    if (!(typeof value === "object")) {
-      result += `${camelCaseToKebabCase(key)} : ${value};\n`;
-    } else if (value !== null) {
-      result += `${key} { ${reduceStyleObject(value)} }\n`;
-    }
-  }
-  return result;
-};
-
 const maybeRegisterStyle = (style: EitherStyleFn<any>) => {
   const styleHash = `${hash(style(VOID_SELECTOR, {}))}`;
   const className = `st-${styleHash}`;
@@ -83,13 +72,6 @@ const maybeRegisterStyleWithProps = <Props extends {}>(
   const className = maybeRegisterStyle(style);
   REGISTERED_STYLE_PROPS.set(className, props);
   return className;
-};
-
-const camelCaseToKebabCase = (str: string) => {
-  return str
-    .replace(/([a-z])([A-Z])/g, "$1-$2")
-    .replace(/[\s_]+/g, "-")
-    .toLowerCase();
 };
 
 const hash = (string: StyleObject) =>

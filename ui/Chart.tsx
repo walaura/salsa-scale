@@ -8,7 +8,7 @@ const MSECS_IN_DAY = 24 * 60 * 60 * 1000;
 const HEIGHT = 200;
 const PADDING = 25;
 
-const makeChart = ({
+const Chart = ({
   points,
   scale = 1,
 }: {
@@ -44,59 +44,53 @@ const makeChart = ({
     return 1 - Math.max(0, Math.min(1, scaled));
   };
 
-  return /* HTML */ `<svg
-    class=${className}
-    height="${PADDING + HEIGHT + PADDING}"
-  >
-    <svg
-      height="100%"
-      width="100%"
-      preserveAspectRatio="none"
-      viewBox="0 0 1000 ${PADDING + HEIGHT + PADDING}"
-    >
-      <polyline
-        class="${className}-line"
-        vector-effect="non-scaling-stroke"
-        points="${svgPoints
-          .map((point) => {
-            const x = Math.floor(point.timeOffset * 1000);
-            const y = PADDING + projectPoint(point.weight) * HEIGHT;
-            return `${x} ${y}`;
-          })
-          .join(", ")}"
-        style="fill:none;stroke-width:4;stroke-linecap:round;stroke:var(--pink-200)"
-      />
-    </svg>
-    <svg>
-      <text fill="var(--neutral-600)" x="${PADDING}" y="${PADDING + 4}">
-        ${formatGrams(maxWeight)}
-      </text>
-      <text
-        fill="var(--neutral-600)"
-        x="${PADDING}"
-        y="${HEIGHT + PADDING + 4}"
+  return (
+    <svg class={className} height={PADDING + HEIGHT + PADDING}>
+      <svg
+        height="100%"
+        width="100%"
+        preserveAspectRatio="none"
+        viewBox={`0 0 1000 ${PADDING + HEIGHT + PADDING}`}
       >
-        ${formatGrams(minWeight)}
-      </text>
-      ${svgPoints
-        .filter((point) => point.feedingEventOfSize != null)
-        .map((point) => {
-          const x = point.timeOffset * 100;
-          const y = PADDING + projectPoint(point.weight) * HEIGHT;
-          return /* HTML */ `
-            <circle class="${className}-dot" cx="${x}%" cy="${y}" r="6" />
-          `;
-        })
-        .join("")}
-      ${svgPoints
-        .map((point) => {
-          const x = point.timeOffset * 100;
-          const y = PADDING + projectPoint(point.weight) * HEIGHT;
-          return makeHoverable({ point, x, y });
-        })
-        .join("")}
+        <polyline
+          class={className("line")}
+          vector-effect="non-scaling-stroke"
+          points={svgPoints
+            .map((point) => {
+              const x = Math.floor(point.timeOffset * 1000);
+              const y = PADDING + projectPoint(point.weight) * HEIGHT;
+              return `${x} ${y}`;
+            })
+            .join(", ")}
+        />
+      </svg>
+      <svg>
+        <text fill="var(--neutral-600)" x={PADDING} y={PADDING + 4}>
+          {formatGrams(maxWeight)}
+        </text>
+        <text fill="var(--neutral-600)" x={PADDING} y={HEIGHT + PADDING + 4}>
+          {formatGrams(minWeight)}
+        </text>
+        {svgPoints
+          .filter((point) => point.feedingEventOfSize != null)
+          .map((point) => {
+            const x = point.timeOffset * 100;
+            const y = PADDING + projectPoint(point.weight) * HEIGHT;
+            return (
+              <circle class={className("dot")} cx={`${x}%`} cy={`${y}`} r="6" />
+            );
+          })
+          .join("")}
+        {svgPoints
+          .map((point) => {
+            const x = point.timeOffset * 100;
+            const y = PADDING + projectPoint(point.weight) * HEIGHT;
+            return makeHoverable({ point, x, y });
+          })
+          .join("")}
+      </svg>
     </svg>
-  </svg>`;
+  );
 };
 
 const dashAnimation = withKeyframes({
@@ -122,6 +116,10 @@ const [className] = withStyles((select) => ({
     strokeDasharray: 2000,
     strokeDashoffset: 2000,
     animation: `${dashAnimation} 1.5s linear forwards`,
+    fill: "none",
+    strokeWidth: 4,
+    strokeLinecap: "round",
+    stroke: "var(--pink-200)",
   },
   [select("dot")]: {
     fill: "var(--pink-500)",
@@ -136,32 +134,32 @@ const makeHoverable = ({
   point: WithId<LogEntry>;
   x: number;
   y: number;
-}) => /* HTML */ `
-  <g class="${hoverableClassName}">
-    <a href="#${point._id.toString()}">
-      <circle cx="${x}%" cy="${y}" r="12" />
+}) => (
+  <g class={hoverableClassName}>
+    <a href={`#${point._id.toString()}`}>
+      <circle cx={`${x}%`} cy={`${y}`} r="12" />
       <g transform="translate(-20 0)">
-        <g class="${hoverableClassName("label")}">
-          <svg x="${x}%" y="${y - 24}">
+        <g class={`${hoverableClassName("label")}`}>
+          <svg x={`${x}%`} y={`${y - 24}`}>
             <rect width="48" height="32" fill="var(--pink-600)" rx="4" ry="4" />
-            <text fill="#fff" x="24" y="14" text-anchor="middle">
-              ${formatGrams(point.weight)}
+            <text fill="var(--neutral-0)" x="24" y="14" text-anchor="middle">
+              {formatGrams(point.weight)}
             </text>
             <text
-              class="${hoverableClassName("date")}"
+              class={hoverableClassName("date")}
               fill="var(--pink-100)"
               x="24"
               y="25"
               text-anchor="middle"
             >
-              ${formatTime(point.timestamp)}
+              {formatTime(point.timestamp)}
             </text>
           </svg>
         </g>
       </g>
     </a>
   </g>
-`;
+);
 
 const [hoverableClassName] = withStyles((select) => ({
   circle: {
@@ -185,4 +183,4 @@ const [hoverableClassName] = withStyles((select) => ({
   },
 }));
 
-export { makeChart };
+export { Chart };
