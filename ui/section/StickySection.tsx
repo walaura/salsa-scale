@@ -1,7 +1,9 @@
 import { withStyles, withKeyframes } from "../../app/styles.ts";
 
-const makeStickySection = ({ children }: { children: string }) => (
-  <div class={className}>{children}</div>
+const StickySection = ({ children }: { children: string }) => (
+  <div class={className} data-test="dffgdfg">
+    {children}
+  </div>
 );
 
 const stickFirstAnimation = withKeyframes({
@@ -23,4 +25,4 @@ const [className] = withStyles(() => ({
   willChange: "transform",
 }));
 
-export { makeStickySection };
+export { StickySection };

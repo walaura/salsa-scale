@@ -1,19 +1,32 @@
-export const jsxs = (name, props) => {
+import type { JSX } from "react";
+
+export const jsxs = <
+  T extends {
+    children?: string;
+  }
+>(
+  name: string | ((props: T) => void),
+  props: T
+) => {
+  if (typeof name === "function") {
+    return name(props);
+  }
   const { children = "" } = props;
   delete props.children;
+
   return /* HTML */ `<${name} ${Object.entries(props)
     .map(([key, value]) => `${key}="${value}"`)
     .join(" ")}>${children}</${name}>`;
 };
 
-export const jsx = (...props) => {
+export const jsx = <T extends {}>(...props: Parameters<typeof jsxs<T>>) => {
   return jsxs(...props);
 };
 
-namespace JSX {
-  // Allow any HTML tag
-  export type IntrinsicElements = Record<string, any>;
+declare module "react" {
+  interface HTMLAttributes<T> {
+    class?: string;
+  }
 }
 
-// Export the main namespace
 export { JSX };

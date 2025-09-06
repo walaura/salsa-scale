@@ -4,7 +4,7 @@ import { makeTable } from "../ui/Table.ts";
 import { makeExpander } from "../ui/section/Expander.ts";
 import { makeDashboard } from "../ui/Dashboard.ts";
 import { type LogEntry } from "../app/setup/db.ts";
-import { makeStickySection } from "../ui/section/StickySection.tsx";
+import { StickySection } from "../ui/section/StickySection.tsx";
 import { getAllData } from "../app/getData.ts";
 
 async function landingRoute({
@@ -55,9 +55,7 @@ async function landingRoute({
   const dashboard = makeDashboard({ feedingEvents });
 
   return [
-    makeStickySection({
-      children: svgLine,
-    }),
+    <StickySection>{svgLine}</StickySection>,
     dashboard
       ? makeExpander({
           title: "Dashboard",

@@ -1,5 +1,5 @@
 import { TOP_SECRET_PATH } from "./app/setup/env.ts";
-import { landingRoute } from "./routes/landing.ts";
+import { landingRoute } from "./routes/landing.tsx";
 import { trackRoute } from "./routes/track.ts";
 import {
   withLog,

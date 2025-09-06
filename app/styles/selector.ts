@@ -1,4 +1,4 @@
-export type Selector = {
+export type Selector = string & {
   (child: string): string;
   toString(): string;
 };
@@ -12,7 +12,7 @@ const makeSelector = (
   fn.toString = () => className;
   fn.keyframes = (child: string) => `kf-${rawClassName}-${child}`;
 
-  return fn;
+  return fn as any as Selector;
 };
 
 export { makeSelector };
