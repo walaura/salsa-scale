@@ -81,10 +81,10 @@ async function backtestFeedingEventRoute() {
           {newPositivesCount} new positives / {newNegativesCount} new negatives.
         </>
       </Expander>
-      <Expander title="Mismatches" isOpen={true}>
+      <Expander title="Mismatches" isOpen={true} name="root">
         <Table columns={COLUMNS} data={mismatchResults} />
       </Expander>
-      <Expander title="All results" isOpen={false}>
+      <Expander title="All results" isOpen={false} name="root">
         <Table columns={COLUMNS} data={allResults} />
       </Expander>
     </>
