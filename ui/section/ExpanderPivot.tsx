@@ -1,6 +1,6 @@
 import { px, rem, withStyles } from "../../app/styles.ts";
 
-type PivotFilter = {
+export type PivotFilter = {
   label: string;
   isActive: boolean;
   link: URL;

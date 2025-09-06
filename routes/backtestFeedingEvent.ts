@@ -64,4 +64,4 @@ async function backtestFeedingEventRoute() {
   );
 }
 
-export default backtestFeedingEventRoute;
+export { backtestFeedingEventRoute };

@@ -11,8 +11,8 @@ import {
   markFeedingEvent,
   unmarkFeedingEvent,
 } from "./routes/sudo.ts";
-import { recordsRoute } from "./routes/records.ts";
-import backtestFeedingEventRoute from "./routes/backtestFeedingEvent.ts";
+import { recordsRoute } from "./routes/records.tsx";
+import { backtestFeedingEventRoute } from "./routes/backtestFeedingEvent.ts";
 
 const landing: RouteFromExpress<"get"> = {
   method: "get",

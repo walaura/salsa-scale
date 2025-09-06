@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import { makePage } from "../../ui/shell/Page.ts";
+import { makePage } from "../../ui/shell/Page.tsx";
 
 export type RouteHandler<ExpectedResponse> = (
   req: Request

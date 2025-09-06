@@ -35,7 +35,7 @@ const popoverOpenAnimation = withKeyframes({
 });
 
 const [className, styleProps] = withStyles(
-  (select, { anchor, area }) => ({
+  (_, { anchor, area }) => ({
     positionAnchor: anchor,
     positionArea: area,
     transformOrigin: area,

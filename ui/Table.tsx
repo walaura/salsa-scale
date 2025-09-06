@@ -2,29 +2,32 @@ import { ROUTES } from "../router.ts";
 import { formatGrams, formatTimeHtml } from "../app/format.ts";
 import type { LogEntry } from "../app/setup/db.ts";
 import type { WithId } from "mongodb";
-import { makeTableActionsRow } from "./Table/TableActions.ts";
+import { TableActionsRow } from "./Table/TableActions.tsx";
 import { withStyles } from "../app/styles.ts";
 
-const makeWeightRow = ({ point }: { point: LogEntry }) => {
+const WeightRow = ({ point }: { point: LogEntry }) => {
   if (point.feedingEventOfSize == null) {
     return formatGrams(point.weight);
   }
 
-  return /* HTML */ `<div class="${className("rowWithIcon")}">
-    <img src="/static/cake.gif" alt="Cake" />
-    <div>
-      ${formatGrams(point.weight)}<br />
-      <strong>
-        Feeding event at ${formatTimeHtml(point.timestamp)} –
-        ${formatGrams(point.feedingEventOfSize)}
-      </strong>
+  return (
+    <div class={className("rowWithIcon")}>
+      <img src="/static/cake.gif" alt="Cake" />
+      <div>
+        {formatGrams(point.weight)}
+        <br />
+        <strong>
+          Feeding event at {formatTimeHtml(point.timestamp)} –{" "}
+          {formatGrams(point.feedingEventOfSize)}
+        </strong>
+      </div>
     </div>
-  </div>`;
+  );
 };
 
-const makeActionsRow = ({ point }: { point: WithId<LogEntry> }) =>
-  makeTableActionsRow({
-    actions: [
+const ActionsRow = ({ point }: { point: WithId<LogEntry> }) => (
+  <TableActionsRow
+    actions={[
       {
         title: "Delete record",
         icon: "bomb",
@@ -42,43 +45,43 @@ const makeActionsRow = ({ point }: { point: WithId<LogEntry> }) =>
         icon: "fe-rm",
         href: ROUTES.unMarkEvent.path.replace(":id", point._id.toString()),
       },
-    ],
-  });
+    ]}
+  />
+);
 
-const makeTable = ({
+const Table = ({
   points,
   showActions = false,
 }: {
   points: WithId<LogEntry>[];
   showActions?: boolean;
-}) => /* HTML */ ` <table class="${className}">
-  <thead>
-    <tr>
-      <th>Weight</th>
-      <th>Time</th>
-      ${showActions ? "<th>Actions</th>" : ""}
-    </tr>
-  </thead>
-  <tbody>
-    ${points
-      .map((point) => {
-        return /* HTML */ ` <tr id=${point._id.toString()}>
-          ${[
-            makeWeightRow({ point }),
-            formatTimeHtml(point.timestamp),
-            showActions ? makeActionsRow({ point }) : undefined,
-          ]
-            .filter((v) => v != null)
-            .map((children) => makeTd({ children }))
-            .join("")}
-        </tr>`;
-      })
-      .join("")}
-  </tbody>
-</table>`;
-
-const makeTd = ({ children }: { children: string }) =>
-  /* HTML */ `<td>${children}</td>`;
+}) => (
+  <table class={className}>
+    <thead>
+      <tr>
+        <th>Weight</th>
+        <th>Time</th>
+        {showActions ? <th>Actions</th> : null}
+      </tr>
+    </thead>
+    <tbody>
+      {points.map((point) => {
+        return (
+          <tr id={point._id.toString()}>
+            {[
+              <WeightRow point={point} />,
+              formatTimeHtml(point.timestamp),
+              showActions ? <ActionsRow point={point} /> : null,
+            ]
+              .filter((v) => v != null)
+              .map((children) => <td>{children} </td>)
+              .join("")}
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+);
 
 const [className] = withStyles((select) => ({
   contain: "strict",
@@ -126,4 +129,4 @@ const [className] = withStyles((select) => ({
   },
 }));
 
-export { makeTable };
+export { Table };

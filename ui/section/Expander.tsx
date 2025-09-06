@@ -1,7 +1,6 @@
+import { JSX } from "local-tsx/jsx-runtime";
 import { px, rem, withStyles } from "../../app/styles.ts";
-import { ExpanderPivot } from "./ExpanderPivot.tsx";
-
-type PivotFilter = { label: string; isActive: boolean; link: URL };
+import { ExpanderPivot, PivotFilter } from "./ExpanderPivot.tsx";
 
 const Expander = ({
   title,
@@ -11,7 +10,7 @@ const Expander = ({
   pivot,
 }: {
   title: string;
-  children: string;
+  children: JSX.Element | string;
   isOpen: boolean;
   name?: string;
   pivot?: Array<PivotFilter>;

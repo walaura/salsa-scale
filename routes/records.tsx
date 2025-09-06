@@ -1,5 +1,5 @@
 import type { WithId } from "mongodb";
-import { makeTable } from "../ui/Table.ts";
+import { Table } from "../ui/Table.tsx";
 import { Expander } from "../ui/section/Expander.tsx";
 import { type LogEntry } from "../app/setup/db.ts";
 import { getAllData } from "../app/getData.ts";
@@ -23,13 +23,11 @@ async function recordsRoute({ showActions }: { showActions: boolean }) {
   }
 
   return Object.entries(days)
-    .map(([date, points], idx) =>
-      Expander({
-        title: date,
-        children: makeTable({ points, showActions }),
-        isOpen: idx === 0,
-      })
-    )
+    .map(([date, points], idx) => (
+      <Expander title={date} isOpen={idx === 0}>
+        <Table points={points} showActions={showActions} />
+      </Expander>
+    ))
     .join("");
 }
 

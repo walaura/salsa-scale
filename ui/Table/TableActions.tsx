@@ -1,5 +1,5 @@
-import { makePopoverAndTrigger } from "../Popover.ts";
-import { makeButton } from "../Button.ts";
+import { makePopoverAndTrigger } from "../Popover.tsx";
+import { makeButton } from "../Button.tsx";
 import { randomBytes } from "node:crypto";
 import { withStyles } from "../../app/styles.ts";
 
@@ -9,14 +9,14 @@ const generateId = (length = 24) => {
 
 type Action = { title: string; icon: string; href: string };
 
-const makeTableActionsRow = ({ actions }: { actions: Array<Action> }) => {
-  return /* HTML */ `<div class="${className}">
-    ${actions
-      .map((action) => {
+const TableActionsRow = ({ actions }: { actions: Array<Action> }) => {
+  return (
+    <div class={className}>
+      {actions.map((action) => {
         const popoverId = `${generateId()}-${action.icon}`;
-        return /* HTML */ `
-          <div class="${className("action")}">
-            ${makePopoverAndTrigger({
+        return (
+          <div class={className("action")}>
+            {makePopoverAndTrigger({
               id: popoverId,
               trigger: {
                 children: /* HTML */ `<img
@@ -33,12 +33,12 @@ const makeTableActionsRow = ({ actions }: { actions: Array<Action> }) => {
                     target: "_blank",
                   })}`,
               },
-            }).join("")}
+            })}
           </div>
-        `;
-      })
-      .join("")}
-  </div>`;
+        );
+      })}
+    </div>
+  );
 };
 
 const [className] = withStyles((select) => ({
@@ -75,4 +75,4 @@ const [className] = withStyles((select) => ({
   },
 }));
 
-export { makeTableActionsRow };
+export { TableActionsRow };
