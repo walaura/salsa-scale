@@ -1,30 +1,31 @@
-const THRESHOLD = 2.01;
+const THRESHOLD = 1.99;
+const DISTANCE_THRESHOLD = 2;
 
 export const isFeedingEvent = (
   current: number,
   lastHour: number[]
 ): [isFeedingEvent: boolean, delta: number] => {
-  const [prev, prevToLast] = lastHour;
-  const maxPreviousWeight = Math.max(prev, prevToLast);
+  const [prev] = lastHour;
 
-  // Not a feeding event if the weight is increasing
-  if (current >= maxPreviousWeight) {
+  if (current >= prev) {
     return [false, 0];
   }
 
-  const delta = Math.abs(
-    Math.min(current, maxPreviousWeight) - Math.max(current, maxPreviousWeight)
-  );
+  const diff = lastHour
+    .map((v, index) => (index === 0 ? 0 : lastHour[index - 1] - v))
+    .slice(1);
+  const diffAvg = diff.reduce((a, b) => a + b, 0) / diff.length;
 
-  const averageInChangeThruLastHour = Math.max(
-    (lastHour.reduce((a, b) => a + b, 0) / lastHour.length - lastHour[0]) * 0.5,
-    0
-  );
+  if (
+    Math.max(...diff.map(Math.abs)) - Math.abs(diffAvg) >
+    DISTANCE_THRESHOLD
+  ) {
+    console.log(`Too noisy: ${current} (${diff.join(", ")})`);
+    return [false, 0];
+  }
 
-  const adjustedThreshold = THRESHOLD + averageInChangeThruLastHour;
+  const delta = Math.abs(current - prev - diffAvg);
 
-  return [
-    maxPreviousWeight - current > adjustedThreshold,
-    delta - averageInChangeThruLastHour,
-  ];
+  const isFeedingEvent = delta > THRESHOLD;
+  return [isFeedingEvent, delta];
 };

@@ -3,10 +3,13 @@ import { getAllData } from "../app/getData.ts";
 
 async function backtestFeedingEventRoute() {
   const all = await getAllData({
-    daysToFetch: 2,
+    daysToFetch: 1,
   });
 
   let results = [];
+
+  let newPositivesCount = 0;
+  let newNegativesCount = 0;
 
   for (const point of all) {
     const sixNextPoints = all
@@ -20,6 +23,12 @@ async function backtestFeedingEventRoute() {
       sixNextPoints
     );
     const wasFeedingEvent = point.feedingEventOfSize != null;
+    if (shouldBeFeedingEvent && !wasFeedingEvent) {
+      newPositivesCount++;
+    }
+    if (!shouldBeFeedingEvent && wasFeedingEvent) {
+      newNegativesCount++;
+    }
 
     if (shouldBeFeedingEvent != wasFeedingEvent) {
       returnable += `<a href="#${point._id}" id=${point._id} style='color: red'>MISMATCH</a><br/> `;
@@ -35,7 +44,12 @@ async function backtestFeedingEventRoute() {
     results.push(returnable);
   }
 
-  return results.join("<hr/>");
+  const header = /* HTML */ `<p>
+      ${newPositivesCount} new positives / ${newNegativesCount} new negatives.
+    </p>
+    <hr />`;
+
+  return header + results.join("<hr/>");
 }
 
 export default backtestFeedingEventRoute;
