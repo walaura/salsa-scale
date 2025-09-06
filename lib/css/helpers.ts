@@ -17,4 +17,6 @@ const reduceStyleObject = (styles: { [key: string]: any }): string => {
   return result;
 };
 
+export { getRegisteredStyles } from "./lib/storage.ts";
+
 export { camelCaseToKebabCase, reduceStyleObject };

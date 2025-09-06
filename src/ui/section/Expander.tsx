@@ -1,5 +1,5 @@
 import { JSX } from "local-tsx/jsx-runtime";
-import { px, rem, withStyles } from "../../app/styles.ts";
+import { px, rem, withStyles } from "local-css/css";
 import { ExpanderPivot, PivotFilter } from "./ExpanderPivot.tsx";
 
 const Expander = ({
@@ -27,7 +27,7 @@ const Expander = ({
   </details>
 );
 
-const [className] = withStyles((select) => ({
+const className = withStyles((select) => ({
   "--radius": "1rem",
   borderRadius: "var(--radius)",
   boxShadow: "0 1px 6px 1px rgba(0, 0, 0, 0.25)",

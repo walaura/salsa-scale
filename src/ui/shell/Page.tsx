@@ -1,7 +1,7 @@
 import { type IRoute } from "express";
-import { withStyles } from "../../app/styles.ts";
+import { withStyles } from "local-css/css";
 import { Nav } from "./Nav.tsx";
-import { getRegisteredStyles } from "../../app/styles/storage.ts";
+import { getRegisteredStyles } from "local-css/helpers";
 
 const Page = ({
   children,
@@ -39,7 +39,7 @@ const Page = ({
   return "<!DOCTYPE html>" + page;
 };
 
-const [className] = withStyles(() => ({
+const className = withStyles(() => ({
   "& > *": {
     maxWidth: "var(--max-width)",
     margin: "auto",

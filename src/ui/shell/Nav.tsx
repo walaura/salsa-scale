@@ -1,5 +1,5 @@
 import { type IRoute } from "express";
-import { withStyles } from "../../app/styles.ts";
+import { withStyles } from "local-css/css";
 import { ROUTES } from "../../router.ts";
 
 export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
@@ -31,7 +31,7 @@ export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
   );
 };
 
-const [className] = withStyles((select) => ({
+const className = withStyles((select) => ({
   position: "fixed",
   boxShadow:
     "var(--shadow-large), inset 0 -1px 0 0 color-mix(in oklab, var(--pink-50), black 5%), inset 0 1px 0 0 color-mix(in oklab, var(--pink-50), white 15%), inset 0 0 0 1px color-mix(in oklab, var(--pink-50), white 5%)",

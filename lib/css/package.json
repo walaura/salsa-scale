@@ -2,6 +2,7 @@
   "main": "index.ts",
   "type": "module",
   "exports": {
-    "./helpers": "./index.ts"
+    "./helpers": "./helpers.ts",
+    "./css": "./css.ts"
   }
 }

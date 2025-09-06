@@ -1,7 +1,7 @@
 import type { WithId } from "mongodb";
 import type { LogEntry } from "../app/setup/db.ts";
 import { formatGrams, formatTime } from "../app/format.ts";
-import { withKeyframes, withStyles } from "../app/styles.ts";
+import { withKeyframes, withStyles } from "local-css/css";
 
 const MSECS_IN_DAY = 24 * 60 * 60 * 1000;
 
@@ -99,7 +99,7 @@ const dashAnimation = withKeyframes({
   },
 });
 
-const [className] = withStyles((select) => ({
+const className = withStyles((select) => ({
   display: "block",
   contain: "strict",
   width: "100%",
@@ -161,7 +161,7 @@ const makeHoverable = ({
   </g>
 );
 
-const [hoverableClassName] = withStyles((select) => ({
+const hoverableClassName = withStyles((select) => ({
   circle: {
     display: "none",
   },

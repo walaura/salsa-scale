@@ -1,5 +1,5 @@
 import { JSX } from "local-tsx/jsx-runtime";
-import { withStyles, withKeyframes } from "../../app/styles.ts";
+import { withStyles, withKeyframes } from "local-css/css";
 
 const StickySection = ({ children }: { children: JSX.Element }) => (
   <div class={className} data-test="dffgdfg">
@@ -15,7 +15,7 @@ const stickFirstAnimation = withKeyframes({
   },
 });
 
-const [className] = withStyles(() => ({
+const className = withStyles(() => ({
   position: "sticky",
   top: "calc(var(--margin-page))",
   animation: `ease ${stickFirstAnimation} both`,

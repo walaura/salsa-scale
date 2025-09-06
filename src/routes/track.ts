@@ -17,6 +17,7 @@ const detectFeedingEventOfSize = async ({
     console.log(`Missing events`);
     return null;
   }
+
   const [isFeedingEvent, delta] = isFeedingEventFn(
     weight,
     lastHour.map((e) => e.weight)
@@ -48,7 +49,6 @@ const detectFeedingEventOfSize = async ({
       }
     );
   }
-
   console.log(`Marking as feeding event of size ${delta}`);
 
   return delta;

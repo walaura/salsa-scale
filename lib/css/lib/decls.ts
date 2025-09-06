@@ -11,10 +11,7 @@ export type StyleObject = Merge<
   },
   CSS.Properties<string | number>
 >;
-export type StyleFnWithProps<Props = { [key: string]: string }> = (
-  root: Selector,
-  props: Props
-) => StyleObject;
-export type EitherStyleFn<Props> = StyleFn | StyleFnWithProps<Props>;
+
+export type DynamicStyleFn<Props> = (props: Props) => StyleFn;
 
 export type StyleFn = (root: Selector) => StyleObject;

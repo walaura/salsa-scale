@@ -1,7 +1,7 @@
 import type { WithId } from "mongodb";
 import type { LogEntry } from "../app/setup/db.ts";
 import { formatGrams, formatTime, formatTimeHtml } from "../app/format.ts";
-import { withStyles } from "../app/styles.ts";
+import { withStyles } from "local-css/css";
 
 const DashboardWidget = ({
   title,
@@ -25,7 +25,7 @@ const DashboardWidget = ({
   </div>
 );
 
-const [widgetClassName] = withStyles((select) => ({
+const widgetClassName = withStyles((select) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -104,7 +104,7 @@ const Dashboard = ({
     </div>
   );
 };
-const [className] = withStyles(() => ({
+const className = withStyles(() => ({
   display: "grid",
   background: "var(--neutral-0-A80)",
   gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",

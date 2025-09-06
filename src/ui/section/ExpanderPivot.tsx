@@ -1,4 +1,4 @@
-import { px, rem, withStyles } from "../../app/styles.ts";
+import { px, rem, withStyles } from "local-css/css";
 
 export type PivotFilter = {
   label: string;
@@ -20,7 +20,7 @@ const ExpanderPivot = ({ filters }: { filters: Array<PivotFilter> }) => (
   </div>
 );
 
-const [className] = withStyles((select) => ({
+const className = withStyles((select) => ({
   display: "flex",
   fontSize: "var(--font-secondary)",
   gap: rem(-0.5),

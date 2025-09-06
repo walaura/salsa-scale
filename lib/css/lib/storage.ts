@@ -1,36 +1,19 @@
-import {
-  type EitherStyleFn,
-  type StyleFnWithProps,
-  type StyleObject,
-} from "./decls.ts";
+import { StyleFn, type StyleObject } from "./decls.ts";
 import { makeSelector } from "./selector.ts";
 import { createHash } from "crypto";
 import { reduceStyleObject } from "local-css/helpers";
 
-const REGISTERED_STYLES = new Map<string, EitherStyleFn<any>>();
+const REGISTERED_STYLES = new Map<string, StyleFn>();
 const REGISTERED_KEYFRAMES = new Map<string, StyleObject>();
-const REGISTERED_STYLE_PROPS = new Map<string, { [key: string]: string }>();
 
 const VOID_SELECTOR = makeSelector("");
 
 const getRegisteredStyles = () => {
   const styles = Array.from(REGISTERED_STYLES.entries()).map(
     ([className, styles]) => {
-      let props: { [key: string]: string } = {};
-      let defaultProps: { [key: string]: string } = {};
-
-      Object.entries(REGISTERED_STYLE_PROPS.get(className) || []).forEach(
-        ([key, value]) => {
-          props[key] = `var(--${key})`;
-          defaultProps[`--${key}`] = value;
-        }
-      );
-
       const selector = makeSelector(className, ".");
-      const renderedStyleFn = styles(selector, props);
-
       return reduceStyleObject({
-        [selector.toString()]: { ...defaultProps, ...renderedStyleFn },
+        [selector.toString()]: styles(selector),
       });
     }
   );
@@ -45,8 +28,8 @@ const getRegisteredStyles = () => {
   return [...styles, ...keyframes];
 };
 
-const maybeRegisterStyle = (style: EitherStyleFn<any>) => {
-  const styleHash = `${hash(style(VOID_SELECTOR, {}))}`;
+const maybeRegisterStyle = (style: StyleFn) => {
+  const styleHash = `${hash(style(VOID_SELECTOR))}`;
   const className = `st-${styleHash}`;
 
   if (!REGISTERED_STYLES.has(className)) {
@@ -65,21 +48,7 @@ const maybeRegisterKeyframes = (style: StyleObject) => {
   return className;
 };
 
-const maybeRegisterStyleWithProps = <Props extends {}>(
-  style: StyleFnWithProps<Props>,
-  props: Props
-) => {
-  const className = maybeRegisterStyle(style);
-  REGISTERED_STYLE_PROPS.set(className, props);
-  return className;
-};
-
 const hash = (string: StyleObject) =>
   createHash("sha256").update(JSON.stringify(string), "utf8").digest("hex");
 
-export {
-  getRegisteredStyles,
-  maybeRegisterStyle,
-  maybeRegisterStyleWithProps,
-  maybeRegisterKeyframes,
-};
+export { getRegisteredStyles, maybeRegisterStyle, maybeRegisterKeyframes };

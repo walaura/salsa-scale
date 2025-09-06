@@ -3,7 +3,7 @@ import { formatGrams, formatTimeHtml } from "../../app/format.ts";
 import type { LogEntry } from "../../app/setup/db.ts";
 import type { WithId } from "mongodb";
 import { TableActionsRow } from "./TableActions.tsx";
-import { rem, withStyles } from "../../app/styles.ts";
+import { rem, withStyles } from "local-css/css";
 
 const WeightRow = ({ point }: { point: LogEntry }) => {
   if (point.feedingEventOfSize == null) {
@@ -83,7 +83,7 @@ const Table = ({
   </table>
 );
 
-const [className] = withStyles((select) => ({
+const className = withStyles((select) => ({
   contain: "strict",
   overflow: "hidden",
   borderCollapse: "collapse",

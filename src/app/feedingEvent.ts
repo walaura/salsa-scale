@@ -16,11 +16,11 @@ export const isFeedingEvent = (
     .slice(1);
   const diffAvg = diff.reduce((a, b) => a + b, 0) / diff.length;
 
+  /* Filter noise (refill, temp change) */
   if (
     Math.max(...diff.map(Math.abs)) - Math.abs(diffAvg) >
     DISTANCE_THRESHOLD
   ) {
-    console.log(`Too noisy: ${current} (${diff.join(", ")})`);
     return [false, 0];
   }
 

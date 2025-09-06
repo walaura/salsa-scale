@@ -1,7 +1,7 @@
 import { PopoverWithTrigger } from "../Popover.tsx";
 import { Button } from "../Button.tsx";
 import { randomBytes } from "node:crypto";
-import { withStyles } from "../../app/styles.ts";
+import { withStyles } from "local-css/css";
 
 const generateId = (length = 24) => {
   return Buffer.from(randomBytes(length)).toString("hex");
@@ -44,7 +44,7 @@ const TableActionsRow = ({ actions }: { actions: Array<Action> }) => {
   );
 };
 
-const [className] = withStyles((select) => ({
+const className = withStyles((select) => ({
   display: "flex",
   justifyContent: "end",
   gap: "1px",

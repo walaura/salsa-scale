@@ -1,4 +1,4 @@
-import { px, rem, withStyles } from "../app/styles.ts";
+import { px, rem, withStyles } from "local-css/css";
 
 const Button = ({
   label,
@@ -14,7 +14,7 @@ const Button = ({
   </a>
 );
 
-const [className] = withStyles(() => ({
+const className = withStyles(() => ({
   boxShadow: `inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black 10%), 
     inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%)`,
   background: `linear-gradient(
