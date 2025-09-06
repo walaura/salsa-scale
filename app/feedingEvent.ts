@@ -1,4 +1,4 @@
-const THRESHOLD = 4;
+const THRESHOLD = 2.01;
 
 export const isFeedingEvent = (
   current: number,
@@ -17,7 +17,7 @@ export const isFeedingEvent = (
   );
 
   const averageInChangeThruLastHour = Math.max(
-    (lastHour.reduce((a, b) => a + b, 0) / lastHour.length - lastHour[0]) * 0.6,
+    (lastHour.reduce((a, b) => a + b, 0) / lastHour.length - lastHour[0]) * 0.5,
     0
   );
 

@@ -12,6 +12,7 @@ import {
   unmarkFeedingEvent,
 } from "./routes/sudo.ts";
 import { recordsRoute } from "./routes/records.ts";
+import backtestFeedingEventRoute from "./routes/backtestFeedingEvent.ts";
 
 const landing: RouteFromExpress<"get"> = {
   method: "get",
@@ -81,6 +82,14 @@ const unMarkEvent: RouteFromExpress<"get"> = {
   }),
 };
 
+const backtestFeedingEvent: RouteFromExpress<"get"> = {
+  method: "get",
+  path: "/backtest-feeding-event",
+  handler: () => {
+    return backtestFeedingEventRoute();
+  },
+};
+
 export const ROUTES = {
   landing,
   track,
@@ -88,4 +97,5 @@ export const ROUTES = {
   records,
   markEvent,
   unMarkEvent,
+  backtestFeedingEvent,
 };

@@ -1,4 +1,4 @@
-import { Db, MongoClient } from "mongodb";
+import { Collection, Db, MongoClient } from "mongodb";
 import { MONGO_URL } from "./env.ts";
 
 export interface LogEntry {
@@ -8,6 +8,7 @@ export interface LogEntry {
 }
 
 export const getDbClient = () => new MongoClient(MONGO_URL);
+
 export const withDb = async <T>(fn: (db: Db) => Promise<T>) => {
   const client = getDbClient();
   try {
@@ -16,3 +17,11 @@ export const withDb = async <T>(fn: (db: Db) => Promise<T>) => {
     await client.close();
   }
 };
+
+export const withDbLogs = async <T>(
+  fn: (logs: Collection<LogEntry>) => Promise<T>
+) =>
+  withDb((db) => {
+    const logs = db.collection<LogEntry>("logs");
+    return fn(logs);
+  });

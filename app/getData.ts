@@ -14,7 +14,7 @@ export const getPreviousFeedingEvents = async ({
   return previousFeedingEvents;
 };
 
-const getAllData = async ({ daysToFetch }: { daysToFetch: number }) =>
+export const getAllData = async ({ daysToFetch }: { daysToFetch: number }) =>
   withDb(async (database) => {
     const logs = database.collection<LogEntry>("logs");
     const all = await logs
@@ -24,5 +24,3 @@ const getAllData = async ({ daysToFetch }: { daysToFetch: number }) =>
       .toArray();
     return all;
   });
-
-export { getAllData };
