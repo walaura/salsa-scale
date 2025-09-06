@@ -35,6 +35,8 @@ async function landingRoute({
   }
 
   const pivot = [
+    { label: "6h", value: 0.25 },
+    { label: "12h", value: 0.5 },
     { label: "24h", value: 1 },
     { label: "3d", value: 3 },
     { label: "7d", value: 7 },
