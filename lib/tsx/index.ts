@@ -1,5 +1,5 @@
 import { reduceStyleObject } from "local-css/helpers";
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 
 export const jsxs = <
   T extends {
@@ -48,5 +48,7 @@ export const Fragment = ({ children }: { children: string }) => {
   }
   return children;
 };
+
+export type JSXNode = ReactNode;
 
 export { JSX };

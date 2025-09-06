@@ -1,87 +1,46 @@
-import { ROUTES } from "../../router.ts";
-import { formatGrams, formatTimeHtml } from "../../app/format.ts";
-import type { LogEntry } from "../../app/setup/db.ts";
-import type { WithId } from "mongodb";
-import { TableActionsRow } from "./TableActions.tsx";
-import { rem, withStyles } from "local-css/css";
+import { withStyles } from "local-css/css";
+import { JSXNode } from "local-tsx/jsx-runtime";
 
-const WeightRow = ({ point }: { point: LogEntry }) => {
-  if (point.feedingEventOfSize == null) {
-    return formatGrams(point.weight);
-  }
-
-  return (
-    <div class={className("rowWithIcon")}>
-      <img src="/static/cake.gif" alt="Cake" />
-      <div class={className("rowWithIconInner")}>
-        {formatGrams(point.weight)}
-        <strong>
-          Feeding event at {formatTimeHtml(point.timestamp)} –{" "}
-          {formatGrams(point.feedingEventOfSize)}
-        </strong>
-      </div>
-    </div>
-  );
+type Columns<ColumnName extends string> = {
+  title: string;
+  key: ColumnName;
+  isHidden?: boolean;
 };
 
-const ActionsRow = ({ point }: { point: WithId<LogEntry> }) => (
-  <TableActionsRow
-    actions={[
-      {
-        title: "Delete record",
-        icon: "bomb",
-        href: ROUTES.delet.path.replace(":id", point._id.toString()),
-      },
-      {
-        title: "Mark as LV3 feeding event",
-        icon: "fe-add",
-        href: ROUTES.markEvent.path
-          .replace(":id", point._id.toString())
-          .replace(":size", "3"),
-      },
-      {
-        title: "Unset feeding event",
-        icon: "fe-rm",
-        href: ROUTES.unMarkEvent.path.replace(":id", point._id.toString()),
-      },
-    ]}
-  />
-);
+type TableData<ColumnName extends string> = {
+  [key in ColumnName]: () => JSXNode;
+} & {
+  key: string;
+};
 
-const Table = ({
-  points,
-  showActions = false,
+const Table = <ColumnName extends string>({
+  columns,
+  data,
 }: {
-  points: WithId<LogEntry>[];
-  showActions?: boolean;
-}) => (
-  <table class={className}>
-    <thead>
-      <tr>
-        <th>Weight</th>
-        <th>Time</th>
-        {showActions ? <th>Actions</th> : null}
-      </tr>
-    </thead>
-    <tbody>
-      {points.map((point) => {
-        return (
-          <tr id={point._id.toString()}>
-            {[
-              <WeightRow point={point} />,
-              formatTimeHtml(point.timestamp),
-              showActions ? <ActionsRow point={point} /> : null,
-            ]
-              .filter((v) => v != null)
-              .map((children) => (
-                <td>{children} </td>
-              ))}
+  columns: readonly Columns<ColumnName>[];
+  data: TableData<ColumnName>[];
+}) => {
+  return (
+    <table class={className}>
+      <thead>
+        <tr>
+          {columns.map((column) =>
+            column.isHidden ? null : <th>{column.title}</th>
+          )}
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row) => (
+          <tr key={row.key}>
+            {columns.map((column) =>
+              column.isHidden ? null : <td>{row[column.key]()}</td>
+            )}
           </tr>
-        );
-      })}
-    </tbody>
-  </table>
-);
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 const className = withStyles((select) => ({
   contain: "strict",
@@ -118,18 +77,6 @@ const className = withStyles((select) => ({
         fontWeight: "bold",
         color: "var(--neutral-1000)",
         fontSize: "var(--font-primary)",
-      },
-      [select("rowWithIcon")]: {
-        display: "flex",
-        alignItems: "flex-start",
-        flexDirection: "row",
-        gap: "1rem",
-        [select("rowWithIconInner")]: {
-          display: "flex",
-          alignItems: "flex-start",
-          flexDirection: "column",
-          gap: rem(1 / 8),
-        },
       },
     },
   },

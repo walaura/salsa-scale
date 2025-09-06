@@ -1,6 +1,6 @@
 import type { WithId } from "mongodb";
 import { Chart } from "../ui/Chart.tsx";
-import { Table } from "../ui/Table/Table.tsx";
+import { RecordsTable } from "./records/ui/RecordsTable.tsx";
 import { Expander } from "../ui/section/Expander.tsx";
 import { Dashboard } from "../ui/Dashboard.tsx";
 import { type LogEntry } from "../app/setup/db.ts";
@@ -58,7 +58,7 @@ async function landingRoute({
     </Expander>,
     ...Object.entries(days).map(([date, points], idx) => (
       <Expander title={date} isOpen={idx === 0}>
-        {Table({ points, showActions })}
+        <RecordsTable points={points} showActions={showActions} />
       </Expander>
     )),
   ].join("");
