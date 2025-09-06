@@ -1,24 +1,9 @@
 import { px, rem, withStyles } from "../../app/styles.ts";
+import { ExpanderPivot } from "./ExpanderPivot.tsx";
 
 type PivotFilter = { label: string; isActive: boolean; link: URL };
 
-const makePivot = (filters: Array<PivotFilter>) => /* HTML */ `<div
-  class="${className}-pivot"
->
-  ${filters
-    .map(({ label, isActive, link }) => {
-      return /* HTML */ `<a
-        data-is-active="${isActive}"
-        class="${className("pivot-link")}"
-        href="${link.toString()}"
-      >
-        ${label}
-      </a>`;
-    })
-    .join("")}
-</div>`;
-
-const makeExpander = ({
+const Expander = ({
   title,
   children,
   isOpen,
@@ -30,24 +15,18 @@ const makeExpander = ({
   isOpen: boolean;
   name?: string;
   pivot?: Array<PivotFilter>;
-}) => {
-  return /* HTML */ `
-    <details
-      class="${className}"
-      ${name ? `name="${name}"` : ""}
-      ${isOpen ? "open" : ""}
-    >
-      <summary>
-        <span class="${className("title")}">
-          <div class="${className("title-drop")}"></div>
-          ${title}
-        </span>
-        ${pivot ? makePivot(pivot) : ""}
-      </summary>
-      <div class="${className("content")}">${children}</div>
-    </details>
-  `;
-};
+}) => (
+  <details class={className} name={name} open={isOpen}>
+    <summary>
+      <span class={className("title")}>
+        <div class={className("title-drop")}></div>
+        {title}
+      </span>
+      {pivot ? <ExpanderPivot filters={pivot} /> : null}
+    </summary>
+    <div class={className("content")}>{children}</div>
+  </details>
+);
 
 const [className] = withStyles((select) => ({
   "--radius": "1rem",
@@ -123,4 +102,4 @@ const [className] = withStyles((select) => ({
   },
 }));
 
-export { makeExpander };
+export { Expander };

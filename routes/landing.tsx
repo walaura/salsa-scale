@@ -1,7 +1,7 @@
 import type { WithId } from "mongodb";
 import { makeChart } from "../ui/Chart.ts";
 import { makeTable } from "../ui/Table.ts";
-import { makeExpander } from "../ui/section/Expander.ts";
+import { Expander } from "../ui/section/Expander.tsx";
 import { makeDashboard } from "../ui/Dashboard.ts";
 import { type LogEntry } from "../app/setup/db.ts";
 import { StickySection } from "../ui/section/StickySection.tsx";
@@ -45,31 +45,26 @@ async function landingRoute({
     link.searchParams.set("scale", f.value.toString());
     return { ...f, isActive: f.value === chartScale, link };
   });
-  const svgLine = makeExpander({
-    title: "Chart",
-    pivot,
-    children: makeChart({ points: all, scale: chartScale }),
-    isOpen: true,
-  });
+  const svgLine = (
+    <Expander title="Chart" pivot={pivot} isOpen={true}>
+      {makeChart({ points: all, scale: chartScale })}
+    </Expander>
+  );
 
   const dashboard = makeDashboard({ feedingEvents });
 
   return [
     <StickySection>{svgLine}</StickySection>,
-    dashboard
-      ? makeExpander({
-          title: "Dashboard",
-          isOpen: true,
-          children: dashboard,
-        })
-      : null,
-    ...Object.entries(days).map(([date, points], idx) =>
-      makeExpander({
-        title: date,
-        children: makeTable({ points, showActions }),
-        isOpen: idx === 0,
-      })
-    ),
+    dashboard ? (
+      <Expander title="Dashboard" isOpen={true}>
+        {dashboard}
+      </Expander>
+    ) : null,
+    ...Object.entries(days).map(([date, points], idx) => (
+      <Expander title={date} isOpen={idx === 0}>
+        {makeTable({ points, showActions })}
+      </Expander>
+    )),
   ].join("");
 }
 

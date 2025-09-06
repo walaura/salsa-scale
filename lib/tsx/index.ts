@@ -11,11 +11,15 @@ export const jsxs = <
   if (typeof name === "function") {
     return name(props);
   }
-  const { children = "" } = props;
+  let { children = "" } = props;
   delete props.children;
 
+  if (Array.isArray(children)) {
+    children = children.join("");
+  }
+
   return /* HTML */ `<${name} ${Object.entries(props)
-    .map(([key, value]) => `${key}="${value}"`)
+    .map(([key, value]) => (Boolean(value) ? `${key}="${value}"` : ""))
     .join(" ")}>${children}</${name}>`;
 };
 

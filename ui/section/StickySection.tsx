@@ -1,6 +1,7 @@
+import { JSX } from "local-tsx/jsx-runtime";
 import { withStyles, withKeyframes } from "../../app/styles.ts";
 
-const StickySection = ({ children }: { children: string }) => (
+const StickySection = ({ children }: { children: JSX.Element }) => (
   <div class={className} data-test="dffgdfg">
     {children}
   </div>
