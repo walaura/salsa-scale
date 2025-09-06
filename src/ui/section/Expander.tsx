@@ -16,7 +16,7 @@ const Expander = ({
   pivot?: Array<PivotFilter>;
 }) => (
   <details class={className} name={name} open={isOpen}>
-    <summary>
+    <summary class={className("summary")}>
       <span class={className("title")}>
         <div class={className("title-drop")}></div>
         {title}
@@ -37,7 +37,7 @@ const className = withStyles((select) => ({
   "&:has(summary:active)": {
     transform: "scale(0.995)",
   },
-  summary: {
+  [select("summary")]: {
     padding: "calc(0.75rem + 2px) calc(1rem + 2px)",
     backgroundColor: "var(--pink-600)",
     boxShadow:

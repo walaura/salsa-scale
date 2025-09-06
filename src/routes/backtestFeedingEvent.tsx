@@ -1,3 +1,4 @@
+import { Icon } from "@/ui/Icon.tsx";
 import { isFeedingEvent } from "../app/feedingEvent.ts";
 import { getAllData } from "../app/getData.ts";
 import { Expander } from "../ui/section/Expander.tsx";
@@ -35,8 +36,19 @@ async function backtestFeedingEventRoute() {
 
     const cell = {
       key: point._id.toString(),
-      was: () => (wasFeedingEvent ? `✅ (${point.feedingEventOfSize})` : ` ❌`),
-      will: () => (shouldBeFeedingEvent ? `✅ (${shouldBeSize})` : ` ❌`),
+
+      was: () => (
+        <>
+          <Icon icon={wasFeedingEvent ? "yay" : "nay"} />
+          {wasFeedingEvent ? <span>({point.feedingEventOfSize})</span> : null}
+        </>
+      ),
+      will: () => (
+        <>
+          <Icon icon={shouldBeFeedingEvent ? "yay" : "nay"} />
+          {shouldBeFeedingEvent ? <span>({shouldBeSize})</span> : null}
+        </>
+      ),
       weight: () => point.weight.toString(),
       nextPoints: () => sixNextPoints.join(", "),
       debug: () => (
