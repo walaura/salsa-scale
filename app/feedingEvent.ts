@@ -1,4 +1,4 @@
-const THRESHOLD = 1.99;
+const THRESHOLD = 1.75;
 const DISTANCE_THRESHOLD = 2;
 
 export const isFeedingEvent = (

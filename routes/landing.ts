@@ -4,7 +4,7 @@ import { makeTable } from "../ui/Table.ts";
 import { makeExpander } from "../ui/section/Expander.ts";
 import { makeDashboard } from "../ui/Dashboard.ts";
 import { type LogEntry } from "../app/setup/db.ts";
-import { makeStickySection } from "../ui/section/StickySection.ts";
+import { makeStickySection } from "../ui/section/StickySection.tsx";
 import { getAllData } from "../app/getData.ts";
 
 async function landingRoute({

@@ -1,0 +1,12 @@
+{
+  "name": "tsx",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {},
+  "type": "module",
+  "exports": {
+    "./jsx-runtime": "./index.ts"
+  },
+  "author": ""
+}

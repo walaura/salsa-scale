@@ -6,7 +6,8 @@ async function backtestFeedingEventRoute() {
     daysToFetch: 1,
   });
 
-  let results = [];
+  let allResults = [];
+  let mismatchResults = [];
 
   let newPositivesCount = 0;
   let newNegativesCount = 0;
@@ -30,18 +31,23 @@ async function backtestFeedingEventRoute() {
       newNegativesCount++;
     }
 
-    if (shouldBeFeedingEvent != wasFeedingEvent) {
+    if (shouldBeFeedingEvent !== wasFeedingEvent) {
       returnable += `<a href="#${point._id}" id=${point._id} style='color: red'>MISMATCH</a><br/> `;
-      returnable += point.feedingEventOfSize ? "was ✅" : "was ❌";
-      returnable += point.feedingEventOfSize && `(${point.feedingEventOfSize})`;
-      returnable += shouldBeFeedingEvent ? " will ✅" : " will ❌";
-      returnable += shouldBeSize && `(${shouldBeSize})`;
-      returnable += `<strong> - ${point.weight} - </strong>`;
-      returnable += `${sixNextPoints.join(",")}`;
-      returnable += `<br/>${new Date(point.timestamp).toISOString()}`;
+    } else {
+      returnable += `<a href="#${point._id}" id=${point._id}>[M]</a> `;
     }
+    returnable += point.feedingEventOfSize ? "was ✅" : "was ❌";
+    returnable += point.feedingEventOfSize && `(${point.feedingEventOfSize})`;
+    returnable += shouldBeFeedingEvent ? " will ✅" : " will ❌";
+    returnable += shouldBeSize && `(${shouldBeSize})`;
+    returnable += `<strong> - ${point.weight} - </strong>`;
+    returnable += `${sixNextPoints.join(",")}`;
+    returnable += `<br/>${new Date(point.timestamp).toISOString()}`;
 
-    results.push(returnable);
+    allResults.push(returnable);
+    if (shouldBeFeedingEvent != wasFeedingEvent) {
+      mismatchResults.push(returnable);
+    }
   }
 
   const header = /* HTML */ `<p>
@@ -49,7 +55,13 @@ async function backtestFeedingEventRoute() {
     </p>
     <hr />`;
 
-  return header + results.join("<hr/>");
+  return (
+    header +
+    `<h1>Mismatches</h1>` +
+    mismatchResults.join("<hr/>") +
+    `<h2>Everything</h2>` +
+    allResults.join("<hr/>")
+  );
 }
 
 export default backtestFeedingEventRoute;

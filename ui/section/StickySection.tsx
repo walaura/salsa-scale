@@ -1,8 +1,8 @@
 import { withStyles, withKeyframes } from "../../app/styles.ts";
 
-const makeStickySection = ({ children }: { children: string }) => /* HTML */ `
-  <div class="${className}">${children}</div>
-`;
+const makeStickySection = ({ children }: { children: string }) => (
+  <div class={className}>{children}</div>
+);
 
 const stickFirstAnimation = withKeyframes({
   to: {

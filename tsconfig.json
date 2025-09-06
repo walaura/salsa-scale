@@ -7,6 +7,12 @@
     "module": "nodenext",
     "target": "es2022",
 
+    "baseUrl": "./",
+    "paths": {
+      "/*": ["./*"]
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "local-tsx",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
