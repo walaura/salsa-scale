@@ -1,7 +1,9 @@
-import { PopoverWithTrigger } from "../Popover.tsx";
-import { Button } from "../Button.tsx";
+import { makePopoverWithTrigger } from "../Popover.tsx";
+import { Button } from "../Button/Button.tsx";
 import { randomBytes } from "node:crypto";
 import { withStyles } from "local-css/css";
+import { Icon } from "../Icon.tsx";
+import { ButtonGroup } from "../Button/ButtonGroup.tsx";
 
 const generateId = (length = 24) => {
   return Buffer.from(randomBytes(length)).toString("hex");
@@ -11,36 +13,33 @@ type Action = { title: string; icon: string; href: string };
 
 const TableActionsRow = ({ actions }: { actions: Array<Action> }) => {
   return (
-    <div class={className}>
+    <ButtonGroup>
       {actions.map((action) => {
         const popoverId = `${generateId()}-${action.icon}`;
+        const [popover, triggerProps] = makePopoverWithTrigger({
+          id: popoverId,
+          popover: {
+            children: (
+              <>
+                <span>{action.title}?</span>
+                <Button
+                  size="large"
+                  label="Confirm"
+                  href={action.href}
+                  target="_blank"
+                />
+              </>
+            ),
+          },
+        });
         return (
-          <div class={className("action")}>
-            <PopoverWithTrigger
-              id={popoverId}
-              trigger={{
-                children: (
-                  <img src={`/static/${action.icon}.gif`} alt={action.title} />
-                ),
-                title: action.title,
-              }}
-              popover={{
-                children: (
-                  <>
-                    <span>{action.title}?</span>
-                    <Button
-                      label="Confirm"
-                      href={action.href}
-                      target="_blank"
-                    />
-                  </>
-                ),
-              }}
-            />
-          </div>
+          <>
+            {popover}
+            <Button label={<Icon icon={action.icon} />} {...triggerProps} />
+          </>
         );
       })}
-    </div>
+    </ButtonGroup>
   );
 };
 

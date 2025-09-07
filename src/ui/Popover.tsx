@@ -71,40 +71,25 @@ const popoverStyle = withDynamicStyles(
     })
 );
 
-const PopoverWithTrigger = ({
+const makePopoverWithTrigger = ({
   id,
-  trigger: triggerProps,
   popover: popoverProps,
 }: {
   id: string;
-  trigger: {
-    children: JSX.Element;
-    title: string;
-  };
   popover: Omit<Parameters<typeof Popover>[0], "id" | "trigger">;
 }) => {
   const anchorName = "--a-" + id;
 
   const popover = <Popover id={id} anchor={anchorName} {...popoverProps} />;
 
-  const trigger = (
-    <button
-      {...triggerStyleProps({
-        anchorName,
-      })}
-      title={triggerProps.title}
-      popoverTarget={id}
-    >
-      {triggerProps.children}
-    </button>
-  );
+  const triggerProps = {
+    styles: triggerStyleProps({
+      anchorName,
+    }),
+    popoverTarget: id,
+  };
 
-  return (
-    <>
-      {trigger}
-      {popover}
-    </>
-  );
+  return [popover, triggerProps] as const;
 };
 
 const triggerStyleProps = withDynamicStyles(
@@ -115,4 +100,4 @@ const triggerStyleProps = withDynamicStyles(
     })
 );
 
-export { Popover, PopoverWithTrigger };
+export { Popover, makePopoverWithTrigger };

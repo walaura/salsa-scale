@@ -3,6 +3,9 @@ import { isFeedingEvent } from "../app/feedingEvent.ts";
 import { getAllData } from "../app/getData.ts";
 import { Expander } from "../ui/section/Expander.tsx";
 import { Table } from "@/ui/Table/Table.tsx";
+import { makePopoverWithTrigger } from "@/ui/Popover.tsx";
+import { Button } from "@/ui/Button/Button.tsx";
+import { px } from "lib/css/css.ts";
 
 async function backtestFeedingEventRoute() {
   const all = await getAllData({
@@ -51,14 +54,37 @@ async function backtestFeedingEventRoute() {
       ),
       weight: () => point.weight.toString(),
       nextPoints: () => sixNextPoints.join(", "),
-      debug: () => (
-        <pre>
-          <details>
-            <summary>{debugData.outcome}</summary>
-            {JSON.stringify(debugData, null, 2)}
-          </details>
-        </pre>
-      ),
+      debug: () => {
+        const debugDataStr = JSON.stringify(debugData.extra, null, 2);
+        const [debugPopover, triggerProps] = makePopoverWithTrigger({
+          id: point._id.toString(),
+          popover: {
+            children: (
+              <pre
+                style={{
+                  minWidth: px(300),
+                  textAlign: "left",
+                }}
+              >
+                {debugDataStr}
+              </pre>
+            ),
+          },
+        });
+
+        return (
+          <>
+            {debugDataStr ? (
+              <>
+                {debugPopover}
+                <Button label={debugData.outcome} {...triggerProps} />
+              </>
+            ) : (
+              debugData.outcome
+            )}
+          </>
+        );
+      },
       timestamp: () => (
         <time dateTime={new Date(point.timestamp).toISOString()}>
           {new Date(point.timestamp).toLocaleString()} (
