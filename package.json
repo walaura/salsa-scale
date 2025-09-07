@@ -7,7 +7,7 @@
   "scripts": {
     "start": "tsx ./src/index.ts",
     "live": "tsx watch ./src/index.ts",
-    "make-colors": "node ./scripts/makeColorRamp.cjs",
+    "make-colors": "tsx ./scripts/makeColorRamp.ts",
     "test": "jest"
   },
   "author": "",

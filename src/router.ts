@@ -1,20 +1,17 @@
 import { TOP_SECRET_PATH } from "./app/setup/env.ts";
 import { landingRoute } from "./routes/landing.tsx";
 import { trackRoute } from "./routes/track.ts";
-import {
-  withLog,
-  withPage,
-  type RouteFromExpress,
-} from "./app/setup/routes.ts";
+import { withLog, withPage, type Route } from "./app/setup/routes.ts";
 import {
   deleteById,
   markFeedingEvent,
   unmarkFeedingEvent,
 } from "./routes/sudo.ts";
 import { recordsRoute } from "./routes/records/records.tsx";
-import { backtestFeedingEventRoute } from "./routes/backtestFeedingEvent.tsx";
+import { backtestFeedingEventRoute } from "./routes/internal/backtestFeedingEventRoute.tsx";
+import { uiRoute } from "./routes/internal/uiRoute.tsx";
 
-const landing: RouteFromExpress<"get"> = {
+const landing: Route<"get"> = {
   method: "get",
   path: "/",
   handler: withPage((req) => {
@@ -29,7 +26,7 @@ const landing: RouteFromExpress<"get"> = {
   }),
 };
 
-const records: RouteFromExpress<"get"> = {
+const records: Route<"get"> = {
   method: "get",
   path: "/records",
   handler: withPage((req) => {
@@ -38,7 +35,7 @@ const records: RouteFromExpress<"get"> = {
   }),
 };
 
-const track: RouteFromExpress<"get"> = {
+const track: Route<"get"> = {
   method: "get",
   path: "/track/" + TOP_SECRET_PATH + "/:weight",
   handler: (req) => {
@@ -52,7 +49,7 @@ const track: RouteFromExpress<"get"> = {
   },
 };
 
-const delet: RouteFromExpress<"get"> = {
+const delet: Route<"get"> = {
   method: "get",
   path: "/sudo/delet/" + TOP_SECRET_PATH + "/:id",
   handler: withLog((req) => {
@@ -61,7 +58,7 @@ const delet: RouteFromExpress<"get"> = {
   }),
 };
 
-const markEvent: RouteFromExpress<"get"> = {
+const markEvent: Route<"get"> = {
   method: "get",
   path: "/sudo/mark/" + TOP_SECRET_PATH + "/:id/:size",
   handler: withLog((req) => {
@@ -72,21 +69,13 @@ const markEvent: RouteFromExpress<"get"> = {
   }),
 };
 
-const unMarkEvent: RouteFromExpress<"get"> = {
+const unMarkEvent: Route<"get"> = {
   method: "get",
   path: "/sudo/unmark/" + TOP_SECRET_PATH + "/:id",
   handler: withLog((req) => {
     const id = req.params.id;
 
     return unmarkFeedingEvent({ id });
-  }),
-};
-
-const backtestFeedingEvent: RouteFromExpress<"get"> = {
-  method: "get",
-  path: "/backtest-feeding-event",
-  handler: withPage(() => {
-    return backtestFeedingEventRoute();
   }),
 };
 
@@ -97,5 +86,6 @@ export const ROUTES = {
   records,
   markEvent,
   unMarkEvent,
-  backtestFeedingEvent,
+  backtestFeedingEventRoute,
+  uiRoute,
 };

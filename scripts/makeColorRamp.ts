@@ -1,6 +1,14 @@
-const { writeFileSync } = require("fs");
-const { join } = require("path");
-const { execSync } = require("child_process");
+import { writeFileSync } from "fs";
+import { join, dirname } from "path";
+import { execSync } from "child_process";
+import {
+  DARK_MODE_DEBUG_CLASS,
+  DARK_MODE_ROOT_CLASS,
+} from "../src/app/setup/envStatic.ts";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const pinkRamp = {
   50: "#fff1f6",
@@ -42,14 +50,18 @@ const RAMPS = {
   neutral: neutralRamp,
 };
 
+type Ramp = {
+  [key: number]: string | { [key: number]: string };
+};
+
 // flip ramps for dark mode automatically
-const flipRampForDarkMode = (rampName, ramp) => {
-  const newRamp = {};
+const flipRampForDarkMode = (rampName: string, ramp: Ramp) => {
+  const newRamp: Ramp = {};
   if (rampName === "pink") {
     ramp = pinkRampDark;
   }
   Object.entries(ramp).forEach(([key, value]) => {
-    newKey = 1000 - parseInt(key);
+    const newKey = 1000 - parseInt(key);
     if (!ramp[newKey]) {
       throw `missing color ${rampName}-${newKey} for dark mode`;
     }
@@ -58,14 +70,14 @@ const flipRampForDarkMode = (rampName, ramp) => {
   return newRamp;
 };
 
-function toCssVars(obj, rampName) {
+function toCssVars(obj: Ramp, rampName: string) {
   return Object.entries(obj)
     .map(([key, value]) => {
       if (typeof value === "object") {
         return Object.entries(value)
           .map(([shade, color]) => {
             const name =
-              shade == 100
+              shade == "100"
                 ? `${rampName}-${key}`
                 : `${rampName}-${key}-A${shade}`;
             return `  --${name}: ${color};`;
@@ -86,7 +98,7 @@ const cssVars = `
 `;
 
 const darkModeCssVars = `
-  :root.dark-mode {
+  :root.${DARK_MODE_ROOT_CLASS}, .${DARK_MODE_DEBUG_CLASS} {
     ${Object.entries(RAMPS)
       .map(([rampName, rampObj]) =>
         toCssVars(flipRampForDarkMode(rampName, rampObj), rampName)

@@ -1,6 +1,7 @@
 import { JSX } from "local-tsx/jsx-runtime";
 import {
   px,
+  rem,
   withDynamicStyles,
   withKeyframes,
   withStyles,
@@ -50,17 +51,23 @@ const popoverStyle = withDynamicStyles(
       position: "absolute",
       margin: 0,
       color: "var(--neutral-1000)",
-      borderRadius: "calc(var(--margin-page) / 2)",
-      padding: "calc(var(--margin-page) / 2)",
+      borderRadius: "calc(var(--margin-page) / 1.5)",
+      padding: "max(calc(var(--margin-page) / 2.5), 1rem)",
       backgroundColor: "var(--pink-50)",
       alignItems: "stretch",
       textAlign: "center",
       flexDirection: "column",
-      gap: "calc(var(--margin-page) / 4)",
+      gap: rem(0.5),
       border: "none",
-      boxShadow:
-        "var(--shadow-large), inset 0 -1px 0 0 color-mix(in oklab, var(--pink-50), black 5%), inset 0 1px 0 0 color-mix(in oklab, var(--pink-50), white 15%), inset 0 0 0 1px color-mix(in oklab, var(--pink-50), white 5%)",
-      minWidth: "12em",
+      boxShadow: [
+        "var(--shadow-large)",
+        `inset 0 -1px 1px 0 color-mix(in hwb, var(--pink-50), black 10%)`,
+        `inset 0 1px 1px 0 color-mix(in hwb, var(--pink-50), white 20%)`,
+        `inset 0 -3px 6px 0 color-mix(in hwb, var(--pink-50), black 5%)`,
+        `inset 0 3px 6px 0 color-mix(in hwb, var(--pink-50), white 10%)`,
+      ].join(","),
+
+      minWidth: rem(12),
       "&::backdrop": {
         backgroundColor: "color-mix(in srgb, var(--pink-100), transparent 20%)",
       },

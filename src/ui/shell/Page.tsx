@@ -24,9 +24,9 @@ const Page = ({
       <head>
         <meta charSet="UTF-8" />
         <title>Is Salsa starving</title>
-        <link rel="stylesheet" href="./static/css/colors.css" />
-        <link rel="stylesheet" href="./static/css/styles.css" />
-        <link rel="icon" href="./static/favicon.png" />
+        <link rel="stylesheet" href="/static/css/colors.css" />
+        <link rel="stylesheet" href="/static/css/styles.css" />
+        <link rel="icon" href="/static/favicon.png" />
         <style type="text/css">{getRegisteredStyles().join("")}</style>
       </head>
       <body class={className}>

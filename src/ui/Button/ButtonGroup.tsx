@@ -15,11 +15,11 @@ const className = withStyles(() => ({
     borderRadius: 0,
     color: "rebeccapurple",
   },
-  [`.${buttonClassName}:first-of-type`]: {
+  [`& > .${buttonClassName}:first-of-type`]: {
     borderTopLeftRadius: rem(1),
     borderBottomLeftRadius: rem(1),
   },
-  [`.${buttonClassName}:last-of-type`]: {
+  [`& > .${buttonClassName}:last-of-type`]: {
     borderTopRightRadius: rem(1),
     borderBottomRightRadius: rem(1),
   },

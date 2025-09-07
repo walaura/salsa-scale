@@ -1,13 +1,14 @@
 import { Icon } from "@/ui/Icon.tsx";
-import { isFeedingEvent } from "../app/feedingEvent.ts";
-import { getAllData } from "../app/getData.ts";
-import { Expander } from "../ui/section/Expander.tsx";
+import { isFeedingEvent } from "../../app/feedingEvent.ts";
+import { getAllData } from "../../app/getData.ts";
+import { Expander } from "../../ui/section/Expander.tsx";
 import { Table } from "@/ui/Table/Table.tsx";
 import { makePopoverWithTrigger } from "@/ui/Popover.tsx";
 import { Button } from "@/ui/Button/Button.tsx";
 import { px } from "lib/css/css.ts";
+import { Route, withPage } from "@/app/setup/routes.ts";
 
-async function backtestFeedingEventRoute() {
+async function backtestFeedingEvent() {
   const all = await getAllData({
     daysToFetch: 1,
   });
@@ -129,4 +130,10 @@ async function backtestFeedingEventRoute() {
   );
 }
 
-export { backtestFeedingEventRoute };
+export const backtestFeedingEventRoute: Route<"get"> = {
+  method: "get",
+  path: "/internal/backtest-feeding-event",
+  handler: withPage(() => {
+    return backtestFeedingEvent();
+  }),
+};

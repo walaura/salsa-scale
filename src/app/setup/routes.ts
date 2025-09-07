@@ -5,7 +5,7 @@ export type RouteHandler<ExpectedResponse> = (
   req: Request
 ) => Promise<ExpectedResponse>;
 
-export type RouteFromExpress<Method, ExpectedResponse = string> = {
+export type Route<Method, ExpectedResponse = string> = {
   method: Method;
   path: string;
   handler: RouteHandler<ExpectedResponse>;

@@ -1,7 +1,8 @@
 /* DO NOT TOUCH THIS LOL */
 /* USE npm run make-colors */
 
-:root.dark-mode {
+:root.dark-mode,
+.dark-mode-fFkixrt6VnHYxyB {
   --pink-50: #12002d;
   --pink-100: #1e0047;
   --pink-200: #2d0063;
