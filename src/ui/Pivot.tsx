@@ -3,7 +3,7 @@ import { px, rem, withStyles } from "local-css/css";
 export type PivotFilter = {
   label: string;
   isActive: boolean;
-  link: URL;
+  link: string | URL;
 };
 
 const Pivot = ({
@@ -24,7 +24,7 @@ const Pivot = ({
         class={linkClassname}
         href={link.toString()}
       >
-        {label}
+        <span>{label}</span>
       </a>
     ))}
   </div>
@@ -32,37 +32,62 @@ const Pivot = ({
 
 const linkClassname = withStyles((select) => ({
   textDecoration: "none",
-  color: "var(--pink-100)",
-  transition: "all 1s ease",
+  transition: "all .2s ease",
   opacity: 0.75,
   boxShadow: "0 0 0 0 transparent",
   background: "transparent",
   willChange: "auto",
   position: "relative",
-
-  ["&::after"]: {
-    content: '""',
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    borderRadius: px(9999),
-    zIndex: -1,
-    transition: "opacity 1s linear",
-    opacity: 0,
-    background: `
+  borderRadius: px(9999),
+  span: {
+    zIndex: 1,
+    position: "relative",
+  },
+  ['&[data-backdrop="light"]']: {
+    color:
+      "color-mix(in oklab, color-mix(in oklab, var(--pink-600), var(--neutral-600) 50%), transparent 25%)",
+    [`:not(:has(:hover)) &[data-is-active="true"]`]: {
+      color: "var(--pink-600)",
+    },
+    [`:has(:hover) &:hover`]: {
+      color: "var(--pink-600)",
+      background: "color-mix(in hwb, var(--pink-100), transparent 50%)",
+    },
+    "&::before": {
+      background: `
+      linear-gradient(
+        to bottom, 
+        var(--pink-200),
+        color-mix(in hwb, var(--pink-200), var(--pink-50) 75%)
+      )`,
+      boxShadow: [
+        "inset 0 1px 1px 0 color-mix(in oklab, var(--pink-400), black 20%)",
+        "0 1px 1px 0 color-mix(in oklab, var(--pink-200), white 10%)",
+      ].join(", "),
+    },
+  },
+  ['&[data-backdrop="dark"]']: {
+    color: "var(--pink-100)",
+    [`:not(:has(:hover)) &[data-is-active="true"]`]: {
+      color: "var(--neutral-0)",
+    },
+    [`:has(:hover) &:hover`]: {
+      color: "var(--neutral-0)",
+      background: "color-mix(in hwb, var(--pink-700), transparent 50%)",
+    },
+    "&::before": {
+      background: `
       linear-gradient(
         to bottom, 
         color-mix(in hwb, var(--pink-600), black 25%),
         color-mix(in hwb, color-mix(in hwb, var(--pink-600), black 12.5%), transparent 75%)
       )`,
-    boxShadow: [
-      "inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), black 30%)",
-      "0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 10%)",
-    ].join(", "),
+      boxShadow: [
+        "inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), black 30%)",
+        "0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 10%)",
+      ].join(", "),
+    },
   },
-
   ['&[data-size="large"]']: {
     fontSize: "var(--font-primary)",
     fontWeight: 600,
@@ -73,18 +98,31 @@ const linkClassname = withStyles((select) => ({
     padding: rem(0.25, 1),
   },
   [`:not(:has(:hover)) &[data-is-active="true"]`]: {
-    "&::after": {
-      opacity: 1,
-    },
-    color: "var(--neutral-0)",
+    opacity: 1,
+  },
+  [`:not(:has(:hover)) &[data-is-active="true"]::before`]: {
+    opacity: 1,
+    scale: "1",
   },
   [`:has(:hover) &:hover`]: {
     opacity: 1,
-    background: "color-mix(in hwb, var(--pink-700), transparent 50%)",
     scale: "1.02",
     "&:active": {
       scale: "0.98",
     },
+  },
+  ["&::before"]: {
+    content: '""',
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    borderRadius: px(9999),
+    zIndex: 0,
+    transition: "all .2s linear",
+    opacity: 0,
+    scale: 0.5,
   },
 }));
 

@@ -1,44 +1,40 @@
 import { type IRoute } from "express";
-import { withStyles } from "local-css/css";
+import { rem, withStyles } from "local-css/css";
 import { ROUTES } from "../../router.ts";
+import { Pivot } from "../Pivot.tsx";
 
 export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
   const LINKS = [
     {
       label: "Home",
-      path: ROUTES.landing.path,
+      link: ROUTES.landing.path,
       isActive: currentRoute.path === ROUTES.landing.path,
     },
     {
       label: "Records",
-      path: ROUTES.records.path,
+      link: ROUTES.records.path,
       isActive: currentRoute.path === ROUTES.records.path,
     },
   ];
 
   return (
     <nav class={className}>
-      <ul>
-        {LINKS.map((link) => (
-          <li>
-            <a data-is-active={link.isActive} href={link.path}>
-              {link.label}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <Pivot backdrop="light" size="large" filters={LINKS} />
     </nav>
   );
 };
 
-const className = withStyles((select) => ({
-  position: "fixed",
+const className = withStyles(() => ({
   boxShadow:
     "var(--shadow-large), inset 0 -1px 0 0 color-mix(in oklab, var(--pink-50), black 5%), inset 0 1px 0 0 color-mix(in oklab, var(--pink-50), white 15%), inset 0 0 0 1px color-mix(in oklab, var(--pink-50), white 5%)",
+  position: "fixed",
   borderRadius: "9999px",
   padding: "1rem",
-  background:
-    "linear-gradient(to bottom, color-mix(in oklab, var(--pink-50), white 5%), color-mix(in oklab, var(--pink-50), transparent 50%))",
+  background: `linear-gradient(
+    to bottom, 
+    var(--neutral-0), 
+    color-mix(in oklab, var(--pink-50), transparent 12.5%)
+  )`,
   backdropFilter: "blur(10px)",
   contain: "content",
   width: "max-content",
@@ -47,23 +43,5 @@ const className = withStyles((select) => ({
   right: 0,
   zIndex: 999,
   display: "flex",
-  gap: "0.5rem",
-  "ul, li": {
-    display: "contents",
-  },
-  a: {
-    fontWeight: 600,
-    color: "var(--neutral-600)",
-    textDecoration: "none",
-    padding: "0.5rem 1rem",
-    borderRadius: "9999px",
-    transition: "background 0.2s linear",
-  },
-  '&:not(:has(:hover)) a[data-is-active="true"], a:hover': {
-    "--bg": "color-mix(in oklab, var(--pink-400), transparent 60%)",
-    color: "var(--pink-600)",
-    background: "var(--bg)",
-    boxShadow:
-      "inset 0 2px 1px 0 color-mix(in oklab, var(--bg), black 2.5%), 0 0 0 1px color-mix(in oklab, var(--pink-50), white 10%)",
-  },
+  gap: rem(1 / 8),
 }));

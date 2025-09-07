@@ -21,7 +21,7 @@ const Expander = ({
         <div class={className("title-drop")}></div>
         {title}
       </span>
-      {pivot ? <Pivot filters={pivot} /> : null}
+      {pivot ? <Pivot backdrop="dark" size="regular" filters={pivot} /> : null}
     </summary>
     <div class={className("content")}>{children}</div>
   </details>
