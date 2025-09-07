@@ -7,6 +7,7 @@ const Button = ({
   target = "_self",
   styles = [],
   size = "regular",
+  type = "secondary",
   ...passThroughProps
 }: {
   label: JSXNode;
@@ -15,6 +16,7 @@ const Button = ({
   styles?: StyleSelectors;
   popoverTarget?: string;
   size?: "large" | "regular";
+  type?: "primary" | "secondary";
 }) => {
   const Element = href ? "a" : "button";
   return (
@@ -22,6 +24,7 @@ const Button = ({
       {...joinStyles(className, styles)}
       href={href}
       data-size={size}
+      data-type={type}
       target={target}
       {...passThroughProps}
     >
@@ -40,11 +43,8 @@ const className = withStyles(() => ({
   border: "none",
   textAlign: "center",
   transition: "all 0.1s ease-in-out",
-  ['&[data-size="large"]']: {
-    fontWeight: 800,
-    fontSize: "var(--font-primary)",
+  ['&[data-type="primary"]']: {
     color: "var(--pink-50)",
-    padding: rem(0.5, 1),
     boxShadow: [
       `inset 0 -1px 1px 0 color-mix(in hwb, var(--pink-600), black 20%)`,
       `inset 0 1px 1px 0 color-mix(in hwb, var(--pink-600), white 60%)`,
@@ -52,14 +52,12 @@ const className = withStyles(() => ({
       `inset 0 3px 6px 0 color-mix(in hwb, var(--pink-600), white 30%)`,
     ].join(","),
     background: `linear-gradient(
-    to bottom, 
-    color-mix(in hwb, var(--pink-600), white 30%) 0%, 
-    var(--pink-600) 100%
-  )`,
+      to bottom, 
+      color-mix(in hwb, var(--pink-600), white 30%) 0%, 
+      var(--pink-600) 100%
+    )`,
   },
-  ['&[data-size="regular"]']: {
-    padding: rem(0.33, 0.5),
-    fontSize: "var(--font-secondary)",
+  ['&[data-type="secondary"]']: {
     color: "var(--pink-800)",
     boxShadow: [
       `inset 0 -1px 1px 0 color-mix(in hwb, var(--pink-100), black 10%)`,
@@ -68,10 +66,19 @@ const className = withStyles(() => ({
       `inset 0 3px 6px 0 color-mix(in hwb, var(--pink-100), white 10%)`,
     ].join(","),
     background: `linear-gradient(
-    to bottom, 
-    color-mix(in hwb, var(--pink-100), white 10%), 
-    color-mix(in hwb, var(--pink-100), black 5%) 
-  )`,
+      to bottom, 
+      color-mix(in hwb, var(--pink-100), white 10%), 
+      color-mix(in hwb, var(--pink-100), black 5%) 
+    )`,
+  },
+  ['&[data-size="large"]']: {
+    fontWeight: 800,
+    fontSize: "var(--font-primary)",
+    padding: rem(0.5, 1),
+  },
+  ['&[data-size="regular"]']: {
+    padding: rem(0.33, 0.5),
+    fontSize: "var(--font-secondary)",
   },
   "&:hover": {
     scale: 1.02,

@@ -1,6 +1,6 @@
 import { JSX } from "local-tsx/jsx-runtime";
 import { px, rem, withStyles } from "local-css/css";
-import { ExpanderPivot, PivotFilter } from "./ExpanderPivot.tsx";
+import { Pivot, PivotFilter } from "../Pivot.tsx";
 
 const Expander = ({
   title,
@@ -21,7 +21,7 @@ const Expander = ({
         <div class={className("title-drop")}></div>
         {title}
       </span>
-      {pivot ? <ExpanderPivot filters={pivot} /> : null}
+      {pivot ? <Pivot filters={pivot} /> : null}
     </summary>
     <div class={className("content")}>{children}</div>
   </details>

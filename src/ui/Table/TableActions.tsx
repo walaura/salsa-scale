@@ -35,7 +35,11 @@ const TableActionsRow = ({ actions }: { actions: Array<Action> }) => {
         return (
           <>
             {popover}
-            <Button label={<Icon icon={action.icon} />} {...triggerProps} />
+            <Button
+              type="primary"
+              label={<Icon icon={action.icon} />}
+              {...triggerProps}
+            />
           </>
         );
       })}
