@@ -10,30 +10,7 @@ import {
 import { recordsRoute } from "./routes/records/records.tsx";
 import { backtestFeedingEventRoute } from "./routes/internal/backtestFeedingEventRoute.tsx";
 import { uiRoute } from "./routes/internal/uiRoute.tsx";
-
-const landing: Route<"get"> = {
-  method: "get",
-  path: "/",
-  handler: withPage((req) => {
-    const showActions = req.query.edit === TOP_SECRET_PATH;
-    const chartScale = req.query.scale
-      ? parseFloat(req.query.scale.toString())
-      : 1;
-    const url = new URL(
-      req.protocol + "://" + req.get("host") + req.originalUrl
-    );
-    return landingRoute({ showActions, chartScale, url });
-  }),
-};
-
-const records: Route<"get"> = {
-  method: "get",
-  path: "/records",
-  handler: withPage((req) => {
-    const showActions = req.query.edit === TOP_SECRET_PATH;
-    return recordsRoute({ showActions });
-  }),
-};
+import { sitemapRoute } from "./routes/internal/sitemapRoute.tsx";
 
 const track: Route<"get"> = {
   method: "get",
@@ -79,13 +56,16 @@ const unMarkEvent: Route<"get"> = {
   }),
 };
 
-export const ROUTES = {
-  landing,
+const ROUTES = {
+  landingRoute,
+  recordsRoute,
   track,
   delet,
-  records,
   markEvent,
   unMarkEvent,
   backtestFeedingEventRoute,
   uiRoute,
+  sitemapRoute,
 };
+
+export { ROUTES };

@@ -7,13 +7,13 @@ export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
   const LINKS = [
     {
       label: "Home",
-      link: ROUTES.landing.path,
-      isActive: currentRoute.path === ROUTES.landing.path,
+      link: ROUTES.landingRoute.path,
+      isActive: currentRoute.path === ROUTES.landingRoute.path,
     },
     {
       label: "Records",
-      link: ROUTES.records.path,
-      isActive: currentRoute.path === ROUTES.records.path,
+      link: ROUTES.recordsRoute.path,
+      isActive: currentRoute.path === ROUTES.recordsRoute.path,
     },
   ];
 

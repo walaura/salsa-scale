@@ -6,8 +6,14 @@ import { Dashboard } from "../ui/Dashboard.tsx";
 import { type LogEntry } from "../app/setup/db.ts";
 import { StickySection } from "../ui/section/StickySection.tsx";
 import { getAllData } from "../app/getData.ts";
+import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
+import {
+  getShouldSeeSecrets,
+  type Route,
+  withPage,
+} from "@/app/setup/routes.ts";
 
-async function landingRoute({
+async function landing({
   showActions,
   chartScale,
   url,
@@ -63,5 +69,20 @@ async function landingRoute({
     )),
   ].join("");
 }
+
+const landingRoute: Route<"get"> = {
+  method: "get",
+  path: "/",
+  handler: withPage((req) => {
+    const showActions = getShouldSeeSecrets(req);
+    const chartScale = req.query.scale
+      ? parseFloat(req.query.scale.toString())
+      : 1;
+    const url = new URL(
+      req.protocol + "://" + req.get("host") + req.originalUrl
+    );
+    return landing({ showActions, chartScale, url });
+  }),
+};
 
 export { landingRoute };

@@ -3,8 +3,10 @@ import { RecordsTable } from "./ui/RecordsTable.tsx";
 import { Expander } from "../../ui/section/Expander.tsx";
 import { type LogEntry } from "../../app/setup/db.ts";
 import { getAllData } from "../../app/getData.ts";
+import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
+import { getShouldSeeSecrets, Route, withPage } from "@/app/setup/routes.ts";
 
-async function recordsRoute({ showActions }: { showActions: boolean }) {
+async function records({ showActions }: { showActions: boolean }) {
   const all = await getAllData({
     daysToFetch: 12,
   });
@@ -30,5 +32,14 @@ async function recordsRoute({ showActions }: { showActions: boolean }) {
     ))
     .join("");
 }
+
+const recordsRoute: Route<"get"> = {
+  method: "get",
+  path: "/records",
+  handler: withPage((req) => {
+    const showActions = getShouldSeeSecrets(req);
+    return records({ showActions });
+  }),
+};
 
 export { recordsRoute };

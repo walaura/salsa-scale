@@ -24,6 +24,7 @@ const TableActionsRow = ({ actions }: { actions: Array<Action> }) => {
                 <span>{action.title}?</span>
                 <Button
                   size="large"
+                  type="primary"
                   label="Confirm"
                   href={action.href}
                   target="_blank"
@@ -36,7 +37,7 @@ const TableActionsRow = ({ actions }: { actions: Array<Action> }) => {
           <>
             {popover}
             <Button
-              type="primary"
+              type="secondary"
               label={<Icon icon={action.icon} />}
               {...triggerProps}
             />
