@@ -1,7 +1,7 @@
 import { Icon } from "@/ui/Icon.tsx";
 import { isFeedingEvent } from "../../app/feedingEvent.ts";
 import { getAllData } from "../../app/getData.ts";
-import { Expander } from "../../ui/section/Expander.tsx";
+import { Expander } from "../../ui/Page/Expander.tsx";
 import { Table } from "@/ui/Table/Table.tsx";
 import { makePopoverWithTrigger } from "@/ui/Popover.tsx";
 import { Button } from "@/ui/Button/Button.tsx";

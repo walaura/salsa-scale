@@ -1,10 +1,10 @@
 import type { WithId } from "mongodb";
 import { Chart } from "../ui/Chart.tsx";
 import { RecordsTable } from "./records/ui/RecordsTable.tsx";
-import { Expander } from "../ui/section/Expander.tsx";
+import { Expander } from "../ui/Page/Expander.tsx";
 import { Dashboard } from "../ui/Dashboard.tsx";
 import { type LogEntry } from "../app/setup/db.ts";
-import { StickySection } from "../ui/section/StickySection.tsx";
+import { StickySection } from "../ui/Page/StickySection.tsx";
 import { getAllData } from "../app/getData.ts";
 import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
 import {

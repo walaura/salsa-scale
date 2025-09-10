@@ -6,12 +6,12 @@ import { Pivot } from "../Pivot.tsx";
 export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
   const LINKS = [
     {
-      label: "Home",
+      label: "Overview",
       link: ROUTES.landingRoute.path,
       isActive: currentRoute.path === ROUTES.landingRoute.path,
     },
     {
-      label: "Records",
+      label: "All data",
       link: ROUTES.recordsRoute.path,
       isActive: currentRoute.path === ROUTES.recordsRoute.path,
     },

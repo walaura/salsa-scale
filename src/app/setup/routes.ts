@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import { Page } from "../../ui/shell/Page.tsx";
+import { Page } from "../../ui/Page/Page.tsx";
 import { TOP_SECRET_PATH } from "./env.ts";
 
 export type RouteHandler<ExpectedResponse> = (

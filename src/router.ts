@@ -1,7 +1,7 @@
 import { TOP_SECRET_PATH } from "./app/setup/env.ts";
 import { landingRoute } from "./routes/landing.tsx";
 import { trackRoute } from "./routes/track.ts";
-import { withLog, withPage, type Route } from "./app/setup/routes.ts";
+import { withLog, type Route } from "./app/setup/routes.ts";
 import {
   deleteById,
   markFeedingEvent,
@@ -10,7 +10,7 @@ import {
 import { recordsRoute } from "./routes/records/records.tsx";
 import { backtestFeedingEventRoute } from "./routes/internal/backtestFeedingEventRoute.tsx";
 import { uiRoute } from "./routes/internal/uiRoute.tsx";
-import { sitemapRoute } from "./routes/internal/sitemapRoute.tsx";
+import { secretRoute } from "./routes/internal/secretRoute.tsx";
 
 const track: Route<"get"> = {
   method: "get",
@@ -65,7 +65,7 @@ const ROUTES = {
   unMarkEvent,
   backtestFeedingEventRoute,
   uiRoute,
-  sitemapRoute,
+  secretRoute,
 };
 
 export { ROUTES };

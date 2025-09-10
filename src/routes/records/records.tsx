@@ -1,6 +1,6 @@
 import type { WithId } from "mongodb";
 import { RecordsTable } from "./ui/RecordsTable.tsx";
-import { Expander } from "../../ui/section/Expander.tsx";
+import { Expander } from "../../ui/Page/Expander.tsx";
 import { type LogEntry } from "../../app/setup/db.ts";
 import { getAllData } from "../../app/getData.ts";
 import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
