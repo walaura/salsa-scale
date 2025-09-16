@@ -1,0 +1,59 @@
+.styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9 { --radius : 1rem;
+border-radius : var(--radius);
+box-shadow : 0 1px 6px 1px rgba(0, 0, 0, 0.25);
+overflow : hidden;
+transform-origin : center 1rem;
+transition : transform 0.2s ease;
+&:has(summary:active) { transform : scale(0.995);
+ }
+.styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-summary { padding : calc(0.75rem + 2px) calc(1rem + 2px);
+background-color : var(--pink-600);
+box-shadow : inset 0 -1px 2px 0 color-mix(in oklab, var(--pink-600), black 10%), inset 0 1px 1px 0 color-mix(in oklab, var(--pink-600), white 50%);
+background : linear-gradient(to bottom, color-mix(in oklab, var(--pink-600), white 30%) 0%, var(--pink-600) 100%);
+color : var(--neutral-0);
+cursor : pointer;
+display : flex;
+justify-content : space-between;
+align-items : center;
+ }
+.styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-content { border : 1px solid var(--pink-300);
+border-top : none;
+border-bottom-left-radius : var(--radius);
+border-bottom-right-radius : var(--radius);
+overflow : hidden;
+contain : content;
+position : relative;
+ }
+.styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-title { font-weight : bold;
+display : flex;
+align-items : center;
+gap : 0.5rem;
+.styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-title-drop { width : 16px;
+height : 16px;
+transition : transform 0.4s ease;
+transform : rotate(-90deg);
+mask-image : url(/static/drop.gif);
+display : block;
+background : var(--neutral-0);
+ }
+ }
+&[open] .styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-title .styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-title-drop { transform : rotate(0deg);
+ }
+.styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-pivot { display : flex;
+font-size : var(--font-secondary);
+gap : -0.5rem;
+margin : -0.25rem;
+.styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-pivot-link { text-decoration : none;
+padding : 0.25rem 1rem;
+border-radius : 9999px;
+color : var(--pink-200);
+transition : all .2s ease;
+ }
+&:not(:has(:hover)) .styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-pivot-link[data-is-active="true"], .styles-23687bba151f45f7efb99c7a34ead0401ae290c53622079f61c25fc571beead9-pivot-link:hover { opacity : 1;
+background : color-mix(in oklab, var(--pink-700), transparent 20%);
+color : var(--neutral-0);
+box-shadow : inset 0 1px 1px 0 color-mix(in oklab, var(--pink-700), #000 20%);
+ }
+ }
+ }
+

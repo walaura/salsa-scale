@@ -1,0 +1,15 @@
+.styles-5ed3d013a5495c7ed6dd73561833f055baaeb7207ec1d85d49a6d343148519ba { display : flex;
+justify-content : end;
+gap : 1px;
+position : relative;
+& > .[object Promise] { border-radius : 0;
+color : rebeccapurple;
+ }
+& > .[object Promise]:first-of-type { border-top-left-radius : 1rem;
+border-bottom-left-radius : 1rem;
+ }
+& > .[object Promise]:last-of-type { border-top-right-radius : 1rem;
+border-bottom-right-radius : 1rem;
+ }
+ }
+

@@ -1,0 +1,21 @@
+.styles-218b3282200d59f0f7addbec6c8008c7cf4b6fa5c120640b227ba7a07f12832c { display : block;
+contain : strict;
+width : 100%;
+background : repeating-linear-gradient(var(--neutral-0-A80), var(--neutral-0-A80) 24px, var(--pink-100) 24px, var(--pink-100) 25px);
+margin-bottom : -1px;
+&, * { transform-box : fill-box;
+ }
+text { font-size : var(--font-secondary);
+ }
+.styles-218b3282200d59f0f7addbec6c8008c7cf4b6fa5c120640b227ba7a07f12832c-line { stroke-dasharray : 2000;
+stroke-dashoffset : 2000;
+animation : [object Promise] 1.5s linear forwards;
+fill : none;
+stroke-width : 4;
+stroke-linecap : round;
+stroke : var(--pink-200);
+ }
+.styles-218b3282200d59f0f7addbec6c8008c7cf4b6fa5c120640b227ba7a07f12832c-dot { fill : var(--pink-500);
+ }
+ }
+

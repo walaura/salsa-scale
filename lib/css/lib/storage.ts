@@ -1,54 +1,59 @@
-import { StyleFn, type StyleObject } from "./decls.ts";
+import { ResolvedStyleObject, StyleFn } from "./decls.ts";
 import { makeSelector } from "./selector.ts";
 import { createHash } from "crypto";
 import { reduceStyleObject } from "local-css/helpers";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { cwd } from "node:process";
 
-const REGISTERED_STYLES = new Map<string, StyleFn>();
-const REGISTERED_KEYFRAMES = new Map<string, StyleObject>();
+type Registers = "styles" | "keyframes";
+type RegistryKey = `${Registers}-${string}`;
+const REGISTRY = new Map<RegistryKey, string>();
 
 const VOID_SELECTOR = makeSelector("");
 
 const getRegisteredStyles = () => {
-  const styles = Array.from(REGISTERED_STYLES.entries()).map(
-    ([className, styles]) => {
-      const selector = makeSelector(className, ".");
-      return reduceStyleObject({
-        [selector.toString()]: styles(selector),
-      });
-    }
-  );
-  const keyframes = Array.from(REGISTERED_KEYFRAMES.entries()).map(
-    ([className, styles]) => {
-      const selector = makeSelector(className, "");
-      const renderedStyleFn = reduceStyleObject(styles);
-      return `@keyframes ${selector.toString()} { ${renderedStyleFn} }`;
-    }
-  );
+  return [...Array.from(REGISTRY.values())];
+};
 
-  return [...styles, ...keyframes];
+const maybeRegister = async (
+  type: Registers,
+  key: string,
+  getValue: (registryKey: RegistryKey) => string
+) => {
+  const registryKey = `${type}-${key}` as RegistryKey;
+  if (REGISTRY.has(registryKey)) {
+    return registryKey;
+  }
+
+  const value = getValue(registryKey);
+  REGISTRY.set(registryKey, value);
+  console.log(cwd());
+  await fs.writeFile(
+    path.join(cwd(), "/.build-cache", `${registryKey}.css`),
+    value + "\n"
+  );
+  return registryKey;
 };
 
 const maybeRegisterStyle = (style: StyleFn) => {
-  const styleHash = `${hash(style(VOID_SELECTOR))}`;
-  const className = `st-${styleHash}`;
-
-  if (!REGISTERED_STYLES.has(className)) {
-    REGISTERED_STYLES.set(className, style);
-  }
-  return className;
+  return maybeRegister("styles", hash(style(VOID_SELECTOR)), (className) => {
+    const selector = makeSelector(className, ".");
+    return reduceStyleObject({
+      [selector.toString()]: style(selector),
+    });
+  });
 };
 
-const maybeRegisterKeyframes = (style: StyleObject) => {
-  const styleHash = `${hash(style)}`;
-  const className = `kf-${styleHash}`;
-
-  if (!REGISTERED_KEYFRAMES.has(className)) {
-    REGISTERED_KEYFRAMES.set(className, style);
-  }
-  return className;
+const maybeRegisterKeyframes = (style: ResolvedStyleObject) => {
+  return maybeRegister("keyframes", hash(style), (className) => {
+    const selector = makeSelector(className, "");
+    const renderedStyleFn = reduceStyleObject(style);
+    return `@keyframes ${selector.toString()} { ${renderedStyleFn} }`;
+  });
 };
 
-const hash = (string: StyleObject) =>
+const hash = (string: ResolvedStyleObject) =>
   createHash("sha256").update(JSON.stringify(string), "utf8").digest("hex");
 
 export { getRegisteredStyles, maybeRegisterStyle, maybeRegisterKeyframes };

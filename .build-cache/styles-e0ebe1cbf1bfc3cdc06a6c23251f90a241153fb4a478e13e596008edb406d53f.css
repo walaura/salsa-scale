@@ -1,0 +1,16 @@
+.styles-e0ebe1cbf1bfc3cdc06a6c23251f90a241153fb4a478e13e596008edb406d53f { circle { display : none;
+ }
+.styles-e0ebe1cbf1bfc3cdc06a6c23251f90a241153fb4a478e13e596008edb406d53f-date { font-size : 0.6em;
+ }
+.styles-e0ebe1cbf1bfc3cdc06a6c23251f90a241153fb4a478e13e596008edb406d53f-label { transform : scaleY(0.5) scaleX(0.2);
+opacity : 0;
+transform-origin : bottom center;
+transition : transform 0.1s ease, opacity 0.1s ease;
+ }
+&:hover { z-index : 99999;
+.styles-e0ebe1cbf1bfc3cdc06a6c23251f90a241153fb4a478e13e596008edb406d53f-label { opacity : 1;
+transform : scaleY(1) scaleX(1) translateZ(42px);
+ }
+ }
+ }
+

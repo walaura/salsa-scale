@@ -5,7 +5,6 @@ import {
   type StyleFn,
   type ResolvedStyleObject,
   DynamicStyleSelector,
-  type StyleSelector,
   type StyleSelectors,
   ResolvedDynamicStyleSelector,
 } from "./lib/decls.ts";
@@ -14,7 +13,7 @@ import { camelCaseToKebabCase } from "./helpers.ts";
 const PROPS = new Proxy(
   {},
   {
-    get(target, prop) {
+    get(_, prop) {
       return `var(--${camelCaseToKebabCase(prop.toString())})`;
     },
   }
