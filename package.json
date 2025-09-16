@@ -5,9 +5,10 @@
   "main": "./src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "tsx ./src/index.ts",
-    "live": "tsx watch ./src/index.ts",
+    "start": "npm run bundle-styles && PROD=true tsx ./src/index.ts",
+    "live": "PROD=false tsx watch ./src/index.ts",
     "make-colors": "tsx ./scripts/makeColorRamp.ts",
+    "bundle-styles": "tsx ./scripts/bundleStyles.ts",
     "test": "jest"
   },
   "author": "",

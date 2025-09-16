@@ -99,7 +99,7 @@ const dashAnimation = await withKeyframes({
   },
 });
 
-const className = await withStyles((select) => ({
+const className = withStyles((select) => ({
   display: "block",
   contain: "strict",
   width: "100%",
@@ -161,7 +161,7 @@ const makeHoverable = ({
   </g>
 );
 
-const hoverableClassName = await withStyles((select) => ({
+const hoverableClassName = withStyles((select) => ({
   circle: {
     display: "none",
   },

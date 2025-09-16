@@ -6,7 +6,7 @@ const ButtonGroup = ({ children }: { children: Array<JSXNode> }) => {
   return <div class={className}>{children}</div>;
 };
 
-const className = await withStyles(() => ({
+const className = withStyles(() => ({
   display: "flex",
   justifyContent: "end",
   gap: "1px",

@@ -8,12 +8,12 @@ const Icon = ({ icon, tint }: { icon: string; tint?: string }) => {
   return <img src={iconUrl} alt="" class={className} />;
 };
 
-const className = await withStyles(() => ({
+const className = withStyles(() => ({
   display: "inline-block",
   verticalAlign: "middle",
 }));
 
-const tintedClassName = await withDynamicStyles<{ icon: string; tint: string }>(
+const tintedClassName = withDynamicStyles<{ icon: string; tint: string }>(
   ({ icon, tint }) =>
     () => ({
       width: px(16),

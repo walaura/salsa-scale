@@ -35,8 +35,8 @@ const styleProps = <P extends {}>(props: P): StyleObject => {
   return returnable as StyleObject;
 };
 
-const withStyles = async (styles: InputStyles): Promise<StyleHtmlClassProp> => {
-  const className = await maybeRegister(
+const withStyles = (styles: InputStyles): StyleHtmlClassProp => {
+  const className = maybeRegister(
     "styles",
     hash(styles(VOID_SELECTOR)),
     (className) => {
@@ -50,10 +50,10 @@ const withStyles = async (styles: InputStyles): Promise<StyleHtmlClassProp> => {
   return makeSelector(className);
 };
 
-export const withDynamicStyles = async <Props extends {}>(
+export const withDynamicStyles = <Props extends {}>(
   styles: DynamicInputStyles<Props>
-): Promise<DynamicStyleHtmlPropsUnfurler<Props>> => {
-  const selector = await withStyles(styles(PROPS as any));
+): DynamicStyleHtmlPropsUnfurler<Props> => {
+  const selector = withStyles(styles(PROPS as any));
 
   const fn: DynamicStyleHtmlPropsUnfurler<Props> = (props) => {
     return {

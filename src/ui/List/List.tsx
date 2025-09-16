@@ -26,7 +26,7 @@ const List = ({ items }: { items: LinkCell[] }) => {
 
 export { List };
 
-const className = await withStyles((select) => ({
+const className = withStyles((select) => ({
   display: "flex",
   flexDirection: "column",
   ["& > * + *"]: {

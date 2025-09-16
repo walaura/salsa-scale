@@ -15,7 +15,7 @@ const stickFirstAnimation = await withKeyframes({
   },
 });
 
-const className = await withStyles(() => ({
+const className = withStyles(() => ({
   position: "sticky",
   top: "calc(var(--margin-page))",
   animation: `ease ${stickFirstAnimation} both`,

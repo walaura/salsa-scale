@@ -42,7 +42,7 @@ const Table = <ColumnName extends string>({
   );
 };
 
-const className = await withStyles((select) => ({
+const className = withStyles((select) => ({
   contain: "strict",
   overflow: "hidden",
   borderCollapse: "collapse",

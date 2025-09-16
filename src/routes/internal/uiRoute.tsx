@@ -72,7 +72,7 @@ const Tester = ({ children }: { children: JSXNode }) => (
   <div class={className}>{children}</div>
 );
 
-const className = await withStyles(() => ({
+const className = withStyles(() => ({
   background: "var(--pink-50)",
   width: "fit-content",
   padding: rem(1),

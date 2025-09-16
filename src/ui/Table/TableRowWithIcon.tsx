@@ -21,7 +21,7 @@ const TableRowWithIcon = ({
   );
 };
 
-const className = await withStyles((select) => ({
+const className = withStyles((select) => ({
   display: "flex",
   alignItems: "flex-start",
   flexDirection: "row",

@@ -3,7 +3,7 @@ import { withStyles } from "local-css/css";
 import { Nav } from "./Nav.tsx";
 import { getRegisteredStyles } from "local-css/helpers";
 
-const Page = ({
+const Page = async ({
   children,
   forceMode,
   currentRoute,
@@ -12,6 +12,8 @@ const Page = ({
   forceMode: "dark" | "light" | undefined;
   currentRoute: IRoute;
 }) => {
+  const styles = await getRegisteredStyles();
+
   const isDarkMode =
     forceMode === "light"
       ? false
@@ -27,7 +29,7 @@ const Page = ({
         <link rel="stylesheet" href="/static/css/colors.css" />
         <link rel="stylesheet" href="/static/css/styles.css" />
         <link rel="icon" href="/static/favicon.png" />
-        <style type="text/css">{getRegisteredStyles().join("")}</style>
+        <style type="text/css">{styles.join("\n")}</style>
       </head>
       <body class={className}>
         <Nav currentRoute={currentRoute} />
@@ -39,7 +41,7 @@ const Page = ({
   return "<!DOCTYPE html>" + page;
 };
 
-const className = await withStyles(() => ({
+const className = withStyles(() => ({
   "& > *": {
     maxWidth: "var(--max-width)",
     margin: "auto",

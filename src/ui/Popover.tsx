@@ -42,7 +42,7 @@ const popoverOpenAnimation = await withKeyframes({
     transform: "translateY(0) scale(1)",
   },
 });
-const popoverStyle = await withDynamicStyles(
+const popoverStyle = withDynamicStyles(
   ({ anchor, area }: { anchor: string; area: string }) =>
     () => ({
       positionAnchor: anchor,
@@ -99,7 +99,7 @@ const makePopoverWithTrigger = ({
   return [popover, triggerProps] as const;
 };
 
-const triggerStyleProps = await withDynamicStyles(
+const triggerStyleProps = withDynamicStyles(
   ({ anchorName }: { anchorName: string }) =>
     () => ({
       anchorName,
