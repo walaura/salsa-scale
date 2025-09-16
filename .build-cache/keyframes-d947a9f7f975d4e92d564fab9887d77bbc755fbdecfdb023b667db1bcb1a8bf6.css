@@ -1,5 +1,0 @@
-@keyframes keyframes-d947a9f7f975d4e92d564fab9887d77bbc755fbdecfdb023b667db1bcb1a8bf6 { to { transform : scale(0.3) translateY(calc(var(--margin-page) * -2));
-box-shadow : var(--shadow-large);
-backdrop-filter : blur(1rem);
- }
- }

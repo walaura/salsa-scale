@@ -11,6 +11,7 @@ type RegistryKey = `${Registers}-${string}`;
 const REGISTRY = new Map<RegistryKey, string>();
 
 const VOID_SELECTOR = makeSelector("");
+const BUILD_CACHE_DIR = path.join(cwd(), "/.build-cache");
 
 const getRegisteredStyles = () => {
   return [...Array.from(REGISTRY.values())];
@@ -28,7 +29,6 @@ const maybeRegister = async (
 
   const value = getValue(registryKey);
   REGISTRY.set(registryKey, value);
-  console.log(cwd());
   await fs.writeFile(
     path.join(cwd(), "/.build-cache", `${registryKey}.css`),
     value + "\n"

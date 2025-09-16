@@ -1,7 +1,0 @@
-.styles-58a8c1aae91cfaf22f699416ee43393af4e89c8fce714f1b8fc4ee519d5b9c2f { & > * { max-width : var(--max-width);
-margin : auto;
-& + * { margin-top : calc(var(--margin-page) * 0.75);
- }
- }
- }
-
