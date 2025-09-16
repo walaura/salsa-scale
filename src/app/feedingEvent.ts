@@ -1,5 +1,5 @@
 const THRESHOLD = 1.75;
-const DISTANCE_THRESHOLD = 2;
+const DISTANCE_THRESHOLD = 4;
 
 const Outcome = {
   NO_DECREASE: "No decrease",
@@ -28,10 +28,9 @@ export const isFeedingEvent = (
   const diffAvg = diff.reduce((a, b) => a + b, 0) / diff.length;
 
   /* Filter noise (refill, temp change) */
-  if (
-    Math.max(...diff.map(Math.abs)) - Math.abs(diffAvg) >
-    DISTANCE_THRESHOLD
-  ) {
+  const maxDiff = Math.max(...diff.map(Math.abs));
+  const avgDiff = Math.abs(diffAvg);
+  if (maxDiff - avgDiff > DISTANCE_THRESHOLD) {
     return [
       false,
       0,
@@ -39,7 +38,7 @@ export const isFeedingEvent = (
         outcome: Outcome.NOISE,
         extra: {
           diff,
-          calc: [Math.max(...diff.map(Math.abs)), Math.abs(diffAvg)],
+          calc: [maxDiff, avgDiff],
         },
       },
     ];
