@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { ResolvedStyleObject } from "./lib/decls.ts";
+import { StyleObject } from "./lib/decls.ts";
 
 const camelCaseToKebabCase = (str: string) => {
   return str
@@ -20,7 +20,7 @@ const reduceStyleObject = (styles: { [key: string]: any }): string => {
   return result;
 };
 
-const hash = (string: ResolvedStyleObject) =>
+const hash = (string: StyleObject) =>
   createHash("sha256").update(JSON.stringify(string), "utf8").digest("hex");
 
 const withUnits =

@@ -1,16 +1,13 @@
-import {
-  isSelector,
-  makeSelector,
-  type BasicStyleSelector,
-} from "./lib/selector.ts";
+import { isSelector, makeSelector } from "./lib/selector.ts";
 import { maybeRegister } from "./lib/storage.ts";
 import {
-  DynamicStyleFn,
-  type StyleFn,
-  type ResolvedStyleObject,
-  DynamicStyleSelector,
-  type StyleSelectors,
-  ResolvedDynamicStyleSelector,
+  DynamicInputStyles,
+  type InputStyles,
+  type StyleObject,
+  DynamicStyleHtmlPropsUnfurler,
+  type StyleProp,
+  StyleHtmlProps,
+  StyleHtmlClassProp,
 } from "./lib/decls.ts";
 import {
   camelCaseToKebabCase,
@@ -30,15 +27,15 @@ const PROPS = new Proxy(
   }
 );
 
-const styleProps = <P extends {}>(props: P): ResolvedStyleObject => {
+const styleProps = <P extends {}>(props: P): StyleObject => {
   if (!props) return {};
   const returnable = Object.fromEntries(
     Object.entries(props).map(([key, value]) => [`--${key}`, value])
   );
-  return returnable as ResolvedStyleObject;
+  return returnable as StyleObject;
 };
 
-const withStyles = async (styles: StyleFn): Promise<BasicStyleSelector> => {
+const withStyles = async (styles: InputStyles): Promise<StyleHtmlClassProp> => {
   const className = await maybeRegister(
     "styles",
     hash(styles(VOID_SELECTOR)),
@@ -54,11 +51,11 @@ const withStyles = async (styles: StyleFn): Promise<BasicStyleSelector> => {
 };
 
 export const withDynamicStyles = async <Props extends {}>(
-  styles: DynamicStyleFn<Props>
-): Promise<DynamicStyleSelector<Props>> => {
+  styles: DynamicInputStyles<Props>
+): Promise<DynamicStyleHtmlPropsUnfurler<Props>> => {
   const selector = await withStyles(styles(PROPS as any));
 
-  const fn: DynamicStyleSelector<Props> = (props) => {
+  const fn: DynamicStyleHtmlPropsUnfurler<Props> = (props) => {
     return {
       class: selector.toString(),
       style: styleProps(props),
@@ -68,9 +65,7 @@ export const withDynamicStyles = async <Props extends {}>(
   return fn;
 };
 
-export const joinStyles = (
-  ...styles: StyleSelectors[]
-): ResolvedDynamicStyleSelector => {
+export const joinStyles = (...styles: StyleProp[]): StyleHtmlProps => {
   let finalClassName = [];
   let style = [];
 
@@ -92,11 +87,11 @@ export const joinStyles = (
   };
 };
 
-const withKeyframes = (styles: ResolvedStyleObject) => {
+const withKeyframes = (styles: StyleObject) => {
   const className = maybeRegister("keyframes", hash(styles), (className) => {
     const selector = makeSelector(className, "");
-    const renderedStyleFn = reduceStyleObject(styles);
-    return `@keyframes ${selector.toString()} { ${renderedStyleFn} }`;
+    const renderedInputStyles = reduceStyleObject(styles);
+    return `@keyframes ${selector.toString()} { ${renderedInputStyles} }`;
   });
   return className;
 };
@@ -104,5 +99,5 @@ const withKeyframes = (styles: ResolvedStyleObject) => {
 const rem = withUnits("rem");
 const px = withUnits("px");
 
-export type { StyleSelectors };
+export type { StyleProp };
 export { withStyles, withKeyframes, rem, px };

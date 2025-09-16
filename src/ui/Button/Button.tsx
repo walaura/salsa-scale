@@ -1,4 +1,4 @@
-import { joinStyles, px, rem, StyleSelectors, withStyles } from "local-css/css";
+import { joinStyles, px, rem, StyleProp, withStyles } from "local-css/css";
 import { JSXNode } from "local-tsx/jsx-runtime";
 
 const Button = ({
@@ -13,7 +13,7 @@ const Button = ({
   label: JSXNode;
   href?: string;
   target?: string;
-  styles?: StyleSelectors;
+  styles?: StyleProp;
   popoverTarget?: string;
   size?: "large" | "regular";
   type?: "primary" | "secondary";

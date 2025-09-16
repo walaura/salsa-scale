@@ -1,37 +1,35 @@
-import { type BasicStyleSelector } from "./selector.ts";
 import type * as CSS from "csstype";
 
 type Merge<A, B> = {
   [K in keyof A]: K extends keyof B ? B[K] : A[K];
 } & B;
 
-export type ResolvedStyleObject = Merge<
+export type StyleObject = Merge<
   {
-    [key: string]: ResolvedStyleObject | string | number | undefined | null;
+    [key: string]: StyleObject | string | number | undefined | null;
   },
   CSS.Properties<string | number>
 >;
-export type StyleFn = (root: BasicStyleSelector) => ResolvedStyleObject;
+export type InputStyles = (root: StyleHtmlClassProp) => StyleObject;
+export type DynamicInputStyles<Props> = (props: Props) => InputStyles;
 
-export type DynamicStyleFn<Props> = (props: Props) => StyleFn;
+export type DynamicStyleHtmlPropsUnfurler<Props extends {}> = {
+  (props: Props): StyleHtmlProps;
+  selector: StyleHtmlClassProp;
+};
 
 /*
 Selectors
 */
-export type BasicStyleSelector = string & {
+export type StyleHtmlClassProp = string & {
   (child: string): string;
   toString(): string;
-  __isSelector: true;
+  __isSelector: boolean;
 };
-
-export type DynamicStyleSelector<Props extends {}> = {
-  (props: Props): ResolvedDynamicStyleSelector;
-  selector: BasicStyleSelector;
-};
-export type ResolvedDynamicStyleSelector = {
+export type StyleHtmlProps = {
   class: string;
-  style: ResolvedStyleObject;
+  style: StyleObject;
 };
 
-export type StyleSelector = ResolvedDynamicStyleSelector | BasicStyleSelector;
-export type StyleSelectors = StyleSelector | StyleSelector[];
+type BaseStyleProp = StyleHtmlProps | StyleHtmlClassProp;
+export type StyleProp = BaseStyleProp | BaseStyleProp[];
