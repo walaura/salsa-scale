@@ -11,7 +11,7 @@ export const BUILD_CACHE_DIR = path.join(cwd(), "/.build-cache");
 
 const getRegisteredStyles = async () => {
   if (!PROD) {
-    return [...Array.from(REGISTRY.values())];
+    return ["/* USING LIVE STYLES */", ...Array.from(REGISTRY.values())];
   }
   const files = await fs.readdir(BUILD_CACHE_DIR);
   const contents = await Promise.all(
