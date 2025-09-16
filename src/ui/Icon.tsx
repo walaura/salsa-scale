@@ -8,7 +8,7 @@ const Icon = ({ icon, tint }: { icon: string; tint?: string }) => {
   return <img src={iconUrl} alt="" class={className} />;
 };
 
-const className = withStyles(() => ({
+const className = await withStyles(() => ({
   display: "inline-block",
   verticalAlign: "middle",
 }));

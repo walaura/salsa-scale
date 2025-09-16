@@ -32,7 +32,7 @@ const Popover = ({
   return popover;
 };
 
-const popoverOpenAnimation = withKeyframes({
+const popoverOpenAnimation = await withKeyframes({
   from: {
     opacity: 0,
     transform: "translateY(0.5rem) scale(0.8)",

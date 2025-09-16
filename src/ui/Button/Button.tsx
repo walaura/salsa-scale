@@ -33,7 +33,7 @@ const Button = ({
   );
 };
 
-const className = withStyles(() => ({
+const className = await withStyles(() => ({
   cursor: "pointer",
   display: "block",
   borderRadius: px(9999),

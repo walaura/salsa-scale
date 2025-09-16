@@ -7,7 +7,7 @@ const StickySection = ({ children }: { children: JSX.Element }) => (
   </div>
 );
 
-const stickFirstAnimation = withKeyframes({
+const stickFirstAnimation = await withKeyframes({
   to: {
     transform: "scale(0.3) translateY(calc(var(--margin-page) * -2))",
     boxShadow: "var(--shadow-large)",
@@ -15,7 +15,7 @@ const stickFirstAnimation = withKeyframes({
   },
 });
 
-const className = withStyles(() => ({
+const className = await withStyles(() => ({
   position: "sticky",
   top: "calc(var(--margin-page))",
   animation: `ease ${stickFirstAnimation} both`,

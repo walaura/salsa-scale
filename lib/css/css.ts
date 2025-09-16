@@ -27,15 +27,15 @@ const styleProps = <P extends {}>(props: P): ResolvedStyleObject => {
   return returnable as ResolvedStyleObject;
 };
 
-const withStyles = (styles: StyleFn): BasicStyleSelector => {
-  const className = maybeRegisterStyle(styles);
+const withStyles = async (styles: StyleFn): Promise<BasicStyleSelector> => {
+  const className = await maybeRegisterStyle(styles);
   return makeSelector(className);
 };
 
-export const withDynamicStyles = <Props extends {}>(
+export const withDynamicStyles = async <Props extends {}>(
   styles: DynamicStyleFn<Props>
-): DynamicStyleSelector<Props> => {
-  const className = maybeRegisterStyle(styles(PROPS as any));
+): Promise<DynamicStyleSelector<Props>> => {
+  const className = await maybeRegisterStyle(styles(PROPS as any));
   const selector = makeSelector(className);
   const fn: DynamicStyleSelector<Props> = (props) => {
     return {

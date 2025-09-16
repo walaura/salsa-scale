@@ -30,7 +30,7 @@ const Pivot = ({
   </div>
 );
 
-const linkClassname = withStyles((select) => ({
+const linkClassname = await withStyles((select) => ({
   textDecoration: "none",
   transition: "all .2s ease",
   opacity: 0.75,
@@ -126,7 +126,7 @@ const linkClassname = withStyles((select) => ({
   },
 }));
 
-const className = withStyles((select) => ({
+const className = await withStyles((select) => ({
   display: "flex",
   fontSize: "var(--font-secondary)",
   gap: rem(-0.5),

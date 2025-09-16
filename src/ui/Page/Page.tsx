@@ -39,7 +39,7 @@ const Page = ({
   return "<!DOCTYPE html>" + page;
 };
 
-const className = withStyles(() => ({
+const className = await withStyles(() => ({
   "& > *": {
     maxWidth: "var(--max-width)",
     margin: "auto",

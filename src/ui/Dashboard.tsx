@@ -22,7 +22,7 @@ const DashboardWidget = ({
   </div>
 );
 
-const widgetClassName = withStyles((select) => ({
+const widgetClassName = await withStyles((select) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -101,7 +101,7 @@ const Dashboard = ({
     </div>
   );
 };
-const className = withStyles(() => ({
+const className = await withStyles(() => ({
   display: "grid",
   background: "var(--neutral-0-A80)",
   gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",

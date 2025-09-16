@@ -93,13 +93,13 @@ const Chart = ({
   );
 };
 
-const dashAnimation = withKeyframes({
+const dashAnimation = await withKeyframes({
   to: {
     strokeDashoffset: 0,
   },
 });
 
-const className = withStyles((select) => ({
+const className = await withStyles((select) => ({
   display: "block",
   contain: "strict",
   width: "100%",
@@ -161,7 +161,7 @@ const makeHoverable = ({
   </g>
 );
 
-const hoverableClassName = withStyles((select) => ({
+const hoverableClassName = await withStyles((select) => ({
   circle: {
     display: "none",
   },

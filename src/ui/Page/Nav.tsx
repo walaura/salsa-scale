@@ -24,7 +24,7 @@ export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
   );
 };
 
-const className = withStyles(() => ({
+const className = await withStyles(() => ({
   boxShadow:
     "var(--shadow-large), inset 0 -1px 0 0 color-mix(in oklab, var(--pink-50), black 5%), inset 0 1px 0 0 color-mix(in oklab, var(--pink-50), white 15%), inset 0 0 0 1px color-mix(in oklab, var(--pink-50), white 5%)",
   position: "fixed",

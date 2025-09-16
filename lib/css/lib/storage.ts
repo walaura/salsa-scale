@@ -30,13 +30,13 @@ const maybeRegister = async (
   const value = getValue(registryKey);
   REGISTRY.set(registryKey, value);
   await fs.writeFile(
-    path.join(cwd(), "/.build-cache", `${registryKey}.css`),
+    path.join(BUILD_CACHE_DIR, `${registryKey}.css`),
     value + "\n"
   );
   return registryKey;
 };
 
-const maybeRegisterStyle = (style: StyleFn) => {
+const maybeRegisterStyle = async (style: StyleFn) => {
   return maybeRegister("styles", hash(style(VOID_SELECTOR)), (className) => {
     const selector = makeSelector(className, ".");
     return reduceStyleObject({
@@ -45,7 +45,7 @@ const maybeRegisterStyle = (style: StyleFn) => {
   });
 };
 
-const maybeRegisterKeyframes = (style: ResolvedStyleObject) => {
+const maybeRegisterKeyframes = async (style: ResolvedStyleObject) => {
   return maybeRegister("keyframes", hash(style), (className) => {
     const selector = makeSelector(className, "");
     const renderedStyleFn = reduceStyleObject(style);
