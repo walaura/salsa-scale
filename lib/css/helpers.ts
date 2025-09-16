@@ -1,3 +1,6 @@
+import { createHash } from "crypto";
+import { ResolvedStyleObject } from "./lib/decls.ts";
+
 const camelCaseToKebabCase = (str: string) => {
   return str
     .replace(/([a-z])([A-Z])/g, "$1-$2")
@@ -17,6 +20,14 @@ const reduceStyleObject = (styles: { [key: string]: any }): string => {
   return result;
 };
 
+const hash = (string: ResolvedStyleObject) =>
+  createHash("sha256").update(JSON.stringify(string), "utf8").digest("hex");
+
+const withUnits =
+  (units: string) =>
+  (...props: (number | string)[]) =>
+    props.map((p) => (typeof p === "string" ? p : `${p}${units}`)).join(" ");
+
 export { getRegisteredStyles } from "./lib/storage.ts";
 
-export { camelCaseToKebabCase, reduceStyleObject };
+export { camelCaseToKebabCase, reduceStyleObject, hash, withUnits };

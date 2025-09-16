@@ -1,7 +1,5 @@
-export type BasicStyleSelector = string & {
-  (child: string): string;
-  toString(): string;
-  __isSelector: true;
+export const isSelector = (obj: any): obj is BasicStyleSelector => {
+  return typeof obj === "function" && obj.__isSelector === true;
 };
 
 const makeSelector = (
@@ -11,7 +9,6 @@ const makeSelector = (
   const className = `${maybePrefix}${rawClassName}`;
   const fn = (child: string) => [className, child].join("-");
   fn.toString = () => className;
-  fn.keyframes = (child: string) => `kf-${rawClassName}-${child}`;
   fn.__isSelector = true;
   return fn as any as BasicStyleSelector;
 };

@@ -1,5 +1,9 @@
-import { makeSelector, type BasicStyleSelector } from "./lib/selector.ts";
-import { maybeRegisterKeyframes, maybeRegisterStyle } from "./lib/storage.ts";
+import {
+  isSelector,
+  makeSelector,
+  type BasicStyleSelector,
+} from "./lib/selector.ts";
+import { maybeRegister } from "./lib/storage.ts";
 import {
   DynamicStyleFn,
   type StyleFn,
@@ -8,7 +12,14 @@ import {
   type StyleSelectors,
   ResolvedDynamicStyleSelector,
 } from "./lib/decls.ts";
-import { camelCaseToKebabCase } from "./helpers.ts";
+import {
+  camelCaseToKebabCase,
+  reduceStyleObject,
+  withUnits,
+  hash,
+} from "./helpers.ts";
+
+const VOID_SELECTOR = makeSelector("");
 
 const PROPS = new Proxy(
   {},
@@ -28,15 +39,25 @@ const styleProps = <P extends {}>(props: P): ResolvedStyleObject => {
 };
 
 const withStyles = async (styles: StyleFn): Promise<BasicStyleSelector> => {
-  const className = await maybeRegisterStyle(styles);
+  const className = await maybeRegister(
+    "styles",
+    hash(styles(VOID_SELECTOR)),
+    (className) => {
+      const selector = makeSelector(className, ".");
+      return reduceStyleObject({
+        [selector.toString()]: styles(selector),
+      });
+    }
+  );
+
   return makeSelector(className);
 };
 
 export const withDynamicStyles = async <Props extends {}>(
   styles: DynamicStyleFn<Props>
 ): Promise<DynamicStyleSelector<Props>> => {
-  const className = await maybeRegisterStyle(styles(PROPS as any));
-  const selector = makeSelector(className);
+  const selector = await withStyles(styles(PROPS as any));
+
   const fn: DynamicStyleSelector<Props> = (props) => {
     return {
       class: selector.toString(),
@@ -57,7 +78,7 @@ export const joinStyles = (
     if (Array.isArray(m)) {
       m = joinStyles(...m);
     }
-    if ("__isSelector" in m === true) {
+    if (isSelector(m)) {
       finalClassName.push(m.toString());
       continue;
     }
@@ -72,14 +93,13 @@ export const joinStyles = (
 };
 
 const withKeyframes = (styles: ResolvedStyleObject) => {
-  const className = maybeRegisterKeyframes(styles);
+  const className = maybeRegister("keyframes", hash(styles), (className) => {
+    const selector = makeSelector(className, "");
+    const renderedStyleFn = reduceStyleObject(styles);
+    return `@keyframes ${selector.toString()} { ${renderedStyleFn} }`;
+  });
   return className;
 };
-
-const withUnits =
-  (units: string) =>
-  (...props: (number | string)[]) =>
-    props.map((p) => (typeof p === "string" ? p : `${p}${units}`)).join(" ");
 
 const rem = withUnits("rem");
 const px = withUnits("px");

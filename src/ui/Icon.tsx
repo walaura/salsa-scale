@@ -13,7 +13,7 @@ const className = await withStyles(() => ({
   verticalAlign: "middle",
 }));
 
-const tintedClassName = withDynamicStyles<{ icon: string; tint: string }>(
+const tintedClassName = await withDynamicStyles<{ icon: string; tint: string }>(
   ({ icon, tint }) =>
     () => ({
       width: px(16),

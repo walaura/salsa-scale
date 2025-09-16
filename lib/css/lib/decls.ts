@@ -13,15 +13,25 @@ export type ResolvedStyleObject = Merge<
 >;
 export type StyleFn = (root: BasicStyleSelector) => ResolvedStyleObject;
 
-export type ResolvedDynamicStyleSelector = {
-  class: string;
-  style: ResolvedStyleObject;
+export type DynamicStyleFn<Props> = (props: Props) => StyleFn;
+
+/*
+Selectors
+*/
+export type BasicStyleSelector = string & {
+  (child: string): string;
+  toString(): string;
+  __isSelector: true;
 };
+
 export type DynamicStyleSelector<Props extends {}> = {
   (props: Props): ResolvedDynamicStyleSelector;
   selector: BasicStyleSelector;
 };
-export type DynamicStyleFn<Props> = (props: Props) => StyleFn;
+export type ResolvedDynamicStyleSelector = {
+  class: string;
+  style: ResolvedStyleObject;
+};
 
 export type StyleSelector = ResolvedDynamicStyleSelector | BasicStyleSelector;
 export type StyleSelectors = StyleSelector | StyleSelector[];
