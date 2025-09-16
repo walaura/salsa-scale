@@ -3,7 +3,13 @@ import { rem, withStyles } from "local-css/css";
 import { ROUTES } from "../../router.ts";
 import { Pivot } from "../Pivot.tsx";
 
-export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
+export const Nav = ({
+  currentRoute,
+  shouldSeeSecrets,
+}: {
+  currentRoute: IRoute;
+  shouldSeeSecrets: boolean;
+}) => {
   const LINKS = [
     {
       label: "Overview",
@@ -15,7 +21,12 @@ export const Nav = ({ currentRoute }: { currentRoute: IRoute }) => {
       link: ROUTES.recordsRoute.path,
       isActive: currentRoute.path === ROUTES.recordsRoute.path,
     },
-  ];
+    shouldSeeSecrets && {
+      label: "Ssh",
+      link: ROUTES.secretRoute.path,
+      isActive: currentRoute.path === ROUTES.secretRoute.path,
+    },
+  ].filter(Boolean) as Parameters<typeof Pivot>[0]["filters"];
 
   return (
     <nav class={className}>

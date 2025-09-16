@@ -1,27 +1,70 @@
 import { rem, withStyles } from "lib/css/css.ts";
 import { Icon } from "../Icon.tsx";
+import { JSXNode } from "local-tsx/jsx-runtime";
 
-type LinkCell = {
+type BaseCell = {
   key: string;
-  href: string;
   label: string;
   sublabel?: string;
 };
 
-const List = ({ items }: { items: LinkCell[] }) => {
+type LinkCell = BaseCell & {
+  href: string;
+};
+type ActionCell = BaseCell & {
+  action: JSXNode;
+};
+
+type Cell = LinkCell | ActionCell;
+
+const List = <TCell extends Cell>({ items }: { items: TCell[] }) => {
   return (
     <div class={className}>
-      {items.map((item) => (
-        <a href={item.href} class={className("cell")}>
-          <div class={className("cell-interior")}>
-            <strong>{item.label}</strong>
-            {item.sublabel && <em>{item.sublabel}</em>}
-          </div>
-          <Icon icon="chevron" tint="var(--pink-300)" />
-        </a>
-      ))}
+      {items.map((item) => {
+        if ("action" in item) {
+          return <ListCell {...item} endCap={item.action} />;
+        }
+        if ("href" in item) {
+          return (
+            <ListCell
+              {...item}
+              endCap={<Icon icon="chevron" tint="var(--pink-300)" />}
+            />
+          );
+        }
+      })}
     </div>
   );
+};
+
+const ListCell = ({
+  href,
+  label,
+  sublabel,
+  endCap,
+}: {
+  href?: string;
+  label: string;
+  sublabel?: string;
+  endCap: JSXNode;
+}) => {
+  const interior = (
+    <>
+      <div class={className("cell-interior")}>
+        <strong>{label}</strong>
+        {sublabel && <em>{sublabel}</em>}
+      </div>
+      {endCap}
+    </>
+  );
+  if (href) {
+    return (
+      <a href={href} class={className("cell")}>
+        {interior}
+      </a>
+    );
+  }
+  return <div class={className("cell")}>{interior}</div>;
 };
 
 export { List };

@@ -7,10 +7,12 @@ const Page = async ({
   children,
   forceMode,
   currentRoute,
+  shouldSeeSecrets,
 }: {
   children: string;
   forceMode: "dark" | "light" | undefined;
   currentRoute: IRoute;
+  shouldSeeSecrets: boolean;
 }) => {
   const styles = await getRegisteredStyles();
 
@@ -32,7 +34,7 @@ const Page = async ({
         <style type="text/css">{styles.join("\n")}</style>
       </head>
       <body class={className}>
-        <Nav currentRoute={currentRoute} />
+        <Nav currentRoute={currentRoute} shouldSeeSecrets={shouldSeeSecrets} />
         {children}
       </body>
     </html>

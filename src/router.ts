@@ -56,8 +56,36 @@ const unMarkEvent: Route<"get"> = {
   }),
 };
 
+const loginRoute: Route<"post"> = {
+  method: "post",
+  path: "/sudo/" + TOP_SECRET_PATH + "/log/in/",
+  handler: withLog(async (_, res) => {
+    let options = {
+      maxAge: Number.MAX_SAFE_INTEGER / 2,
+    };
+
+    res.cookie(TOP_SECRET_PATH, TOP_SECRET_PATH, options);
+    return await "kk";
+  }),
+};
+
+const logoutRoute: Route<"post"> = {
+  method: "post",
+  path: "/sudo/" + TOP_SECRET_PATH + "/log/out/",
+  handler: withLog(async (_, res) => {
+    let options = {
+      maxAge: 0,
+    };
+
+    res.cookie(TOP_SECRET_PATH, "", options);
+    return await "kk";
+  }),
+};
+
 const ROUTES = {
   landingRoute,
+  loginRoute,
+  logoutRoute,
   recordsRoute,
   track,
   delet,

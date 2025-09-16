@@ -48,62 +48,22 @@ const widgetClassName = withStyles((select) => ({
 }));
 
 const Dashboard = ({
-  feedingEvents,
+  widgets,
 }: {
-  feedingEvents: WithId<LogEntry>[];
+  widgets: Parameters<typeof DashboardWidget>[0][];
 }) => {
-  if (feedingEvents.length === 0) {
-    return null;
-  }
-
-  const now = Date.now();
-  const timeSinceLast = now - feedingEvents[0].timestamp;
-  const averageTimeBetweenEvents =
-    feedingEvents.reduce((acc, curr, idx) => {
-      if (idx === 0) return acc;
-      const diff = feedingEvents[idx - 1].timestamp - curr.timestamp;
-      return acc + diff;
-    }, timeSinceLast) / feedingEvents.length;
-
-  const averageSizeOfEvents =
-    feedingEvents.reduce((acc, curr) => {
-      return acc + (curr.feedingEventOfSize ?? 0);
-    }, 0) / feedingEvents.length;
-
-  const expectedNextFeedingTime =
-    now - timeSinceLast + averageTimeBetweenEvents;
-
   return (
     <div class={className}>
-      <DashboardWidget
-        title="Time since last event"
-        fact={formatTime(timeSinceLast, true)}
-        icon="clock-pink"
-      />
-      <DashboardWidget
-        title="Average time between"
-        fact={formatTime(averageTimeBetweenEvents, true)}
-        icon="time-snake"
-      />
-      <DashboardWidget
-        title="Average size"
-        fact={formatGrams(averageSizeOfEvents)}
-        icon="food"
-      />
-      <DashboardWidget
-        title="Expected next time"
-        fact={
-          (now > expectedNextFeedingTime ? "Soon!! Was " : "") +
-          formatTimeHtml(expectedNextFeedingTime)
-        }
-        icon="clock-blue"
-      />
+      {widgets.map((w) => (
+        <DashboardWidget {...w} />
+      ))}
     </div>
   );
 };
+
 const className = withStyles(() => ({
   display: "grid",
-  background: "var(--neutral-0-A80)",
+  background: "color-mix(in srgb, var(--neutral-0) 75%, transparent)",
   gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
   margin: "-0.5px",
 }));

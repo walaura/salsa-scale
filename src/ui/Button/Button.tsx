@@ -1,35 +1,48 @@
 import { joinStyles, px, rem, StyleProp, withStyles } from "local-css/css";
 import { JSXNode } from "local-tsx/jsx-runtime";
 
-const Button = ({
-  label,
-  href,
-  target = "_self",
-  styles = [],
-  size = "regular",
-  type = "secondary",
-  ...passThroughProps
-}: {
+type BaseButtonProps = {
   label: JSXNode;
-  href?: string;
   target?: string;
   styles?: StyleProp;
   popoverTarget?: string;
   size?: "large" | "regular";
   type?: "primary" | "secondary";
-}) => {
-  const Element = href ? "a" : "button";
+};
+
+type HrefButtonProps = BaseButtonProps & {
+  href: string;
+  target?: undefined | "_blank";
+};
+
+type FormButtonProps = BaseButtonProps & {
+  action?: "submit";
+};
+
+const Button = ({
+  label,
+  styles = [],
+  size = "regular",
+  type = "secondary",
+  popoverTarget,
+  ...otherProps
+}: HrefButtonProps | FormButtonProps) => {
+  const sharedElementProps = {
+    ...joinStyles(className, styles),
+    "data-size": size,
+    "data-type": type,
+    popoverTarget,
+  };
+
+  if ("href" in otherProps) {
+    const { target, href } = otherProps;
+    return <a {...sharedElementProps} href={href} target={target} />;
+  }
+
   return (
-    <Element
-      {...joinStyles(className, styles)}
-      href={href}
-      data-size={size}
-      data-type={type}
-      target={target}
-      {...passThroughProps}
-    >
+    <button {...sharedElementProps} type={otherProps.action}>
       {label}
-    </Element>
+    </button>
   );
 };
 

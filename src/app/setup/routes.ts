@@ -1,9 +1,10 @@
-import type { Request } from "express";
+import type { Request, Response } from "express";
 import { Page } from "../../ui/Page/Page.tsx";
 import { TOP_SECRET_PATH } from "./env.ts";
 
 export type RouteHandler<ExpectedResponse> = (
-  req: Request
+  req: Request,
+  res: Response
 ) => Promise<ExpectedResponse>;
 
 export type Route<Method, ExpectedResponse = string> = {
@@ -21,26 +22,30 @@ export type RouteTransformer<
 ) => RouteHandler<TransformedResponse>;
 
 export const withPage: RouteTransformer<string> = (handler) => {
-  return (req) => {
+  return (req, res) => {
     const forceMode =
       req.query.dark != null
         ? "dark"
         : req.query.light != null
         ? "light"
         : undefined;
-    return handler(req).then((resp) => {
+
+    const shouldSeeSecrets = req.cookies?.[TOP_SECRET_PATH] === TOP_SECRET_PATH;
+
+    return handler(req, res).then((resp) => {
       return Page({
         forceMode,
         children: resp as string,
         currentRoute: req.route,
+        shouldSeeSecrets,
       });
     });
   };
 };
 
 export const withLog: RouteTransformer<string> = (handler) => {
-  return (req) => {
-    return handler(req).then((resp) => {
+  return (req, res) => {
+    return handler(req, res).then((resp) => {
       console.log(resp);
       return resp as string;
     });

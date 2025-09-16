@@ -6,12 +6,12 @@ import { Dashboard } from "../ui/Dashboard.tsx";
 import { type LogEntry } from "../app/setup/db.ts";
 import { StickySection } from "../ui/Page/StickySection.tsx";
 import { getAllData } from "../app/getData.ts";
-import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
 import {
   getShouldSeeSecrets,
   type Route,
   withPage,
 } from "@/app/setup/routes.ts";
+import { RecordsDashboard } from "./records/ui/RecordsDashboard.tsx";
 
 async function landing({
   showActions,
@@ -60,7 +60,7 @@ async function landing({
   return [
     <StickySection>{svgLine}</StickySection>,
     <Expander title="Dashboard" isOpen={true}>
-      <Dashboard feedingEvents={feedingEvents} />
+      <RecordsDashboard feedingEvents={feedingEvents} />
     </Expander>,
     ...Object.entries(days).map(([date, points], idx) => (
       <Expander title={date} isOpen={idx === 0}>

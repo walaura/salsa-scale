@@ -7,6 +7,7 @@ import { makePopoverWithTrigger } from "@/ui/Popover.tsx";
 import { Button } from "@/ui/Button/Button.tsx";
 import { px } from "lib/css/css.ts";
 import { Route, withPage } from "@/app/setup/routes.ts";
+import { Dashboard } from "@/ui/Dashboard.tsx";
 
 async function backtestFeedingEvent() {
   const all = await getAllData({
@@ -116,9 +117,20 @@ async function backtestFeedingEvent() {
   return (
     <>
       <Expander title="Summary" isOpen={true}>
-        <>
-          {newPositivesCount} new positives / {newNegativesCount} new negatives.
-        </>
+        <Dashboard
+          widgets={[
+            {
+              title: "new positives",
+              fact: newPositivesCount.toString(),
+              icon: "yay",
+            },
+            {
+              title: "new negatives",
+              fact: newNegativesCount.toString(),
+              icon: "nay",
+            },
+          ]}
+        />
       </Expander>
       <Expander title="Mismatches" isOpen={true} name="root">
         <Table columns={COLUMNS} data={mismatchResults} />
