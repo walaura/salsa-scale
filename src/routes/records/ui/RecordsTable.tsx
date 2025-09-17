@@ -32,19 +32,22 @@ const ActionsRow = ({ point }: { point: WithId<LogEntry> }) => (
       {
         title: "Delete record",
         icon: "bomb",
-        href: ROUTES.delet.path.replace(":id", point._id.toString()),
+        href: ROUTES.sudoDeletRoute.path.replace(":id", point._id.toString()),
       },
       {
         title: "Mark as LV3 feeding event",
         icon: "fe-add",
-        href: ROUTES.markEvent.path
+        href: ROUTES.sudoMarkEventRoute.path
           .replace(":id", point._id.toString())
           .replace(":size", "3"),
       },
       {
         title: "Unset feeding event",
         icon: "fe-rm",
-        href: ROUTES.unMarkEvent.path.replace(":id", point._id.toString()),
+        href: ROUTES.sudoUnMarkEventRoute.path.replace(
+          ":id",
+          point._id.toString(),
+        ),
       },
     ]}
   />

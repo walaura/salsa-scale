@@ -2,15 +2,11 @@ import type { WithId } from "mongodb";
 import { Chart } from "../ui/Chart.tsx";
 import { RecordsTable } from "./records/ui/RecordsTable.tsx";
 import { Expander } from "../ui/Page/Expander.tsx";
-import { Dashboard } from "../ui/Dashboard.tsx";
+
 import { type LogEntry } from "../app/setup/db.ts";
 import { StickySection } from "../ui/Page/StickySection.tsx";
 import { getAllData } from "../app/getData.ts";
-import {
-  getShouldSeeSecrets,
-  type Route,
-  withPage,
-} from "@/app/setup/routes.ts";
+import { type Route, withPage } from "@/app/setup/routes.ts";
 import { RecordsDashboard } from "./records/ui/RecordsDashboard.tsx";
 
 async function landing({
@@ -74,12 +70,12 @@ const landingRoute: Route<"get"> = {
   method: "get",
   path: "/",
   handler: withPage((req) => {
-    const showActions = getShouldSeeSecrets(req);
+    const showActions = req.isSignedIn;
     const chartScale = req.query.scale
       ? parseFloat(req.query.scale.toString())
       : 1;
     const url = new URL(
-      req.protocol + "://" + req.get("host") + req.originalUrl
+      req.protocol + "://" + req.get("host") + req.originalUrl,
     );
     return landing({ showActions, chartScale, url });
   }),

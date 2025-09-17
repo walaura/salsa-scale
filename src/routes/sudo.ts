@@ -1,7 +1,9 @@
 import { ObjectId } from "mongodb";
 import { type LogEntry, withDb } from "../app/setup/db.ts";
+import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
+import { Route, withLog, withSignInRequirement } from "@/app/setup/routes.ts";
 
-export const deleteById = ({ id }: { id: string }) =>
+const deleteById = ({ id }: { id: string }) =>
   withDb(async (database) => {
     const logs = database.collection<LogEntry>("logs");
     await logs.deleteOne({ _id: new ObjectId(id) });
@@ -9,7 +11,7 @@ export const deleteById = ({ id }: { id: string }) =>
     return response;
   });
 
-export const markFeedingEvent = ({
+const markFeedingEvent = ({
   id,
   feedingEventOfSize,
 }: {
@@ -20,19 +22,55 @@ export const markFeedingEvent = ({
     const logs = database.collection<LogEntry>("logs");
     await logs.updateOne(
       { _id: new ObjectId(id) },
-      { $set: { feedingEventOfSize } }
+      { $set: { feedingEventOfSize } },
     );
     const response = `Log entry marked with the following id: ${id} and size: ${feedingEventOfSize}`;
     return response;
   });
 
-export const unmarkFeedingEvent = ({ id }: { id: string }) =>
+const unmarkFeedingEvent = ({ id }: { id: string }) =>
   withDb(async (database) => {
     const logs = database.collection<LogEntry>("logs");
     await logs.updateOne(
       { _id: new ObjectId(id) },
-      { $unset: { feedingEventOfSize: "" } }
+      { $unset: { feedingEventOfSize: "" } },
     );
     const response = `Log entry unmarked with the following id: ${id}`;
     return response;
   });
+
+export const sudoDeletRoute: Route<"get"> = {
+  method: "get",
+  path: "/sudo/delet/" + TOP_SECRET_PATH + "/:id",
+  handler: withSignInRequirement(
+    withLog((req) => {
+      const id = req.params.id;
+      return deleteById({ id });
+    }),
+  ),
+};
+
+export const sudoMarkEventRoute: Route<"get"> = {
+  method: "get",
+  path: "/sudo/mark/" + TOP_SECRET_PATH + "/:id/:size",
+  handler: withSignInRequirement(
+    withLog((req) => {
+      const id = req.params.id;
+      const feedingEventOfSize = parseInt(req.params.size);
+
+      return markFeedingEvent({ id, feedingEventOfSize });
+    }),
+  ),
+};
+
+export const sudoUnMarkEventRoute: Route<"get"> = {
+  method: "get",
+  path: "/sudo/unmark/" + TOP_SECRET_PATH + "/:id",
+  handler: withSignInRequirement(
+    withLog((req) => {
+      const id = req.params.id;
+
+      return unmarkFeedingEvent({ id });
+    }),
+  ),
+};

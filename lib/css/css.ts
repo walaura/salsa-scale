@@ -24,13 +24,13 @@ const PROPS = new Proxy(
     get(_, prop) {
       return `var(--${camelCaseToKebabCase(prop.toString())})`;
     },
-  }
+  },
 );
 
 const styleProps = <P extends {}>(props: P): StyleObject => {
   if (!props) return {};
   const returnable = Object.fromEntries(
-    Object.entries(props).map(([key, value]) => [`--${key}`, value])
+    Object.entries(props).map(([key, value]) => [`--${key}`, value]),
   );
   return returnable as StyleObject;
 };
@@ -44,14 +44,14 @@ const withStyles = (styles: InputStyles): StyleHtmlClassProp => {
       return reduceStyleObject({
         [selector.toString()]: styles(selector),
       });
-    }
+    },
   );
 
   return makeSelector(className);
 };
 
 export const withDynamicStyles = <Props extends {}>(
-  styles: DynamicInputStyles<Props>
+  styles: DynamicInputStyles<Props>,
 ): DynamicStyleHtmlPropsUnfurler<Props> => {
   const selector = withStyles(styles(PROPS as any));
 

@@ -30,14 +30,14 @@ async function secret({ shouldSeeSecrets }: { shouldSeeSecrets: boolean }) {
 
 const SignIn = ({ shouldSeeSecrets }: { shouldSeeSecrets: boolean }) => {
   const sublabel = shouldSeeSecrets
-    ? "Log out to lose access to admin tools, come back to re-enable"
+    ? "Sign out to lose access to admin tools, come back to re-enable"
     : "Save your access to admin tools";
 
   const action = shouldSeeSecrets
-    ? ROUTES.logoutRoute.path
-    : ROUTES.loginRoute.path;
+    ? ROUTES.authSignOutRoute.path
+    : ROUTES.authSignInRoute.path;
 
-  const actionLabel = shouldSeeSecrets ? "Log out" : "Log in";
+  const actionLabel = shouldSeeSecrets ? "Sign out" : "Sign in";
   const row = [
     {
       key: "sck",

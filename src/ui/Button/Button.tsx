@@ -36,7 +36,11 @@ const Button = ({
 
   if ("href" in otherProps) {
     const { target, href } = otherProps;
-    return <a {...sharedElementProps} href={href} target={target} />;
+    return (
+      <a {...sharedElementProps} href={href} target={target}>
+        {label}
+      </a>
+    );
   }
 
   return (

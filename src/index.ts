@@ -3,12 +3,14 @@ import {} from "./app/setup/env.ts";
 import { ROUTES } from "./router.ts";
 import express from "express";
 import cookieParser from "cookie-parser";
+import { signinMiddleware } from "./app/setup/express.ts";
 
 const app = express();
 const port = 3000;
 
 app.use("/static", express.static("static"));
 app.use(cookieParser());
+app.use(signinMiddleware());
 
 for (const route of Object.values(ROUTES)) {
   app[route.method](route.path, async (req, res) => {

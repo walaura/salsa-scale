@@ -1,10 +1,9 @@
 import type { Request, Response } from "express";
 import { Page } from "../../ui/Page/Page.tsx";
-import { TOP_SECRET_PATH } from "./env.ts";
 
 export type RouteHandler<ExpectedResponse> = (
   req: Request,
-  res: Response
+  res: Response,
 ) => Promise<ExpectedResponse>;
 
 export type Route<Method, ExpectedResponse = string> = {
@@ -16,9 +15,9 @@ export type Route<Method, ExpectedResponse = string> = {
 export type PathTransformer = (path: string, req: Request) => string;
 export type RouteTransformer<
   TransformedResponse,
-  ExpectedResponse = unknown
+  ExpectedResponse = unknown,
 > = (
-  handler: RouteHandler<ExpectedResponse>
+  handler: RouteHandler<ExpectedResponse>,
 ) => RouteHandler<TransformedResponse>;
 
 export const withPage: RouteTransformer<string> = (handler) => {
@@ -27,17 +26,15 @@ export const withPage: RouteTransformer<string> = (handler) => {
       req.query.dark != null
         ? "dark"
         : req.query.light != null
-        ? "light"
-        : undefined;
-
-    const shouldSeeSecrets = req.cookies?.[TOP_SECRET_PATH] === TOP_SECRET_PATH;
+          ? "light"
+          : undefined;
 
     return handler(req, res).then((resp) => {
       return Page({
         forceMode,
         children: resp as string,
         currentRoute: req.route,
-        shouldSeeSecrets,
+        shouldSeeSecrets: req.isSignedIn,
       });
     });
   };
@@ -52,6 +49,14 @@ export const withLog: RouteTransformer<string> = (handler) => {
   };
 };
 
-export const getShouldSeeSecrets = (req: Request): boolean => {
-  return req.query.edit === TOP_SECRET_PATH;
+export const withSignInRequirement: RouteTransformer<string> = (handler) => {
+  return (req, res) => {
+    if (!req.isSignedIn) {
+      res.status(401).send("Unauthorized");
+      return Promise.resolve("");
+    }
+    return handler(req, res).then((resp) => {
+      return resp as string;
+    });
+  };
 };

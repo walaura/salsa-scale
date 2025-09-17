@@ -3,8 +3,8 @@ import { RecordsTable } from "./ui/RecordsTable.tsx";
 import { Expander } from "../../ui/Page/Expander.tsx";
 import { type LogEntry } from "../../app/setup/db.ts";
 import { getAllData } from "../../app/getData.ts";
-import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
-import { getShouldSeeSecrets, Route, withPage } from "@/app/setup/routes.ts";
+
+import { Route, withPage } from "@/app/setup/routes.ts";
 
 async function records({ showActions }: { showActions: boolean }) {
   const all = await getAllData({
@@ -37,7 +37,7 @@ const recordsRoute: Route<"get"> = {
   method: "get",
   path: "/records",
   handler: withPage((req) => {
-    const showActions = getShouldSeeSecrets(req);
+    const showActions = req.isSignedIn;
     return records({ showActions });
   }),
 };
