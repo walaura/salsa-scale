@@ -2,12 +2,17 @@ import { PROD } from "@/app/setup/env.ts";
 import fs, { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { cwd } from "node:process";
+import { getCallSites } from "node:util";
 import prettier from "prettier";
 
 type Registers = "styles" | "keyframes";
-type RegistryKey = `${Registers}-${string}`;
 
-const REGISTRY = new Map<RegistryKey, string>();
+const SHORT_REGISTER_KEY: Record<Registers, string> = {
+  styles: "",
+  keyframes: "kf",
+};
+
+const REGISTRY = new Map<string, string>();
 const BUILD_CACHE_DIR = path.join(cwd(), "/.build-cache");
 
 const getRegisteredStyles = async () => {
@@ -25,9 +30,10 @@ const getRegisteredStyles = async () => {
 const maybeRegister = (
   type: Registers,
   key: string,
-  getValue: (registryKey: RegistryKey) => string,
+  getValue: (registryKey: string) => string,
 ) => {
-  const registryKey = `${type}-${key}` as RegistryKey;
+  const registryKey = [SHORT_REGISTER_KEY[type], key].filter(Boolean).join("-");
+  const data = getCallSites();
   if (PROD || REGISTRY.has(registryKey)) {
     return registryKey;
   }
