@@ -4,6 +4,6 @@
   "exports": {
     "./helpers": "./helpers.ts",
     "./css": "./css.ts",
-    "./storage": "./lib/storage.ts"
+    "./storage": "./storage.ts"
   }
 }

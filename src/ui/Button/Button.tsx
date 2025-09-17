@@ -1,4 +1,5 @@
-import { joinStyles, px, rem, StyleProp, withStyles } from "local-css/css";
+import { joinStyles } from "lib/css/helpers.ts";
+import { px, rem, type StyleProp, withStyles } from "local-css/css";
 import { JSXNode } from "local-tsx/jsx-runtime";
 
 type BaseButtonProps = {

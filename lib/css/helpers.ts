@@ -1,24 +1,6 @@
 import { createHash } from "crypto";
-import { StyleObject } from "./lib/decls.ts";
-
-const camelCaseToKebabCase = (str: string) => {
-  return str
-    .replace(/([a-z])([A-Z])/g, "$1-$2")
-    .replace(/[\s_]+/g, "-")
-    .toLowerCase();
-};
-
-const reduceStyleObject = (styles: { [key: string]: any }): string => {
-  let result = "";
-  for (const [key, value] of Object.entries(styles)) {
-    if (!(typeof value === "object")) {
-      result += `${camelCaseToKebabCase(key)} : ${value};\n`;
-    } else if (value !== null) {
-      result += `${key} { ${reduceStyleObject(value)} }\n`;
-    }
-  }
-  return result;
-};
+import { StyleHtmlProps, StyleObject, StyleProp } from "./lib/decls.ts";
+import { isStyleSelector } from "./lib/htmlProps.ts";
 
 const hash = (string: StyleObject) =>
   createHash("sha256").update(JSON.stringify(string), "utf8").digest("hex");
@@ -28,4 +10,27 @@ const withUnits =
   (...props: (number | string)[]) =>
     props.map((p) => (typeof p === "string" ? p : `${p}${units}`)).join(" ");
 
-export { camelCaseToKebabCase, reduceStyleObject, hash, withUnits };
+const joinStyles = (...styles: StyleProp[]): StyleHtmlProps => {
+  let finalClassName = [];
+  let style = [];
+
+  for (let m of styles) {
+    if (Array.isArray(m)) {
+      m = joinStyles(...m);
+    }
+    if (isStyleSelector(m)) {
+      finalClassName.push(m.toString());
+      continue;
+    }
+    finalClassName.push(m.class.toString());
+    style.push(m.style);
+  }
+
+  return {
+    class: finalClassName.join(" "),
+    style: style.reduce((a, b) => ({ ...a, ...b }), {}),
+  };
+};
+
+export { reduceStyleObject } from "./lib/jsToCss.ts";
+export { hash, withUnits, joinStyles };

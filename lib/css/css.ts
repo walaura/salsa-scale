@@ -1,103 +1,57 @@
-import { isSelector, makeSelector } from "./lib/selector.ts";
-import { maybeRegister } from "./lib/storage.ts";
+import { dynamicStyleStyleProp, makeStyleSelector } from "./lib/htmlProps.ts";
+import { maybeRegister } from "./storage.ts";
 import {
   DynamicInputStyles,
   type InputStyles,
   type StyleObject,
   DynamicStyleHtmlPropsUnfurler,
   type StyleProp,
-  StyleHtmlProps,
-  StyleHtmlClassProp,
+  StyleSelector,
 } from "./lib/decls.ts";
-import {
-  camelCaseToKebabCase,
-  reduceStyleObject,
-  withUnits,
-  hash,
-} from "./helpers.ts";
+import { reduceStyleObject, withUnits, hash } from "./helpers.ts";
+import { EMPTY_PROPS } from "./lib/jsToCss.ts";
 
-const VOID_SELECTOR = makeSelector("");
+const VOID_SELECTOR = makeStyleSelector("");
 
-const PROPS = new Proxy(
-  {},
-  {
-    get(_, prop) {
-      return `var(--${camelCaseToKebabCase(prop.toString())})`;
-    },
-  },
-);
-
-const styleProps = <P extends {}>(props: P): StyleObject => {
-  if (!props) return {};
-  const returnable = Object.fromEntries(
-    Object.entries(props).map(([key, value]) => [`--${key}`, value]),
-  );
-  return returnable as StyleObject;
-};
-
-const withStyles = (styles: InputStyles): StyleHtmlClassProp => {
+export const withStyles = (styles: InputStyles): StyleSelector => {
   const className = maybeRegister(
     "styles",
     hash(styles(VOID_SELECTOR)),
     (className) => {
-      const selector = makeSelector(className, ".");
+      const selector = makeStyleSelector(className, ".");
       return reduceStyleObject({
         [selector.toString()]: styles(selector),
       });
     },
   );
 
-  return makeSelector(className);
+  return makeStyleSelector(className);
 };
 
 export const withDynamicStyles = <Props extends {}>(
   styles: DynamicInputStyles<Props>,
 ): DynamicStyleHtmlPropsUnfurler<Props> => {
-  const selector = withStyles(styles(PROPS as any));
+  const selector = withStyles(styles(EMPTY_PROPS as any));
 
   const fn: DynamicStyleHtmlPropsUnfurler<Props> = (props) => {
     return {
       class: selector.toString(),
-      style: styleProps(props),
+      style: dynamicStyleStyleProp(props),
     };
   };
   fn.selector = selector;
   return fn;
 };
 
-export const joinStyles = (...styles: StyleProp[]): StyleHtmlProps => {
-  let finalClassName = [];
-  let style = [];
-
-  for (let m of styles) {
-    if (Array.isArray(m)) {
-      m = joinStyles(...m);
-    }
-    if (isSelector(m)) {
-      finalClassName.push(m.toString());
-      continue;
-    }
-    finalClassName.push(m.class.toString());
-    style.push(m.style);
-  }
-
-  return {
-    class: finalClassName.join(" "),
-    style: style.reduce((a, b) => ({ ...a, ...b }), {}),
-  };
-};
-
-const withKeyframes = (styles: StyleObject) => {
+export const withKeyframes = (styles: StyleObject) => {
   const className = maybeRegister("keyframes", hash(styles), (className) => {
-    const selector = makeSelector(className, "");
     const renderedInputStyles = reduceStyleObject(styles);
-    return `@keyframes ${selector.toString()} { ${renderedInputStyles} }`;
+    return `@keyframes ${className} { ${renderedInputStyles} }`;
   });
   return className;
 };
 
-const rem = withUnits("rem");
-const px = withUnits("px");
+export const rem = withUnits("rem");
+export const px = withUnits("px");
 
-export type { StyleProp };
-export { withStyles, withKeyframes, rem, px };
+export type { StyleProp } from "./lib/decls.ts";

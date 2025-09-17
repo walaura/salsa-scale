@@ -10,18 +10,18 @@ export type StyleObject = Merge<
   },
   CSS.Properties<string | number>
 >;
-export type InputStyles = (root: StyleHtmlClassProp) => StyleObject;
+export type InputStyles = (root: StyleSelector) => StyleObject;
 export type DynamicInputStyles<Props> = (props: Props) => InputStyles;
 
 export type DynamicStyleHtmlPropsUnfurler<Props extends {}> = {
   (props: Props): StyleHtmlProps;
-  selector: StyleHtmlClassProp;
+  selector: StyleSelector;
 };
 
 /*
 Selectors
 */
-export type StyleHtmlClassProp = string & {
+export type StyleSelector = string & {
   (child: string): string;
   toString(): string;
   __isSelector: boolean;
@@ -31,5 +31,5 @@ export type StyleHtmlProps = {
   style: StyleObject;
 };
 
-type BaseStyleProp = StyleHtmlProps | StyleHtmlClassProp;
+type BaseStyleProp = StyleHtmlProps | StyleSelector;
 export type StyleProp = BaseStyleProp | BaseStyleProp[];
