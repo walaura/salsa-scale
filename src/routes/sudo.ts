@@ -41,7 +41,7 @@ const unmarkFeedingEvent = ({ id }: { id: string }) =>
 
 export const sudoDeletRoute: Route<"get"> = {
   method: "get",
-  path: "/sudo/delet/" + TOP_SECRET_PATH + "/:id",
+  path: "/sudo/delet/:id",
   handler: withSignInRequirement(
     withLog((req) => {
       const id = req.params.id;
@@ -52,7 +52,7 @@ export const sudoDeletRoute: Route<"get"> = {
 
 export const sudoMarkEventRoute: Route<"get"> = {
   method: "get",
-  path: "/sudo/mark/" + TOP_SECRET_PATH + "/:id/:size",
+  path: "/sudo/mark/:id/:size",
   handler: withSignInRequirement(
     withLog((req) => {
       const id = req.params.id;
@@ -65,7 +65,7 @@ export const sudoMarkEventRoute: Route<"get"> = {
 
 export const sudoUnMarkEventRoute: Route<"get"> = {
   method: "get",
-  path: "/sudo/unmark/" + TOP_SECRET_PATH + "/:id",
+  path: "/sudo/unmark/:id",
   handler: withSignInRequirement(
     withLog((req) => {
       const id = req.params.id;
