@@ -1,5 +1,3 @@
-import { StyleObject } from "./decls.ts";
-
 const EMPTY_PROPS = new Proxy(
   {},
   {
