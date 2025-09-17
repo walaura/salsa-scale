@@ -33,10 +33,6 @@ const maybeRegister = (
   getValue: (registryKey: string) => string,
 ) => {
   const registryKey = [SHORT_REGISTER_KEY[type], key].filter(Boolean).join("-");
-  const data = getCallSite()
-    .filter((c) => !c.scriptName.startsWith(path.dirname(import.meta.url)))
-    .shift();
-  console.log(data);
   if (PROD || REGISTRY.has(registryKey)) {
     return registryKey;
   }
