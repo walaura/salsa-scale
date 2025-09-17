@@ -2,7 +2,7 @@ import { PROD } from "@/app/setup/env.ts";
 import fs, { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { cwd } from "node:process";
-import { getCallSites } from "node:util";
+import { getCallSite } from "node:util";
 import prettier from "prettier";
 
 type Registers = "styles" | "keyframes";
@@ -33,7 +33,10 @@ const maybeRegister = (
   getValue: (registryKey: string) => string,
 ) => {
   const registryKey = [SHORT_REGISTER_KEY[type], key].filter(Boolean).join("-");
-  const data = getCallSites();
+  const data = getCallSite()
+    .filter((c) => !c.scriptName.startsWith(path.dirname(import.meta.url)))
+    .shift();
+  console.log(data);
   if (PROD || REGISTRY.has(registryKey)) {
     return registryKey;
   }
