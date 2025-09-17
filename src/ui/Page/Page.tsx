@@ -1,7 +1,7 @@
 import { type IRoute } from "express";
 import { withStyles } from "local-css/css";
 import { Nav } from "./Nav.tsx";
-import { getRegisteredStyles } from "local-css/helpers";
+import { getRegisteredStyles } from "local-css/storage";
 
 const Page = async ({
   children,

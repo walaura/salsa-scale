@@ -28,10 +28,4 @@ const withUnits =
   (...props: (number | string)[]) =>
     props.map((p) => (typeof p === "string" ? p : `${p}${units}`)).join(" ");
 
-export {
-  getRegisteredStyles,
-  getUnbundledRegisteredStyles,
-  BUILD_CACHE_DIR,
-} from "./lib/storage.ts";
-
 export { camelCaseToKebabCase, reduceStyleObject, hash, withUnits };

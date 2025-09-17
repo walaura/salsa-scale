@@ -1,13 +1,14 @@
 import { PROD } from "@/app/setup/env.ts";
-import fs from "node:fs/promises";
+import fs, { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { cwd } from "node:process";
+import prettier from "prettier";
 
 type Registers = "styles" | "keyframes";
 type RegistryKey = `${Registers}-${string}`;
 
 const REGISTRY = new Map<RegistryKey, string>();
-export const BUILD_CACHE_DIR = path.join(cwd(), "/.build-cache");
+const BUILD_CACHE_DIR = path.join(cwd(), "/.build-cache");
 
 const getRegisteredStyles = async () => {
   if (!PROD) {
@@ -15,20 +16,16 @@ const getRegisteredStyles = async () => {
   }
   const files = await fs.readdir(BUILD_CACHE_DIR);
   const contents = await Promise.all(
-    files.map((file) => fs.readFile(path.join(BUILD_CACHE_DIR, file), "utf-8"))
+    files.map((file) => fs.readFile(path.join(BUILD_CACHE_DIR, file), "utf-8")),
   );
 
   return contents.filter((content) => content.trim().length > 0);
 };
 
-const getUnbundledRegisteredStyles = () => {
-  return REGISTRY;
-};
-
 const maybeRegister = (
   type: Registers,
   key: string,
-  getValue: (registryKey: RegistryKey) => string
+  getValue: (registryKey: RegistryKey) => string,
 ) => {
   const registryKey = `${type}-${key}` as RegistryKey;
   if (PROD || REGISTRY.has(registryKey)) {
@@ -40,4 +37,17 @@ const maybeRegister = (
   return registryKey;
 };
 
-export { getRegisteredStyles, getUnbundledRegisteredStyles, maybeRegister };
+const writeToDisk = async () => {
+  mkdir(BUILD_CACHE_DIR, { recursive: true });
+  await Promise.all(
+    Array.from(REGISTRY).map(async ([key, value]) =>
+      writeFile(
+        path.join(BUILD_CACHE_DIR, `${key}.css`),
+        (await prettier.format(value, { parser: "css" })) + "\n",
+      ),
+    ),
+  );
+  return `Wrote ${REGISTRY.size} styles to ${BUILD_CACHE_DIR}`;
+};
+
+export { getRegisteredStyles, maybeRegister, writeToDisk };
