@@ -8,8 +8,8 @@ import prettier from "prettier";
 type Registers = "styles" | "keyframes";
 
 const SHORT_REGISTER_KEY: Record<Registers, string> = {
-  styles: "",
-  keyframes: "kf",
+  styles: "s",
+  keyframes: "k",
 };
 
 const REGISTRY = new Map<string, string>();
