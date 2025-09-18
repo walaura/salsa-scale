@@ -11,31 +11,49 @@ import { Button } from "@/ui/Button/Button.tsx";
 import { px } from "lib/css/css.ts";
 import { Route, withPage } from "@/app/setup/routes.ts";
 import { Dashboard } from "@/ui/Dashboard.tsx";
+import { JSXNode } from "local-tsx/jsx-runtime";
 
 async function backtestFeedingEvent() {
-  const all = await getAllData({
-    daysToFetch: 1,
-  });
+  const all = (
+    await getAllData({
+      daysToFetch: 1,
+    })
+  ).reverse();
 
   let allResults = [];
   let mismatchResults = [];
+  let eventsMergedInto: { [key: string]: string[] } = {};
 
   let newPositivesCount = 0;
   let newNegativesCount = 0;
 
   for (const point of all) {
-    const sixNextPoints = all.slice(
-      all.indexOf(point) + 1,
-      all.indexOf(point) + 7,
-    );
+    const sixNextPoints = all
+      .slice(all.indexOf(point) - 6, all.indexOf(point))
+      .reverse();
 
     const [shouldBeFeedingEvent, shouldBeSize, debugData] = isFeedingEvent(
       point.weight,
       sixNextPoints.map((p) => p.weight),
     );
+    if (shouldBeFeedingEvent) {
+      all[all.indexOf(point)] = { ...point, feedingEventOfSize: shouldBeSize };
+    }
     const [shouldBeFinalSize, eventsToMerge] = shouldBeFeedingEvent
       ? maybeMergePreviousFeedingEvent(shouldBeSize, sixNextPoints)
-      : [shouldBeSize, []]; // todo, run backwards and use should bes instead of db data
+      : [shouldBeSize, []];
+
+    for (const e of eventsToMerge) {
+      all.map((p) =>
+        p._id.toString() === e.toString()
+          ? { ...p, feedingEventOfSize: null }
+          : p,
+      );
+      eventsMergedInto[e.toString()] = [
+        ...(eventsMergedInto[e.toString()] || []),
+        point._id.toString(),
+      ];
+    }
 
     const wasFeedingEvent = point.feedingEventOfSize != null;
     if (shouldBeFeedingEvent && !wasFeedingEvent) {
@@ -46,7 +64,6 @@ async function backtestFeedingEvent() {
     }
 
     const rtf1 = new Intl.RelativeTimeFormat("en", { style: "short" });
-
     const cell = {
       key: point._id.toString(),
 
@@ -58,7 +75,15 @@ async function backtestFeedingEvent() {
       ),
       will: () => (
         <>
-          <Icon icon={shouldBeFeedingEvent ? "yay" : "nay"} />
+          <Icon
+            icon={
+              shouldBeFeedingEvent
+                ? eventsMergedInto[point._id.toString()]?.length
+                  ? "up-arrow"
+                  : "yay"
+                : "nay"
+            }
+          />
           {shouldBeFeedingEvent ? <span>({shouldBeFinalSize})</span> : null}
         </>
       ),
@@ -67,18 +92,8 @@ async function backtestFeedingEvent() {
       debug: () => {
         const debugDataStr = JSON.stringify(debugData.extra, null, 2);
         const [debugPopover, debugTriggerProps] = makePopoverWithTrigger({
-          id: point._id.toString(),
           popover: {
-            children: (
-              <pre
-                style={{
-                  minWidth: px(300),
-                  textAlign: "left",
-                }}
-              >
-                {debugDataStr}
-              </pre>
-            ),
+            children: <Debug>{debugDataStr}</Debug>,
           },
         });
 
@@ -96,31 +111,42 @@ async function backtestFeedingEvent() {
         );
       },
       debugMerge: () => {
+        const eventsMergedIntoStr = (
+          eventsMergedInto[point._id.toString()] ?? []
+        ).join(", ");
         const eventsToMergeStr = eventsToMerge.length
           ? eventsToMerge.join(", ")
           : null;
         const [mergePopover, mergeTriggerProps] = makePopoverWithTrigger({
-          id: point._id.toString() + "-merge",
           popover: {
-            children: (
-              <pre
-                style={{
-                  minWidth: px(300),
-                  textAlign: "left",
-                }}
-              >
-                {eventsToMergeStr}
-              </pre>
-            ),
+            children: <Debug>{eventsToMergeStr}</Debug>,
           },
         });
+        const [mergeIntoPopover, mergeIntoTriggerProps] =
+          makePopoverWithTrigger({
+            popover: {
+              children: <Debug>{eventsMergedIntoStr}</Debug>,
+            },
+          });
 
         return (
           <>
             {eventsToMergeStr ? (
               <>
                 {mergePopover}
-                <Button label="Merged with" {...mergeTriggerProps} />
+                <Button
+                  label={`Merging ${eventsToMerge.length}`}
+                  {...mergeTriggerProps}
+                />
+              </>
+            ) : null}
+            {eventsMergedIntoStr ? (
+              <>
+                {mergeIntoPopover}
+                <Button
+                  label={`Merged into ${eventsMergedInto[point._id.toString()].length}`}
+                  {...mergeIntoTriggerProps}
+                />
               </>
             ) : null}
           </>
@@ -138,9 +164,9 @@ async function backtestFeedingEvent() {
       ),
     };
 
-    allResults.push(cell);
+    allResults.unshift(cell);
     if (shouldBeFeedingEvent != wasFeedingEvent) {
-      mismatchResults.push(cell);
+      mismatchResults.unshift(cell);
     }
   }
 
@@ -181,6 +207,17 @@ async function backtestFeedingEvent() {
     </>
   );
 }
+
+const Debug = ({ children }: { children: JSXNode }) => (
+  <pre
+    style={{
+      minWidth: px(300),
+      textAlign: "left",
+    }}
+  >
+    {children}
+  </pre>
+);
 
 export const backtestFeedingEventRoute: Route<"get"> = {
   method: "get",

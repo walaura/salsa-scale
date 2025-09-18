@@ -1,11 +1,6 @@
 import { JSX } from "local-tsx/jsx-runtime";
-import {
-  px,
-  rem,
-  withDynamicStyles,
-  withKeyframes,
-  withStyles,
-} from "local-css/css";
+import { rem, withDynamicStyles, withKeyframes } from "local-css/css";
+import { randomBytes } from "crypto";
 
 const Popover = ({
   id,
@@ -75,16 +70,15 @@ const popoverStyle = withDynamicStyles(
         animation: `${popoverOpenAnimation} 0.1s ease both`,
         display: "flex",
       },
-    })
+    }),
 );
 
 const makePopoverWithTrigger = ({
-  id,
   popover: popoverProps,
 }: {
-  id: string;
   popover: Omit<Parameters<typeof Popover>[0], "id" | "trigger">;
 }) => {
+  const id = randomBytes(16).toString("hex");
   const anchorName = "--a-" + id;
 
   const popover = <Popover id={id} anchor={anchorName} {...popoverProps} />;
@@ -104,7 +98,7 @@ const triggerStyleProps = withDynamicStyles(
     () => ({
       anchorName,
       display: "block",
-    })
+    }),
 );
 
 export { Popover, makePopoverWithTrigger };
