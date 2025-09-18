@@ -8,7 +8,7 @@ import { Expander } from "../../ui/Page/Expander.tsx";
 import { Table } from "@/ui/Table/Table.tsx";
 import { makePopoverWithTrigger } from "@/ui/Popover.tsx";
 import { Button } from "@/ui/Button/Button.tsx";
-import { px } from "lib/css/css.ts";
+import { px, rem } from "lib/css/css.ts";
 import { Route, withPage } from "@/app/setup/routes.ts";
 import { Dashboard } from "@/ui/Dashboard.tsx";
 import { JSXNode } from "local-tsx/jsx-runtime";
@@ -153,14 +153,17 @@ async function backtestFeedingEvent() {
         );
       },
       timestamp: () => (
-        <time dateTime={new Date(point.timestamp).toISOString()}>
-          {new Date(point.timestamp).toLocaleString()} (
-          {rtf1.format(
-            Math.round((point.timestamp - Date.now()) / 1000 / 60),
-            "minute",
-          )}
-          )
-        </time>
+        <div style={{ display: "flex", flexDirection: "column", gap: px(4) }}>
+          <time dateTime={new Date(point.timestamp).toISOString()}>
+            {new Date(point.timestamp).toLocaleString()} (
+            {rtf1.format(
+              Math.round((point.timestamp - Date.now()) / 1000 / 60),
+              "minute",
+            )}
+            )
+          </time>
+          <em style={{ fontSize: rem(1 / 2) }}>{point._id.toString()}</em>
+        </div>
       ),
     };
 
