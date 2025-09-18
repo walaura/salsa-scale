@@ -2,9 +2,7 @@ import { JSX } from "local-tsx/jsx-runtime";
 import { withStyles, withKeyframes } from "local-css/css";
 
 const StickySection = ({ children }: { children: JSX.Element }) => (
-  <div class={className} data-test="dffgdfg">
-    {children}
-  </div>
+  <div class={className}>{children}</div>
 );
 
 const stickFirstAnimation = await withKeyframes({

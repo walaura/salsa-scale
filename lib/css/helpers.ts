@@ -2,9 +2,6 @@ import { createHash } from "crypto";
 import { StyleHtmlProps, StyleObject, StyleProp } from "./lib/decls.ts";
 import { isStyleSelector } from "./lib/htmlProps.ts";
 
-const hash = (string: StyleObject) =>
-  createHash("sha256").update(JSON.stringify(string), "utf8").digest("hex");
-
 const withUnits =
   (units: string) =>
   (...props: (number | string)[]) =>
@@ -33,4 +30,4 @@ const joinStyles = (...styles: StyleProp[]): StyleHtmlProps => {
 };
 
 export { reduceStyleObject } from "./lib/jsToCss.ts";
-export { hash, withUnits, joinStyles };
+export { withUnits, joinStyles };
