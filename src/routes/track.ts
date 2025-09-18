@@ -44,9 +44,6 @@ const detectFeedingEventOfSize = async ({
 
   //clean up the previous ones if they were set
   for (const id of eventsToMerge) {
-    console.log(
-      `Cleaning up previous feeding event ${id} to merge with new event of size ${delta}`,
-    );
     await logs.updateOne(
       { _id: id },
       {

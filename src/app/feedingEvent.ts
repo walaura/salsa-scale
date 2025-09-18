@@ -73,7 +73,7 @@ export const maybeMergePreviousFeedingEvent = (
       continue;
     }
     console.log(
-      `Cleaning up previous feeding event ${prior._id} to merge with new event of size ${delta}`,
+      `Marking ${prior._id} to merge with new event of size ${delta}`,
     );
     delta += prior.feedingEventOfSize;
     mergeables.push(prior._id);
