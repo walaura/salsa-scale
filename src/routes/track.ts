@@ -1,6 +1,9 @@
 import { Collection } from "mongodb";
 import { withDb, type LogEntry } from "../app/setup/db.ts";
-import { isFeedingEvent as isFeedingEventFn } from "../app/feedingEvent.ts";
+import {
+  isFeedingEvent as isFeedingEventFn,
+  maybeMergePreviousFeedingEvent,
+} from "../app/feedingEvent.ts";
 import { getPreviousFeedingEvents } from "../app/getData.ts";
 import { formatGrams } from "../app/format.ts";
 import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
@@ -20,7 +23,7 @@ const detectFeedingEventOfSize = async ({
     return null;
   }
 
-  const [isFeedingEvent, delta] = isFeedingEventFn(
+  let [isFeedingEvent, tempDelta] = isFeedingEventFn(
     weight,
     lastHour.map((e) => e.weight),
   );
@@ -34,16 +37,18 @@ const detectFeedingEventOfSize = async ({
     return null;
   }
 
+  const [delta, eventsToMerge] = maybeMergePreviousFeedingEvent(
+    tempDelta,
+    lastHour,
+  );
+
   //clean up the previous ones if they were set
-  for await (const prior of lastHour) {
-    if (prior.feedingEventOfSize == null) {
-      continue;
-    }
+  for (const id of eventsToMerge) {
     console.log(
-      `Cleaning up previous feeding event ${prior._id} to merge with new event of size ${delta}`,
+      `Cleaning up previous feeding event ${id} to merge with new event of size ${delta}`,
     );
     await logs.updateOne(
-      { _id: prior._id },
+      { _id: id },
       {
         $set: {
           feedingEventOfSize: null,

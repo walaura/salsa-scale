@@ -1,3 +1,6 @@
+import { WithId } from "mongodb";
+import { LogEntry } from "./setup/db.ts";
+
 const THRESHOLD = 1.75;
 const DISTANCE_THRESHOLD = 4;
 
@@ -14,7 +17,7 @@ type DebugData = {
 
 export const isFeedingEvent = (
   current: number,
-  lastHour: number[]
+  lastHour: number[],
 ): [isFeedingEvent: boolean, delta: number, debugData: DebugData] => {
   const [prev] = lastHour;
 
@@ -58,4 +61,22 @@ export const isFeedingEvent = (
     ];
   }
   return [isFeedingEvent, delta, { outcome: Outcome.YAY }];
+};
+
+export const maybeMergePreviousFeedingEvent = (
+  delta: number,
+  lastHour: WithId<LogEntry>[],
+): [number, WithId<LogEntry>["_id"][]] => {
+  let mergeables = [];
+  for (const prior of lastHour) {
+    if (prior.feedingEventOfSize == null) {
+      continue;
+    }
+    console.log(
+      `Cleaning up previous feeding event ${prior._id} to merge with new event of size ${delta}`,
+    );
+    delta += prior.feedingEventOfSize;
+    mergeables.push(prior._id);
+  }
+  return [delta, mergeables];
 };

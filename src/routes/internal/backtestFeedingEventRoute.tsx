@@ -1,5 +1,8 @@
 import { Icon } from "@/ui/Icon.tsx";
-import { isFeedingEvent } from "../../app/feedingEvent.ts";
+import {
+  isFeedingEvent,
+  maybeMergePreviousFeedingEvent,
+} from "../../app/feedingEvent.ts";
 import { getAllData } from "../../app/getData.ts";
 import { Expander } from "../../ui/Page/Expander.tsx";
 import { Table } from "@/ui/Table/Table.tsx";
@@ -21,14 +24,19 @@ async function backtestFeedingEvent() {
   let newNegativesCount = 0;
 
   for (const point of all) {
-    const sixNextPoints = all
-      .slice(all.indexOf(point) + 1, all.indexOf(point) + 7)
-      .map((p) => p.weight);
+    const sixNextPoints = all.slice(
+      all.indexOf(point) + 1,
+      all.indexOf(point) + 7,
+    );
 
     const [shouldBeFeedingEvent, shouldBeSize, debugData] = isFeedingEvent(
       point.weight,
-      sixNextPoints
+      sixNextPoints.map((p) => p.weight),
     );
+    const [shouldBeFinalSize, eventsToMerge] = shouldBeFeedingEvent
+      ? maybeMergePreviousFeedingEvent(shouldBeSize, sixNextPoints)
+      : [shouldBeSize, []]; // todo, run backwards and use should bes instead of db data
+
     const wasFeedingEvent = point.feedingEventOfSize != null;
     if (shouldBeFeedingEvent && !wasFeedingEvent) {
       newPositivesCount++;
@@ -51,14 +59,14 @@ async function backtestFeedingEvent() {
       will: () => (
         <>
           <Icon icon={shouldBeFeedingEvent ? "yay" : "nay"} />
-          {shouldBeFeedingEvent ? <span>({shouldBeSize})</span> : null}
+          {shouldBeFeedingEvent ? <span>({shouldBeFinalSize})</span> : null}
         </>
       ),
       weight: () => point.weight.toString(),
-      nextPoints: () => sixNextPoints.join(", "),
+      nextPoints: () => sixNextPoints.map((p) => p.weight).join(", "),
       debug: () => {
         const debugDataStr = JSON.stringify(debugData.extra, null, 2);
-        const [debugPopover, triggerProps] = makePopoverWithTrigger({
+        const [debugPopover, debugTriggerProps] = makePopoverWithTrigger({
           id: point._id.toString(),
           popover: {
             children: (
@@ -79,11 +87,42 @@ async function backtestFeedingEvent() {
             {debugDataStr ? (
               <>
                 {debugPopover}
-                <Button label={debugData.outcome} {...triggerProps} />
+                <Button label={debugData.outcome} {...debugTriggerProps} />
               </>
             ) : (
               debugData.outcome
             )}
+          </>
+        );
+      },
+      debugMerge: () => {
+        const eventsToMergeStr = eventsToMerge.length
+          ? eventsToMerge.join(", ")
+          : null;
+        const [mergePopover, mergeTriggerProps] = makePopoverWithTrigger({
+          id: point._id.toString() + "-merge",
+          popover: {
+            children: (
+              <pre
+                style={{
+                  minWidth: px(300),
+                  textAlign: "left",
+                }}
+              >
+                {eventsToMergeStr}
+              </pre>
+            ),
+          },
+        });
+
+        return (
+          <>
+            {eventsToMergeStr ? (
+              <>
+                {mergePopover}
+                <Button label="Merged with" {...mergeTriggerProps} />
+              </>
+            ) : null}
           </>
         );
       },
@@ -92,7 +131,7 @@ async function backtestFeedingEvent() {
           {new Date(point.timestamp).toLocaleString()} (
           {rtf1.format(
             Math.round((point.timestamp - Date.now()) / 1000 / 60),
-            "minute"
+            "minute",
           )}
           )
         </time>
@@ -111,6 +150,7 @@ async function backtestFeedingEvent() {
     { title: "Weight", key: "weight" },
     { title: "Next points", key: "nextPoints" },
     { title: "Debug", key: "debug" },
+    { title: "Debug merge", key: "debugMerge", visible: false },
     { title: "Timestamp", key: "timestamp" },
   ] as const;
 
