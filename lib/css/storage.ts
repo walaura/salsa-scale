@@ -35,8 +35,9 @@ const getClassName = () => {
   const err = new Error();
   const pst = Error.prepareStackTrace;
   Error.prepareStackTrace = (_, trace) => {
+    const currentScript = import.meta.dirname || path.dirname(import.meta.url);
     const cs = trace
-      .filter((cs) => !cs.getFileName()?.includes(import.meta.dirname))
+      .filter((cs) => !cs.getFileName()?.includes(currentScript))
       .slice(0, 1)
       .pop()!;
 
