@@ -7,6 +7,12 @@ export interface LogEntry {
   feedingEventOfSize?: number | null;
 }
 
+export interface EmailEntry {
+  weight: number;
+  sentAt: number;
+  feedingEventOfSize?: number | null;
+}
+
 export const getDbClient = () => new MongoClient(MONGO_URL);
 
 export const withDb = async <T>(fn: (db: Db) => Promise<T>) => {

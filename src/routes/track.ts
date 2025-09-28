@@ -1,5 +1,5 @@
 import { Collection } from "mongodb";
-import { withDb, type LogEntry } from "../app/setup/db.ts";
+import { EmailEntry, withDb, type LogEntry } from "../app/setup/db.ts";
 import {
   isFeedingEvent as isFeedingEventFn,
   maybeMergePreviousFeedingEvent,
@@ -8,6 +8,17 @@ import { getPreviousFeedingEvents } from "../app/getData.ts";
 import { formatGrams } from "../app/format.ts";
 import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
 import { Route } from "@/app/setup/routes.ts";
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.improvmx.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER || "",
+    pass: process.env.EMAIL_PASS || "",
+  },
+});
 
 const detectFeedingEventOfSize = async ({
   logs,
@@ -67,21 +78,68 @@ export const trackRoute: Route<"get"> = {
 
     return withDb(async (database) => {
       const logs = database.collection<LogEntry>("logs");
+      const emails = database.collection<EmailEntry>("emails");
 
       const feedingEventOfSize = await detectFeedingEventOfSize({
         logs,
         weight,
       });
 
-      const result = await logs.insertOne({
+      function addHours(date, hours) {
+        date.setHours(date.getHours() + hours);
+        return date;
+      }
+      const lastEmailSent = await emails
+        .find({})
+        .sort({ sentAt: -1 })
+        .limit(1)
+        .toArray()
+        .then((arr) => arr[0]);
+
+      const a = await emails.insertOne({
         weight,
-        timestamp,
+        sentAt: timestamp,
         feedingEventOfSize,
       });
+
+      // 6 hours
+      if (
+        !(
+          addHours(new Date(lastEmailSent.sentAt), 1) < new Date() &&
+          weight < 100
+        )
+      ) {
+        const info = await transporter.sendMail({
+          from: `"Salsa's Scale" <${process.env.EMAIL_USER}>`,
+          to: process.env.EMAIL_TO,
+          subject: "Salsa is starving",
+          text: "Salsa is starving, feed the cat",
+          html: `
+            <b>Salsa is starving, you need to feed the cat</b>
+            <br />
+            <img src="cid:sadSalsa" alt="Salsa's Scale" />`,
+          attachments: [
+            {
+              filename: "salsa.jpg",
+              path: "https://scale.salsashack.co.uk/static/salsa.jpg",
+              cid: "sadSalsa",
+            },
+          ],
+        });
+
+        console.log("Message sent:", info.messageId);
+        console.log("More than 2 hours since last email");
+      }
+
+      // const result = await logs.insertOne({
+      //   weight,
+      //   timestamp,
+      //   feedingEventOfSize,
+      // });
+      const result = { insertedId: "mocked-id-1234" }; // Mocked result for demonstration
       const response = `New log entry (${formatGrams(
         weight,
       )}) created with the following id: ${result.insertedId}`;
-      console.log(response);
 
       return response;
     });
