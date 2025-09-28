@@ -5,7 +5,7 @@ import {
   maybeMergePreviousFeedingEvent,
 } from "../app/feedingEvent.ts";
 import { getPreviousFeedingEvents } from "../app/getData.ts";
-import { formatGrams } from "../app/format.ts";
+import { formatGrams, formatTime } from "../app/format.ts";
 import { TOP_SECRET_PATH } from "@/app/setup/env.ts";
 import { Route } from "@/app/setup/routes.ts";
 import nodemailer from "nodemailer";
@@ -85,10 +85,13 @@ export const trackRoute: Route<"get"> = {
         weight,
       });
 
-      function addHours(date, hours) {
-        date.setHours(date.getHours() + hours);
-        return date;
-      }
+      const lastFeedingEvent = await logs
+        .find({ feedingEventOfSize: { $ne: null } })
+        .sort({ timestamp: -1 })
+        .limit(1)
+        .toArray()
+        .then((arr) => arr[0]);
+
       const lastEmailSent = await emails
         .find({})
         .sort({ sentAt: -1 })
@@ -96,26 +99,28 @@ export const trackRoute: Route<"get"> = {
         .toArray()
         .then((arr) => arr[0]);
 
-      const a = await emails.insertOne({
-        weight,
-        sentAt: timestamp,
-        feedingEventOfSize,
-      });
+      const lastFeedingEventTime = lastFeedingEvent?.timestamp;
+      const sixHours = 6 * 60 * 60;
+      const twoHours = 2 * 60 * 60;
 
-      // 6 hours
       if (
-        !(
-          addHours(new Date(lastEmailSent.sentAt), 1) < new Date() &&
-          weight < 100
-        )
+        lastEmailSent.feedingEventId !== lastFeedingEvent?._id &&
+        new Date(lastEmailSent.sentAt + twoHours) < new Date() &&
+        new Date((lastFeedingEventTime ?? 0) + sixHours) < new Date()
       ) {
-        const info = await transporter.sendMail({
+        await emails.insertOne({
+          weight,
+          sentAt: timestamp,
+          feedingEventId: lastFeedingEvent?._id,
+        });
+        const email = await transporter.sendMail({
           from: `"Salsa's Scale" <${process.env.EMAIL_USER}>`,
           to: process.env.EMAIL_TO,
           subject: "Salsa is starving",
           text: "Salsa is starving, feed the cat",
           html: `
             <b>Salsa is starving, you need to feed the cat</b>
+            <b>She hasn't eaten for ${formatTime(Date.now() - lastFeedingEventTime)} hours</b>
             <br />
             <img src="cid:sadSalsa" alt="Salsa's Scale" />`,
           attachments: [
@@ -127,7 +132,7 @@ export const trackRoute: Route<"get"> = {
           ],
         });
 
-        console.log("Message sent:", info.messageId);
+        console.log("Message sent:", email.messageId);
         console.log("More than 2 hours since last email");
       }
 
